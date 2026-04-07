@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import MyPage from './MyPage'
 
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="" element={} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   )
