@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Category from './component/layout/Category'
+import Layout from './component/layout/Layout'
 
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Category />} />
+        <Route path="/" element={<Layout />} />
       </Routes>
     </BrowserRouter>
   )
