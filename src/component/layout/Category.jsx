@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Category.css';
-import SearchModal from './SearchMordal'
+import SearchModal from '../../SearchMordal'
 
 function Category() {
 

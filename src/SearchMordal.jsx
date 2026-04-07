@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SearchModal({ onClose }) {
     const [keyword,setKeyword]=useState("");
-    const navigate=useNavigate();
+    //const navigate=useNavigate();
 
     useEffect(() => {
         // 스크롤 막기
@@ -30,7 +30,7 @@ function SearchModal({ onClose }) {
             return;
         }
         alert(txt+'제출됨');
-        navigate(`/search?q=${txt}`);
+        //navigate(`/search?q=${txt}`);
         onClose();
     };
 
