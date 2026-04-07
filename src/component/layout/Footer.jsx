@@ -1,6 +1,6 @@
 import './Footer.css'
-import githubLogo from './assets/github.svg'
-import instaLogo from './assets/insta.png'
+import githubLogo from '../../assets/github.svg'
+import instaLogo from '../../assets/insta.png'
 
 function Footer() {
 
