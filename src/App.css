@@ -1,3 +1,14 @@
+.srchbtn{
+  height: 5vh;
+  border-radius: 2%;
+  background-color: #00000000;
+  border-color: #00000000;
+  background-image: url('./assets/srch.jpg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -16,6 +27,8 @@
     outline-offset: 2px;
   }
 }
+
+
 
 .hero {
   position: relative;
