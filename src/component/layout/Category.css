@@ -2,7 +2,7 @@
 .category-sidebar {
   width: 200px;
   height: 100vh;
-  position: fixed;
+  /*position: fixed;*/
   top: 0;
   left: 0;
   background-color: rgb(4, 4, 76) !important;

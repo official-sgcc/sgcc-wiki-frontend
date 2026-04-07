@@ -1,12 +1,17 @@
 import Category from "./Category";
-import Footer from "./Footer.jsx";
+import Footer from "./Footer";
+import './Layout.css';
 
 function Layout({content}){
     return (
         <>
-            <Category />
-            <content />
-            <Footer />
+            <div id='entire'>
+                <Category />
+                <div id='main'>
+                    <content />
+                    <Footer />
+                </div>
+            </div>
         </>
     );
 }
