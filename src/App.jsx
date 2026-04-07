@@ -4,11 +4,23 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
+import Footer from './component/layout/Footer'
+import SearchModal from './SearchMordal'
+import Layout from './component/layout/Layout'
+
+
 function App() {
   const [count, setCount] = useState(0)
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
+      <Layout>
+      <div>
+        <button className='srchbtn' onClick={()=>{setIsOpen(true);}} />
+        {isOpen && <SearchModal onClose={() => setIsOpen(false)} />}
+      </div>
+
       <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
@@ -114,6 +126,8 @@ function App() {
 
       <div className="ticks"></div>
       <section id="spacer"></section>
+      
+      </Layout>
     </>
   )
 }
