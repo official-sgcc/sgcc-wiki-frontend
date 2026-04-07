@@ -1,0 +1,51 @@
+:root{
+    --mordal_content_height: 10vh;
+    --srchbtn_bgimage: url('./assets/srch.jpg');
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 10vh;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.modal_content {
+  background: white;
+  padding: 3vw;
+  border-radius: 5vmin;
+  min-width: 100vw;
+  height: var(--mordal_content_height);
+}
+
+input{
+    font-size: 1.7rem;
+    text-align: left;
+    width:100%;
+    height: var(--mordal_content_height);
+    border: 0px;
+}
+.srchbox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+.srchbtn{
+    background-image: url('./assets/srch.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: var(--mordal_content_height);
+    width: var(--mordal_content_height);
+    background-color: #00000000;
+    border-color: #00000000;
+}

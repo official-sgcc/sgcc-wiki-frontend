@@ -1,0 +1,24 @@
+:root{
+    --footerbgcolor: #c3bdd9;
+    --footertxtcolor: #000000;
+}
+a{
+    text-decoration: none;
+    text-transform: none;
+    color: var(--footertxtcolor);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.FooterContainer{
+    display: flex;
+    justify-content:left;
+    background-color: var(--footerbgcolor);
+    height: 8vh;
+    align-items: center;
+    gap: 5vw;
+    padding: 3vw;
+}
+.logo{
+    height: 5vh;
+}
