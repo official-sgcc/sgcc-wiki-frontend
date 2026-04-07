@@ -1,0 +1,20 @@
+.padding {
+    margin: 3%;
+
+}
+
+.accountName {
+    font-size: 36pt;
+}
+
+.showPanel {
+    padding: 5%;
+}
+
+.showPanelTitle {
+    font-size: 20pt;
+}
+
+.showPanelContent {
+    font-size: 16pt;
+}
