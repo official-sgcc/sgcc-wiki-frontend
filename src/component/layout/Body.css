@@ -1,0 +1,78 @@
+.body-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; /* 세로 중앙 정렬 */
+  align-items: center;    /* 가로 중앙 정렬 */
+  min-height: 80vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
+}
+
+.body-container h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+/* 카테고리들을 가로로 나열 (3열 기준) */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 100px;
+  justify-items: center;
+}
+
+/* 개별 카테고리 카드 스타일 */
+.category-card {
+  background: rgb(134, 168, 226); 
+  color: white;            
+  width: 300px;             
+  height: 300px;
+  border-radius: 50%;       
+  
+  /* 내부 텍스트 중앙 정렬 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  padding: 20px;
+  box-sizing: border-box;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: none;             
+  text-align: center;
+}
+
+.category-card:hover {
+  transform: scale(1.05); /* 위로 뜨는 대신 전체적으로 커지게 */
+  background: rgb(186, 186, 213);    /* 호버 시 포인트 색상 */
+  color: rgb(4, 4, 76);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.category-card h3 {
+  margin: 0;
+  padding-bottom: 5px;
+  border-bottom: none;    
+  font-size: 1.6rem;
+}
+
+.sub-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 0 0;
+}
+
+.sub-item {
+  padding: 8px 0;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.sub-item:hover {
+  color: rgb(4, 4, 76);
+  text-decoration: underline;
+}
