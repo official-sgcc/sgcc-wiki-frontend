@@ -9,13 +9,8 @@ function Layout({content}){
         <>
             <div id='entire'>
                 <Header/>
-                <Category />
                 <div id='main'>
-
-                    <Body>
-                        
-                    </Body>
-                    <content />
+                    {content}
                 </div>
                 <Footer />
             </div>

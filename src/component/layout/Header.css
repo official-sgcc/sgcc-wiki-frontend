@@ -1,4 +1,108 @@
 header{
     height: 10vh;
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+.footer-item-login {
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.footer-item-login:hover {
+  text-decoration: underline;
+  color: #ffcc00;
+}
+
+/* 로그인 모달 배경 */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* 로그인 모달 본체 */
+.login-modal-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  width: 350px;
+  position: relative;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.login-modal-content h2 {
+  margin-bottom: 30px;
+  color: rgb(4, 4, 76);
+}
+
+.login-modal-content input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+/* 입력창 클릭(포커스) 시 효과 */
+.login-modal-content input:focus {
+  outline: none;
+  border-color: rgb(4, 4, 76);
+  box-shadow: 0 0 5px rgba(4, 4, 76, 0.2);
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+  color: #d93025; 
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: rgb(4, 4, 76);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.login-submit-btn:hover {
+  background-color: #1a1a5a;
+}
+
+/* 닫기 버튼 */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #999;
+}
+
+.close-btn:hover {
+  color: #333;
 }
