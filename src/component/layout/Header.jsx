@@ -2,7 +2,7 @@ import './Header.css'
 import { useState } from 'react'
 import SearchModal from '../../SearchMordal';
 function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSrchOpen, setIsSrchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [userId, setUserId] = useState('');
   const [userPw, setUserPw] = useState('');
@@ -31,22 +31,23 @@ function Header() {
 
   return (
     <header>
-      <div>
-        <button className='srchbtn' onClick={()=>{setIsOpen(true);}} />
-        {isOpen && <SearchModal onClose={() => setIsOpen(false)} />}
+      <div className="header-logo">
+        <h2>SGCC Wiki</h2>
       </div>
-      <div className="sidebar-footer">
-        <p 
-          className="footer-item-login" 
-          onClick={() => {
-            setIsLoginOpen(true)
-        }}
-        >
-          Login
-        </p>
-        <p>포탈시스템</p>
+      <div className='header-rightside'>
+        <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} />
+        <div className="loginbtn">
+          <p 
+            className="footer-item-login" 
+            onClick={() => {
+              setIsLoginOpen(true)
+          }}
+          >
+            Login
+          </p>
+        </div>
       </div>
-
+      {isSrchOpen && <SearchModal onClose={() => setIsSrchOpen(false)} />}
       {isLoginOpen && (
         <div className="login-modal-overlay" onClick={closeLoginModal}>
           <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
