@@ -1,5 +1,6 @@
 import './Header.css'
 import { useState } from 'react'
+import { useEffect } from 'react';
 import SearchModal from '../../SearchMordal';
 function Header() {
   const [isSrchOpen, setIsSrchOpen] = useState(false);
@@ -28,6 +29,20 @@ function Header() {
     setUserPw('');
     setErrorMessage('');
   };
+
+  useEffect(() => {
+      // 스크롤 막기
+      if(isLoginOpen||isSrchOpen){
+        document.body.style.overflow = "hidden";
+      }else{
+        document.body.style.overflow = "auto";
+      }
+
+      // 모달 닫히면 복구
+      return () => {
+      document.body.style.overflow = "auto";
+      };
+  }, [isLoginOpen,isSrchOpen]);
 
   return (
     <header>

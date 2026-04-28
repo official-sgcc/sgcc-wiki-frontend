@@ -7,15 +7,15 @@ function SearchModal({ onClose }) {
     const [keyword,setKeyword]=useState("");
     //const navigate=useNavigate();
 
-    useEffect(() => {
-        // 스크롤 막기
-        document.body.style.overflow = "hidden";
+    // useEffect(() => {
+    //     // 스크롤 막기
+    //     document.body.style.overflow = "hidden";
 
-        // 모달 닫히면 복구
-        return () => {
-        document.body.style.overflow = "auto";
-        };
-    }, []);
+    //     // 모달 닫히면 복구
+    //     return () => {
+    //     document.body.style.overflow = "auto";
+    //     };
+    // }, []);
     const handleKeyDown=(e)=>{//enter키 처리
         if(e.key=='Enter'){
             handleSearch();
