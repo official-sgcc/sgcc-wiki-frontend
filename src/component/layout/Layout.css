@@ -10,6 +10,8 @@
     flex-direction: column;
     width: 100%;
     flex-wrap: wrap;
+    overflow-x: auto;
+    margin-top: 10vh; /*header 높이 만큼 내려주기*/
 }
 content{
     flex:1
