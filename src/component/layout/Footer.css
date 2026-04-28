@@ -1,5 +1,5 @@
 :root{
-    --footerbgcolor: #c3bdd9;
+    --footerbgcolor: #e7e3e3;
     --footertxtcolor: #000000;
 }
 a{
@@ -14,7 +14,7 @@ a{
     display: flex;
     justify-content:left;
     background-color: var(--footerbgcolor);
-    height: 8vh;
+    height: 2vh;
     align-items: center;
     gap: 5vw;
     padding: 3vw;
