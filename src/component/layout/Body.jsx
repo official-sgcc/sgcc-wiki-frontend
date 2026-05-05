@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Body.css';
 
 function Body() {
   // 사이드바에 있던 카테고리 데이터를 그대로 가져옵니다.
   const categories = {
     "category1": ["subcategory1-1", "subcategory1-2"],
-    "category2": ["subcategory2-1", "subcategory2-2"],
+    "SGCC 소개": ["subcategory2-1", "subcategory2-2"],
     "category3": ["subcategory3-1", "subcategory3-2"],
   };
 
@@ -20,7 +21,11 @@ function Body() {
             <h3>{category}</h3>
             <ul className="sub-list">
               {categories[category].map((sub, idx) => (
-                <li key={idx} className="sub-item">{sub}</li>
+                <li key={idx} className="sub-item">
+                  <Link to={`/wiki/${sub}`} className="sub-link">
+                    {sub}
+                  </Link>
+                </li>
               ))}
             </ul>
           </div>
