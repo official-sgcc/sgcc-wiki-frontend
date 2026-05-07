@@ -3,6 +3,7 @@ import Layout from './component/layout/Layout'
 import Body from './component/layout/Body'
 import SubCategory from './component/layout/SubCategory'
 import GetDocs from './component/docs/GetDocs'
+import NotFound from './component/docs/NotFound'
 
 function App() {
 
@@ -12,7 +13,7 @@ function App() {
         <Route path="/" element={<Layout content={<Body/>}/>} />
         <Route path="/wiki/:subcategory" element={<Layout content={<SubCategory/>}/>} />
         <Route path="/wiki/detail/:title" element={<Layout content={<GetDocs />}/>} />
-        <Route path="*" element={<Layout content={<Body />}/>} />
+        <Route path="*" element={<Layout content={<NotFound />}/>} />
       </Routes>
     </BrowserRouter>
   )
