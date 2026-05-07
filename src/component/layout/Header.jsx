@@ -2,6 +2,8 @@ import './Header.css'
 import { useState } from 'react'
 import { useEffect } from 'react';
 import SearchModal from '../../SearchMordal';
+import { Link } from 'react-router-dom';
+
 function Header() {
   const [isSrchOpen, setIsSrchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -47,7 +49,7 @@ function Header() {
   return (
     <header>
       <div className="header-logo">
-        <h2>SGCC Wiki</h2>
+        <Link to={`/`}>SGCC Wiki</Link>
       </div>
       <div className='header-rightside'>
         <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} />
