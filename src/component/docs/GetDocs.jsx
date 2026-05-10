@@ -44,7 +44,6 @@ function convertToHTML(doc){
 
 function GetDocs() {
   const { title } = useParams();
-  const [intitle, setIntitle] = useState("");
   const [doc, setDoc] = useState(null);
   useEffect(() => {
     async function fetchDoc() {
@@ -54,23 +53,9 @@ function GetDocs() {
     fetchDoc();
   }, [title]);
   return (
-    <section>
-      <input
-        id="titleinput"
-        type="text"
-        onChange={(e) => setIntitle(e.target.value)}
-        placeholder="title을 입력하세요"
-      />
-      <button
-        onClick={async () => {
-          const data = await getDocsData(intitle);
-          console.log(data);
-        }}
-      >
-        Load
-      </button>
+    <article>
       {doc !== null ? doc : <NotFound status={0} message="검색 중 . . . "/>}
-    </section>
+    </article>
   );
 }
 
