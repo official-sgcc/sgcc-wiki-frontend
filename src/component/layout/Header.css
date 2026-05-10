@@ -1,6 +1,7 @@
 :root{
-    --headerbgcolor: #ffffff;
+    --headerbgcolor: #edb7f2;
 }
+
 
 header{
     background-color: var(--headerbgcolor);
