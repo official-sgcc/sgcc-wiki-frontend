@@ -2,8 +2,7 @@
     --headerbgcolor: #edb7f2;
 }
 
-
-header{
+.main-header{
     background-color: var(--headerbgcolor);
     position: fixed;
     height: 10vh;

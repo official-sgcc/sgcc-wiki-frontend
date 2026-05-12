@@ -47,7 +47,7 @@ function Header() {
   }, [isLoginOpen,isSrchOpen]);
 
   return (
-    <header>
+    <header className='main-header'>
       <div className="header-logo">
         <Link to={`/`}>SGCC Wiki</Link>
       </div>
