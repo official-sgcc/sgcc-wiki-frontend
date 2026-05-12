@@ -24,21 +24,6 @@ async function getDocsData(title) {
   }
 }
 
-//temp
-async function createDocs(Title, Content, Tags) {
-  try {
-    await axios.post(`${api_url}/documents`, {
-      params: {
-        title: Title,
-        content: Content,
-        tags: Tags,
-      },
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
-
 //date 값 변환해주는 함수
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -80,7 +65,7 @@ function GetDocs() {
   if (!doc.ok) {
     return <NotFound status={doc.status} message="문서를 찾을 수 없습니다" />;
   }
-  console.log(doc.data);
+  
   //doc.data에 title, content, 날짜 등이 있음
   return (
     <article className="docs-container">
