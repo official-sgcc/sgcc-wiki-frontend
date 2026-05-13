@@ -26,7 +26,7 @@
   height: var(--mordal_content_height);
 }
 
-input{
+.srchinput{
     font-size: 1.7rem;
     text-align: left;
     width:100%;
