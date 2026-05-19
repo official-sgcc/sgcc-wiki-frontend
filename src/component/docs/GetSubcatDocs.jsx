@@ -10,7 +10,7 @@ async function getDocsListData(category) {
     const response = await axios.get(`${api_url}/documents?category=${category}`);
     return {
       ok: true,
-      data: response.data, // 예상 데이터: [{title, date, author}, ...]
+      data: response.data
     };
   } catch (e) {
     return {
