@@ -5,6 +5,7 @@ import SubCategory from './component/layout/SubCategory'
 import GetDocs from './component/docs/GetDocs'
 import NotFound from './component/docs/NotFound'
 import DocsEditor from './component/docs/DocsEditor'
+import MyPage from './component/account/MyPage'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/wiki/:subcategory" element={<Layout content={<SubCategory/>}/>} />
         <Route path="/wiki/detail/:title" element={<Layout content={<GetDocs />}/>} />
         <Route path="/wiki/edit" element={<Layout content={<DocsEditor />}/>} />
+        <Route path="/mypage" element={<Layout content={<MyPage />}/>} />
         <Route path="*" element={<Layout content={<NotFound />}/>} />
       </Routes>
     </BrowserRouter>

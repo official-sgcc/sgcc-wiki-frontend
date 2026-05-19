@@ -18,3 +18,9 @@
 .showPanelContent {
     font-size: 16pt;
 }
+
+.accountNotice {
+    margin-top: 16px;
+    font-size: 14pt;
+    color: #555555;
+}
