@@ -25,7 +25,7 @@
 
 .header-rightside{
     flex: 1;
-    gap: 3vw;
+    gap: 1vw;
     display: flex;
     flex-direction: row;
     justify-content: right;
@@ -40,13 +40,12 @@
 }
 .footer-item-login {
   cursor: pointer;
-  margin-bottom: 10px;
   font-weight: bold;
 }
 
 .footer-item-login:hover {
-  text-decoration: underline;
-  color: #ffcc00;
+  text-decoration: none;
+  color: #000000;
 }
 
 /* 로그인 모달 배경 */
@@ -68,7 +67,7 @@
   background-color: white;
   padding: 40px;
   border-radius: 12px;
-  width: 350px;
+  width: 330px;
   position: relative;
   color: #fbf6f6;
   text-align: center;
@@ -81,7 +80,8 @@
 }
 
 .login-modal-content input {
-  width: 100%;
+  width: 90%;
+  height: 70px;
   padding: 12px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
@@ -94,7 +94,7 @@
 .login-modal-content input:focus {
   outline: none;
   border-color: rgb(4, 4, 76);
-  box-shadow: 0 0 5px rgba(4, 4, 76, 0.2);
+  box-shadow: 0 0 5px rgba(165, 165, 235, 0.2);
 }
 
 /* 에러 메시지 스타일 */
@@ -107,9 +107,10 @@
 }
 
 .login-submit-btn {
-  width: 100%;
+  width: 90%;
+  height: 40px;
   padding: 12px;
-  background-color: rgb(4, 4, 76);
+  background-color: #1a1a5a;
   color: white;
   border: none;
   border-radius: 6px;
@@ -119,7 +120,7 @@
 }
 
 .login-submit-btn:hover {
-  background-color: #1a1a5a;
+  background-color: #2d2d7b;
 }
 
 /* 닫기 버튼 */
