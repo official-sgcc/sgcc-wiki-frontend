@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import api from '../../backend/axios.js'
-import './MyPage.css'
+import './UserPage.css'
 import ShowPanel from './ShowPanel.jsx'
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
 
-function MyPage() {
+function UserPage() {
   const token = sessionStorage.getItem(TOKEN_KEY);
-  const username = sessionStorage.getItem(USERNAME_KEY);
+  const myusername = sessionStorage.getItem(USERNAME_KEY);
+  const { userID } = useParams();
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(Boolean(token && username));
+  const [isLoading, setIsLoading] = useState(Boolean(token && myusername));
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (!token || !username) {
+    if (!token || !myusername) {
       setIsLoading(false);
       return;
     }
@@ -23,7 +25,7 @@ function MyPage() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const response = await api.get(`/users/${username}`);
+        const response = await api.get(`/users/${userID}`);
         setUser(response.data);
       } catch (error) {
         const status = error.response?.status;
@@ -40,9 +42,9 @@ function MyPage() {
     }
 
     fetchUser();
-  }, [token, username]);
+  }, [token, myusername, userID]);
 
-  if (!token || !username) {
+  if (!token || !myusername) {
     return (
       <div className="padding">
         <div className="accountName">로그인이 필요합니다.</div>
@@ -62,21 +64,18 @@ function MyPage() {
   if (errorMessage) {
     return (
       <div className="padding">
-        <div className="accountName">My Page</div>
+        <div className="accountName">{userID}'s Page</div>
         <p className="accountNotice">{errorMessage}</p>
       </div>
     )
   }
   
   return ( 
-    <div className="padding">
-      <div className="accountName">
-        Hello, {user?.username || username}
-      </div>
-      <ShowPanel title="아이디" content={user?.username || username} />
-      <ShowPanel title="권한" content={user?.permission || '정보 없음'} />
+	<div className="padding">
+      <div className="accountName">{userID}'s Page</div>
+      <ShowPanel title="아이디" content={user?.username || userID} />
     </div>
   )
 }
 
-export default MyPage
+export default UserPage

@@ -6,6 +6,7 @@ import GetDocs from './component/docs/GetDocs'
 import NotFound from './component/docs/NotFound'
 import DocsEditor from './component/docs/DocsEditor'
 import MyPage from './component/account/MyPage'
+import UserPage from './component/account/UserPage'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/wiki/detail/:title" element={<Layout content={<GetDocs />}/>} />
         <Route path="/wiki/edit" element={<Layout content={<DocsEditor />}/>} />
         <Route path="/mypage" element={<Layout content={<MyPage />}/>} />
+        <Route path="/users/:userID" element={<Layout content={<UserPage />}/>} />
         <Route path="*" element={<Layout content={<NotFound />}/>} />
       </Routes>
     </BrowserRouter>
