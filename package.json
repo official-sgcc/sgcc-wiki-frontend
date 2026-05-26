@@ -12,11 +12,13 @@
   "dependencies": {
     "@uiw/react-md-editor": "^4.1.0",
     "axios": "^1.16.0",
+    "easymde": "^2.21.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.14.0",
     "react-scripts": "^0.0.0",
+    "react-simplemde-editor": "^5.2.0",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
