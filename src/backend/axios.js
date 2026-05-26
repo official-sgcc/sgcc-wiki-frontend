@@ -2,6 +2,7 @@ import axios from 'axios';
 //import { Cookies } from 'react-cookie';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SERVER_URL || 'http://localhost:8000';
+const TOKEN_KEY = 'token';
 //const cookies = new Cookies();
 
 const api = axios.create({
@@ -14,13 +15,12 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        /*
-        const token = cookies.get('token'); 
+        const token = sessionStorage.getItem(TOKEN_KEY);
 
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers.auth = token;
         }
-        */
+
         return config;
     },
     (error) => {

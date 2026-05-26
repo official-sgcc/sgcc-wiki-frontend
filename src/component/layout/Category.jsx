@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Category.css';
 import SearchModal from '../../SearchMordal'
+import { Link } from 'react-router-dom';
+import LoginModal from '../account/LoginModal';
+
+const TOKEN_KEY = 'token';
+const USERNAME_KEY = 'username';
 
 function Category() {
 
   const [activeCategory, setActiveCategory] = useState(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [userId, setUserId] = useState('');
-  const [userPw, setUserPw] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
+  const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
+  const isLoggedIn = Boolean(token);
 
 
   const categories = {
@@ -20,25 +25,20 @@ function Category() {
   
   const mainCategories = Object.keys(categories);
 
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    // 테스트용 임시 아이디/비번
-    const mockId = "noeul";
-    const mockPw = "1222";
-
-    if (userId === mockId && userPw === mockPw) {
-        alert("로그인 성공!");
-        closeLoginModal();
-    } else {
-        setErrorMessage('아이디 또는 비밀번호가 올바르지 않습니다.');
-    }
-  };
-
   const closeLoginModal = () => {
     setIsLoginOpen(false);
-    setUserId('');
-    setUserPw('');
-    setErrorMessage('');
+  };
+
+  const handleLoginSuccess = ({ username, token }) => {
+    setCurrentUsername(username);
+    setToken(token);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USERNAME_KEY);
+    setCurrentUsername('');
+    setToken('');
   };
 
   return (
@@ -76,42 +76,28 @@ function Category() {
         {isOpen && <SearchModal onClose={() => setIsOpen(false)} />}
       </div>
       <div className="sidebar-footer">
-        <p 
-          className="footer-item-login" 
-          onClick={() => {
-            setIsLoginOpen(true)
-        }}
-        >
-          Login
-        </p>
+        {isLoggedIn ? (
+          <>
+            <Link className="footer-item-login" to="/mypage">
+              {currentUsername || 'My Page'}
+            </Link>
+            <p className="footer-item-login" onClick={handleLogout}>Logout</p>
+          </>
+        ) : (
+          <p 
+            className="footer-item-login" 
+            onClick={() => {
+              setIsLoginOpen(true)
+          }}
+          >
+            Login
+          </p>
+        )}
         <p>포탈시스템</p>
       </div>
 
       {isLoginOpen && (
-        <div className="login-modal-overlay" onClick={closeLoginModal}>
-          <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-btn" onClick={closeLoginModal}>X</button>
-            <h2>LOGIN</h2>
-            <form onSubmit={handleLoginSubmit}>
-              <input 
-                type="text" 
-                placeholder="아이디" 
-                value={userId} 
-                onChange={(e) => setUserId(e.target.value)}
-                required // 비어있는 상태 방지
-              />
-              <input 
-                type="password" 
-                placeholder="비밀번호" 
-                value={userPw} 
-                onChange={(e) => setUserPw(e.target.value)}
-                required // 비어있는 상태 방지
-              />
-              {errorMessage && <p className="error-message">{errorMessage}</p>}
-              <button type="submit" className="login-submit-btn">LOGIN</button>
-            </form>
-          </div>
-        </div>
+        <LoginModal onClose={closeLoginModal} onSuccess={handleLoginSuccess} />
       )}
     </nav>
   );
