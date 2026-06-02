@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import NotFound from "./NotFound";
@@ -43,6 +43,7 @@ function GetDocs() {
   const { title } = useParams();
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
+  const navigate=useNavigate();
 
   //when page loaded -> getdocs with loding
   useEffect(() => {
@@ -54,6 +55,13 @@ function GetDocs() {
     }
     fetchDoc();
   }, [title]);
+
+  function handleTagButton(e) {
+    //tag 누르면 tag 리스트로 연결
+    let selectedTag=e.target.textContent.substr(1);
+    console.log(selectedTag);
+    // navigate(`/tag/${e.target.key}`);
+  }
 
   if (loding) {
     return (
@@ -78,13 +86,24 @@ function GetDocs() {
           </span>
 
           <span className="docs-date">
-            작성일 : {doc.data.updated_at ? formatDate(doc.data.updated_at): "날짜미상"}
+            작성일 :{" "}
+            {doc.data.updated_at ? formatDate(doc.data.updated_at) : "날짜미상"}
           </span>
         </div>
       </header>
 
       <section className="docs-content">
         <ReactMarkdown>{doc.data.content}</ReactMarkdown>
+      </section>
+
+      <section>
+        <div className="tag-list">
+          {doc.data.tags?.map((tag) => (
+            <div key={tag} className="tag-chip" onClick={handleTagButton}>
+              <span>#{tag.name}</span>
+            </div>
+          ))}
+        </div>
       </section>
     </article>
   );

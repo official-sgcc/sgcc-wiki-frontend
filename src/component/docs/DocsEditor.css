@@ -192,3 +192,27 @@
     width: 100%;
   }
 }
+
+/* 카테고리 관련 css */
+.editor-category {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+.editor-category label {
+  font-weight: 600;
+}
+
+.editor-category select {
+  min-width: 160px;
+
+  padding: 8px 12px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  background: white;
+}
