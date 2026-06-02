@@ -1,7 +1,7 @@
 import './Header.css'
 import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
 
 const TOKEN_KEY = 'token';
@@ -13,6 +13,7 @@ function Header() {
   const [currentUsername, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
   const isLoggedIn = Boolean(token);
+  const navigate = useNavigate();
 
   const closeLoginModal = () => {
     setIsLoginOpen(false);
@@ -28,6 +29,7 @@ function Header() {
     sessionStorage.removeItem(USERNAME_KEY);
     setCurrentUsername('');
     setToken('');
+    navigate('/');
   };
 
   useEffect(() => {
