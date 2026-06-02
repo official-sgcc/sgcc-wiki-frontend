@@ -1,5 +1,5 @@
 :root{
-    --headerbgcolor: #edb7f2;
+    --headerbgcolor: #e7e3e3;
 }
 
 .main-header{
@@ -17,10 +17,6 @@
   font-weight: bold;
   margin-left: 3vw;
   padding: 3px;
-}
-
-.header-logo h2 {
-  color: #000000;
 }
 
 .header-rightside{

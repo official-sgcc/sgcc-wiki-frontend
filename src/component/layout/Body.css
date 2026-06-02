@@ -13,7 +13,7 @@
 .body-container h1 {
   text-align: center;
   margin-bottom: 40px;
-  color: #333;
+  /*color: #333;*/
 }
 
 /* 카테고리들을 가로로 나열 (3열 기준) */
@@ -22,17 +22,18 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 100px;
   justify-items: center;
+  align-items: start;
 }
 
-/* 개별 카테고리 카드 스타일 */
+
+/* 개별 카테고리 카드 스타일
 .category-card {
-  background: rgb(186, 186, 213); 
+  background: #000000;
   color: white;            
   width: 300px;             
   height: 300px;
   border-radius: 50%;       
-  
-  /* 내부 텍스트 중앙 정렬 */
+ 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -44,12 +45,42 @@
   border: none;             
   text-align: center;
 }
+*/
 
-.category-card:hover {
-  transform: scale(1.05); /* 위로 뜨는 대신 전체적으로 커지게 */
-  background: rgb(186, 186, 213);    /* 호버 시 포인트 색상 */
-  color: rgb(4, 4, 76);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;             
+  box-sizing: border-box;
+  transition: transform 0.2s ease-in-out;
+  text-align: center;
+  cursor: pointer;
+}
+
+
+
+.character-wrapper {
+  width: 250px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.category-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 이미지 비율 유지 */
+  z-index: 1;
+}
+
+.category-title {
+  color: white; 
+  top: 10px;
+  position: relative;
 }
 
 .category-card h3 {
@@ -60,18 +91,37 @@
 }
 
 .sub-list {
+  position: absolute;  
+  top: 15px;            
+  left: 50%;
+  transform: translateX(-50%); 
+  
   list-style: none;
   padding: 0;
-  margin: 15px 0 0 0;
+  margin: 0;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3px;            
+  width: 100%;
 }
 
 .sub-item {
   padding: 8px 0;
-  color: #666;
   cursor: pointer;
   font-size: 0.95rem;
 }
 
 .sub-item:hover {
   color: rgb(4, 4, 76);
+}
+
+.sub-link {
+  color: #c0bcbc;          
+  text-decoration: none;   
+  font-size: 0.95rem;
+  display: inline-block;
+  transition: color 0.2s ease;
 }
