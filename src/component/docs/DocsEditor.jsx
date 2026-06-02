@@ -23,7 +23,7 @@ async function SubmitDocs(Title, Content, Tags, Category) {
   }, {
     headers: {
       "Content-Type": "application/json",
-      auth: `Bearer ${sessionStorage.getItem("token")}`,
+      auth: sessionStorage.getItem("token"),
     },
   });
 }
