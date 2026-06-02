@@ -67,7 +67,7 @@ function DocsEditor() {
     location.state?.category ?? "";
   const { prevtitle } = useParams();
 
-  console.log("DocsEditor Render");//debug 용
+  // console.log("DocsEditor Render");//debug 용
 
 
   const isEditMode = prevtitle !== undefined;
