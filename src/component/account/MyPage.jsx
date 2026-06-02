@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import api from '../../backend/axios.js'
 import './MyPage.css'
+import AccountStatus from './AccountStatus.jsx'
+import EditList from './EditList.jsx'
 import ShowPanel from './ShowPanel.jsx'
 
 const TOKEN_KEY = 'token';
@@ -10,6 +12,7 @@ function MyPage() {
   const token = sessionStorage.getItem(TOKEN_KEY);
   const username = sessionStorage.getItem(USERNAME_KEY);
   const [user, setUser] = useState(null);
+  const [editList, setEditList] = useState([]);
   const [isLoading, setIsLoading] = useState(Boolean(token && username));
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -25,6 +28,7 @@ function MyPage() {
       try {
         const response = await api.get(`/users/${username}`);
         setUser(response.data);
+        setEditList(response.data?.editList || response.data?.edit_versions || []);
       } catch (error) {
         const status = error.response?.status;
         if (status === 404) {
@@ -44,27 +48,22 @@ function MyPage() {
 
   if (!token || !username) {
     return (
-      <div className="padding">
-        <div className="accountName">로그인이 필요합니다.</div>
-        <p className="accountNotice">상단 Login 버튼으로 로그인한 뒤 다시 확인해주세요.</p>
-      </div>
+      <AccountStatus
+        title="로그인이 필요합니다."
+        message="상단 Login 버튼으로 로그인한 뒤 다시 확인해주세요."
+      />
     )
   }
 
   if (isLoading) {
     return (
-      <div className="padding">
-        <div className="accountName">사용자 정보를 불러오는 중 . . .</div>
-      </div>
+      <AccountStatus title="사용자 정보를 불러오는 중 . . ." />
     )
   }
 
   if (errorMessage) {
     return (
-      <div className="padding">
-        <div className="accountName">My Page</div>
-        <p className="accountNotice">{errorMessage}</p>
-      </div>
+      <AccountStatus title="My Page" message={errorMessage} />
     )
   }
   
@@ -75,6 +74,9 @@ function MyPage() {
       </div>
       <ShowPanel title="아이디" content={user?.username || username} />
       <ShowPanel title="권한" content={user?.permission || '정보 없음'} />
+      <ShowPanel title="Email" content={user?.email || '정보 없음'} />
+      <ShowPanel title="Bio" content={user?.bio || '정보 없음'} />
+      <EditList edits={editList} />
     </div>
   )
 }
