@@ -6,6 +6,10 @@ import SimpleMDE from "react-simplemde-editor";
 import "./DocsEditor.css";
 import "easymde/dist/easymde.min.css";
 import NotFound from "./NotFound";
+import { getDocsData } from "./GetDocs";
+import { useMemo } from "react";
+
+
 
 const api_url = import.meta.env.VITE_SERVER_URL;
 
@@ -13,6 +17,22 @@ const api_url = import.meta.env.VITE_SERVER_URL;
 async function SubmitDocs(Title, Content, Tags, Category) {
   await axios.post(`${api_url}/documents`, {
     title: Title,
+    content: Content,
+    tags: Tags.map(tag => ({
+      name: tag,
+    })),
+    category: {
+      name: Category,
+    }
+  }, {
+    headers: {
+      "Content-Type": "application/json",
+      auth: sessionStorage.getItem("token"),
+    },
+  });
+}
+async function ModifyDocs(Title, Content, Tags, Category) {
+  await axios.put(`${api_url}/documents/${Title}`, {
     content: Content,
     tags: Tags.map(tag => ({
       name: tag,
@@ -36,20 +56,27 @@ function DocsEditor() {
   const [tagInput, setTagInput] = useState("");
   const [categories, setCategories] = useState([]);
   const location = useLocation();
+  const mdeOptions = useMemo(
+    () => ({
+      spellChecker: false,
+    }),
+    []
+  );
 
   const initialCategory =
     location.state?.category ?? "";
+  const { prevtitle } = useParams();
+
+  console.log("DocsEditor Render");//debug 용
+
+
+  const isEditMode = prevtitle !== undefined;
   const [category, setCategory] = useState(
     location.state?.category ?? ""
   );
   const navigate = useNavigate();
 
-  //수정인 경우 이전 파일을 에디터에 띄우기 위한 용도
-  // useEffect(() => {
-  //   if (prev !== "") {
-  //     setValue(prev);
-  //   }
-  // }, [prev]);
+
   if (sessionStorage.getItem("token") == null) {
     return (<NotFound status={0} message="먼저 로그인을 해주세요" />);
   }
@@ -82,6 +109,38 @@ function DocsEditor() {
     }
 
     loadCategories();
+    //수정인 경우 이전 파일을 에디터에 띄우기 위한 용도
+    async function init() {
+      if (isEditMode) {
+        const rtn = await getDocsData(prevtitle);
+
+        if (!rtn.ok) {
+          if (
+            confirm(
+              "이전 문서를 불러오는데 실패했습니다. 다시 시도할까요?"
+            )
+          ) {
+            init();
+          } else {
+            navigate(-1);
+          }
+          return;
+        }
+
+        setTitle(rtn.data.title);
+        setValue(rtn.data.content);
+
+        setTags(
+          rtn.data.tags?.map(tag => tag.name) ?? []
+        );
+
+        setCategory(
+          rtn.data.category?.name ?? ""
+        );
+      }
+    }
+
+    init();
   }, []);
   function addTag() {
     const trimmed = tagInput.trim();
@@ -105,7 +164,10 @@ function DocsEditor() {
     try {
       setSaving(true);
 
-      await SubmitDocs(title, value, tags, category);
+      if(isEditMode)
+        await ModifyDocs(title,value,tags,category);
+      else
+        await SubmitDocs(title, value, tags, category);
 
       navigate(`/wiki/detail/${title}`);
     }
@@ -163,6 +225,7 @@ function DocsEditor() {
           placeholder="문서 제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          readOnly={isEditMode}
         />
 
         <button className="save-btn" onClick={handleSubmit}>
@@ -170,7 +233,7 @@ function DocsEditor() {
         </button>
       </div>
       <div data-color-mode="light">
-        <SimpleMDE value={value} onChange={setValue} />
+        <SimpleMDE value={value} onChange={setValue} options={mdeOptions} />
       </div>
       <div className="editor-footer">
         <div className="tag-container">

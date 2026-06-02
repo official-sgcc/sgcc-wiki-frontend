@@ -50,6 +50,10 @@
 .mde-title-input:focus {
   border-color: #888;
 }
+.mde-title-input:read-only {
+  background: #f5f5f5;
+  cursor: default;
+}
 
 /* ===== 저장 버튼 ===== */
 

@@ -17,6 +17,7 @@ function App() {
         <Route path="/wiki/:subcategory" element={<Layout content={<SubCategory/>}/>} />
         <Route path="/wiki/detail/:title" element={<Layout content={<GetDocs />}/>} />
         <Route path="/wiki/edit" element={<Layout content={<DocsEditor />}/>} />
+        <Route path="/wiki/detail/:prevtitle/edit" element={<Layout content={<DocsEditor />}/>} />
         <Route path="/mypage" element={<Layout content={<MyPage />}/>} />
         <Route path="/users/:userID" element={<Layout content={<UserPage />}/>} />
         <Route path="*" element={<Layout content={<NotFound />}/>} />

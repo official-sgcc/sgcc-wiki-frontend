@@ -9,7 +9,7 @@ import "./DocsViewStyle.css";
 const api_url = import.meta.env.VITE_SERVER_URL;
 
 //get docs from api by axios
-async function getDocsData(title) {
+export async function getDocsData(title) {
   try {
     const response = await axios.get(`${api_url}/documents/${title}`);
     return {
