@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../backend/axios.js';
 import './LoginModal.css';
 
@@ -88,7 +89,7 @@ function LoginModal({ onClose, onSuccess }) {
     onClose();
   };
 
-  return (
+  return createPortal(
     <div className="login-modal-overlay" onClick={onClose}>
       <div className="login-modal-content" onClick={(event) => event.stopPropagation()}>
         <LoginForm
@@ -97,7 +98,8 @@ function LoginModal({ onClose, onSuccess }) {
           showCloseButton
         />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

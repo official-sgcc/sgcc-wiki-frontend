@@ -2,6 +2,7 @@ import './SearchMordal.css'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 const wikiData = {
   "subcategory1-1": [
@@ -65,7 +66,7 @@ function SearchModal({ onClose }) {
         }
     };
 
-    return (
+    return createPortal(
         <div className="modal_overlay" onClick={onClose}>
             <div className="mordal_content" onClick={(e) => e.stopPropagation()}>
                 <div className='srchbox'>
@@ -80,7 +81,8 @@ function SearchModal({ onClose }) {
                     <button className='srchbtn' onClick={handleSearch} />
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 export default SearchModal
