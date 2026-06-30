@@ -1,9 +1,10 @@
 import React from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import DocsList from './DocsList';
 
 const wikiData = {
   "subcategory1-1": [
-    { id: 1, title: "제목1", date: "2026-01-01", user: "작성자" },
+    { id: 1, title: "string", date: "2026-01-01", user: "작성자" },
     { id: 2, title: "제목2", date: "2026-01-01", user: "작성자" }
   ],
   "subcategory1-2": [
@@ -41,49 +42,7 @@ function SubCategory() {
         
       </h2>
 
-      {/* 게시글 목록 (filteredPostList를 기반으로 렌더링) */}
-      {filteredPostList.length > 0 ? (
-        <ul style={{ 
-          listStyle: 'none', 
-          padding: 0, 
-          margin: 0, 
-          width: '100%' 
-        }}>
-          {filteredPostList.map((post) => (
-            <li key={post.id} style={{
-              textAlign: 'left',
-              borderBottom: '1px solid #eee',
-              padding: '20px 10px', 
-              cursor: 'pointer',
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              boxSizing: 'border-box',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <h3 style={{ 
-                margin: '0 0 8px 0', 
-                color: '#007bff',
-                fontSize: '1.2rem' 
-              }}>
-                {post.title}
-              </h3>
-              <div style={{ fontSize: '0.9rem', color: '#888' }}>
-                <span>{post.date}</span>
-                <span style={{ margin: '0 10px' }}>|</span>
-                <span>{post.user}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p style={{ color: '#666', textAlign: 'center', marginTop: '50px' }}>
-          {searchKeyword ? "검색 결과와 일치하는 게시글이 없습니다." : "등록된 게시글이 없습니다."}
-        </p>
-      )}
+      <DocsList docsdata={filteredPostList}/>
     </div>
   );
 }
