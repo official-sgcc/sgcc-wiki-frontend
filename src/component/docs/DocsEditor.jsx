@@ -175,28 +175,29 @@ function DocsEditor() {
     try {
       setSaving(true);
 
-      //tag 리스트 item들 존재 여부
-      const ServerTags = await GetTagList();
-      const serverTagNames = ServerTags.map(
-        tag => tag.name
-      );
+      // 태그 존재 여부는 백단에서 처리하기로 합의
+      // //tag 리스트 item들 존재 여부
+      // const ServerTags = await GetTagList();
+      // const serverTagNames = ServerTags.map(
+      //   tag => tag.name
+      // );
 
-      const missingTags = tags.filter(
-        tag => !serverTagNames.includes(tag)
-      );
-      // console.log(missingTags);
+      // const missingTags = tags.filter(
+      //   tag => !serverTagNames.includes(tag)
+      // );
+      // // console.log(missingTags);
 
-      if (missingTags.length > 0) {
-        alert(
-          `존재하지 않는 태그: ${missingTags.join(", ")}`
-        );
-        return;
-      }
+      // if (missingTags.length > 0) {
+      //   alert(
+      //     `존재하지 않는 태그: ${missingTags.join(", ")}`
+      //   );
+      //   return;
+      // }
       
       
       //카테고리가 존재하지 않는 경우
-      console.log(categories);
-      console.log(category);
+      // console.log(categories);
+      // console.log(category);
       if(categories.length===0||!categories.map(cat=>cat.name).includes(category)){
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
