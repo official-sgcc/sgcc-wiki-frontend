@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";
@@ -70,7 +69,7 @@ function GetDocs() {
     //tag 누르면 tag 리스트로 연결
     let selectedTag = e.target.textContent.substr(1);
     console.log(selectedTag);
-    // navigate(`/tag/${e.target.key}`); -----------------------------------------------------------------------------------------------
+    navigate(`/tag/${e.target.key}`);
   }
 
   if (loding) {
