@@ -1,8 +1,8 @@
 #entire{
     display: flex;
     flex-direction: column;
-    max-width: 100svw;
-    min-height: 100vh;
+    height: 100svh;
+    overflow: hidden;
 }
 
 #main{
@@ -12,6 +12,7 @@
     width: 100%;
     flex-wrap: wrap;
     overflow-x: auto;
+    overflow: hidden;
     margin-top: 10vh; /*header 높이 만큼 내려주기*/
 }
 content{
