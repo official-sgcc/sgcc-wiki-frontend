@@ -5,59 +5,11 @@ import { useEffect } from "react";
 import SimpleMDE from "react-simplemde-editor";
 import "./DocsEditor.css";
 import "easymde/dist/easymde.min.css";
-import NotFound from "./NotFound";
-import { getDocsData } from "./GetDocs";
+import NotFound from "../../ui/NotFound";
 import { useMemo } from "react";
 
-
-
-const api_url = import.meta.env.VITE_SERVER_URL;
-
-//Get Tag List
-async function GetTagList() {
-  try {
-    const response = await axios.get(`${api_url}/tags`);
-    return response.data;
-  } catch (e) {
-    alert(e);
-    return null;
-  }
-}
-
-//Docs Submit
-async function SubmitDocs(Title, Content, Tags, Category) {
-  await axios.post(`${api_url}/documents`, {
-    title: Title,
-    content: Content,
-    tags: Tags.map(tag => ({
-      name: tag,
-    })),
-    category: {
-      name: Category,
-    }
-  }, {
-    headers: {
-      "Content-Type": "application/json",
-      auth: sessionStorage.getItem("token"),
-    },
-  });
-}
-async function ModifyDocs(Title, Content, Tags, Category) {
-  await axios.put(`${api_url}/documents/${Title}`, {
-    content: Content,
-    tags: Tags.map(tag => ({
-      name: tag,
-    })),
-    category: {
-      name: Category,
-    }
-  }, {
-    headers: {
-      "Content-Type": "application/json",
-      auth: sessionStorage.getItem("token"),
-    },
-  });
-}
+import { GetTagList } from "../../util/TagCategoryAPI";
+import {SubmitDocs, ModifyDocs, GetDocsDetail} from "../../util/DocsAPI";
 
 function DocsEditor() {
   const [value, setValue] = useState("");
@@ -123,7 +75,7 @@ function DocsEditor() {
     //수정인 경우 이전 파일을 에디터에 띄우기 위한 용도
     async function init() {
       if (isEditMode) {
-        const rtn = await getDocsData(prevtitle);
+        const rtn = await GetDocsDetail(prevtitle);
 
         if (!rtn.ok) {
           if (

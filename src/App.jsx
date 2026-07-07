@@ -2,11 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './component/layout/Layout'
 import Body from './component/layout/Body'
 import SubCategory from './component/layout/SubCategory'
-import GetDocs from './component/docs/GetDocs'
-import NotFound from './component/docs/NotFound'
-import DocsEditor from './component/docs/DocsEditor'
+import GetDocs from './component/docs/DocsDetail/GetDocs'
+import NotFound from './component/ui/NotFound'
+import DocsEditor from './component/docs/editor/DocsEditor'
 import MyPage from './component/account/MyPage'
 import UserPage from './component/account/UserPage'
+import TagList from './component/docs/tagview/TagList'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/wiki/detail/:prevtitle/edit" element={<Layout content={<DocsEditor />}/>} />
         <Route path="/mypage" element={<Layout content={<MyPage />}/>} />
         <Route path="/users/:userID" element={<Layout content={<UserPage />}/>} />
+        <Route path="/tag/:tag" element={<Layout content={<TagList />}/>} />
         <Route path="*" element={<Layout content={<NotFound />}/>} />
       </Routes>
     </BrowserRouter>
