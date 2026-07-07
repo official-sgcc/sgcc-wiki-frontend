@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
 import api from '../../backend/axios.js';
 import './LoginModal.css';
 
@@ -78,6 +79,9 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
         <button className="login-submit-btn" type="submit" disabled={isSubmitting}>
           {isSubmitting ? '로그인 중...' : 'LOGIN'}
         </button>
+        <Link className="signup-link-btn" to="/signup" onClick={onClose}>
+          회원가입
+        </Link>
       </form>
     </>
   );
