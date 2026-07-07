@@ -2,9 +2,13 @@ import { useNavigate } from "react-router-dom";
 
 /*
 
+목적: 공용 리스트 컴포넌트
+
 사용법: <DocsList docsdata={(여기에다가 서버에서 넘어온 response 형식 그대로 넣어주면 됨)} />
 
-클릭 시 해당 문서로 연결되는 것 까지 작성 완료
+설명: data로 들어온 문서 리스트를 블럭으로 반환해주는 함수
+
+개발 현황 :클릭 시 해당 문서로 연결되는 것 까지 작성 완료
 
 */
 
