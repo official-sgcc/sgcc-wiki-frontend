@@ -5,59 +5,11 @@ import { useEffect } from "react";
 import SimpleMDE from "react-simplemde-editor";
 import "./DocsEditor.css";
 import "easymde/dist/easymde.min.css";
-import NotFound from "./NotFound";
-import { getDocsData } from "./GetDocs";
+import NotFound from "../../ui/NotFound";
 import { useMemo } from "react";
 
-
-
-const api_url = import.meta.env.VITE_SERVER_URL;
-
-//Get Tag List
-async function GetTagList() {
-  try {
-    const response = await axios.get(`${api_url}/tags`);
-    return response.data;
-  } catch (e) {
-    alert(e);
-    return null;
-  }
-}
-
-//Docs Submit
-async function SubmitDocs(Title, Content, Tags, Category) {
-  await axios.post(`${api_url}/documents`, {
-    title: Title,
-    content: Content,
-    tags: Tags.map(tag => ({
-      name: tag,
-    })),
-    category: {
-      name: Category,
-    }
-  }, {
-    headers: {
-      "Content-Type": "application/json",
-      auth: sessionStorage.getItem("token"),
-    },
-  });
-}
-async function ModifyDocs(Title, Content, Tags, Category) {
-  await axios.put(`${api_url}/documents/${Title}`, {
-    content: Content,
-    tags: Tags.map(tag => ({
-      name: tag,
-    })),
-    category: {
-      name: Category,
-    }
-  }, {
-    headers: {
-      "Content-Type": "application/json",
-      auth: sessionStorage.getItem("token"),
-    },
-  });
-}
+import { GetTagList } from "../../util/TagCategoryAPI";
+import {SubmitDocs, ModifyDocs, GetDocsDetail} from "../../util/DocsAPI";
 
 function DocsEditor() {
   const [value, setValue] = useState("");
@@ -123,7 +75,7 @@ function DocsEditor() {
     //수정인 경우 이전 파일을 에디터에 띄우기 위한 용도
     async function init() {
       if (isEditMode) {
-        const rtn = await getDocsData(prevtitle);
+        const rtn = await GetDocsDetail(prevtitle);
 
         if (!rtn.ok) {
           if (
@@ -175,28 +127,29 @@ function DocsEditor() {
     try {
       setSaving(true);
 
-      //tag 리스트 item들 존재 여부
-      const ServerTags = await GetTagList();
-      const serverTagNames = ServerTags.map(
-        tag => tag.name
-      );
+      // 태그 존재 여부는 백단에서 처리하기로 합의
+      // //tag 리스트 item들 존재 여부
+      // const ServerTags = await GetTagList();
+      // const serverTagNames = ServerTags.map(
+      //   tag => tag.name
+      // );
 
-      const missingTags = tags.filter(
-        tag => !serverTagNames.includes(tag)
-      );
-      // console.log(missingTags);
+      // const missingTags = tags.filter(
+      //   tag => !serverTagNames.includes(tag)
+      // );
+      // // console.log(missingTags);
 
-      if (missingTags.length > 0) {
-        alert(
-          `존재하지 않는 태그: ${missingTags.join(", ")}`
-        );
-        return;
-      }
+      // if (missingTags.length > 0) {
+      //   alert(
+      //     `존재하지 않는 태그: ${missingTags.join(", ")}`
+      //   );
+      //   return;
+      // }
       
       
       //카테고리가 존재하지 않는 경우
-      console.log(categories);
-      console.log(category);
+      // console.log(categories);
+      // console.log(category);
       if(categories.length===0||!categories.map(cat=>cat.name).includes(category)){
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
