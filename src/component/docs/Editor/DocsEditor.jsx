@@ -1,15 +1,29 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect,useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import SimpleMDE from "react-simplemde-editor";
-import "./DocsEditor.css";
-import "easymde/dist/easymde.min.css";
+import SimpleMDE from "react-simplemde-editor"; //MD Editor
 import NotFound from "../../ui/NotFound";
-import { useMemo } from "react";
+import { GetListOfCategories, GetTagList } from "../../util/TagCategoryAPI";//태그 관련 API
+import {SubmitDocs, ModifyDocs, GetDocsDetail} from "../../util/DocsAPI";//문서 API
+import "./DocsEditor.css";//css
+import "easymde/dist/easymde.min.css";//mde css
 
-import { GetTagList } from "../../util/TagCategoryAPI";
-import {SubmitDocs, ModifyDocs, GetDocsDetail} from "../../util/DocsAPI";
+/*
+
+목적: 문서 편집기
+
+사용법: navigate (with params).
+URL: 
+작성모드 - /wiki/edit
+수정모드 - /wiki/detail/:prevtitle/edit
+파라미터: 선택사항(수정 모드) - 문서 제목 prevtitle
+
+설명: 문서 작성 및 수정용 페이지
+
+개발 현황
+MUST: 완료 - 문서 편집
+SHOULD: 완료 - 문서 수정
+
+*/
 
 function DocsEditor() {
   const [value, setValue] = useState("");
@@ -47,7 +61,7 @@ function DocsEditor() {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const response = await axios.get(`${api_url}/categories`);
+        const response = GetListOfCategories();
 
         setCategories(response.data);
 

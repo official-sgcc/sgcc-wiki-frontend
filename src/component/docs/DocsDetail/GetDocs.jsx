@@ -1,28 +1,29 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";//MD viewer
+import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
+import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
+import { DeleteDocs, GetDocsDetail,formatDate } from "../../util/DocsAPI";// 문서 관련 api
 import "./GetDocs.css";
 
-import { IoTrashOutline } from "react-icons/io5";
-import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { DeleteDocs, GetDocsDetail } from "../../util/DocsAPI";
+/*
 
+목적: 단일 문서 페이지
 
-//date 값 변환해주는 함수
-function formatDate(dateString) {
-  const date = new Date(dateString);
+사용법: navigate with params.
+URL: /wiki/detail/:title
+파라미터: 문서 제목 string
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+설명: title 파라미터로 넘어온 제목의 문서를 서버에서 받아와서 보여주는 페이지
 
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
+개발 현황
+MUST: 완료 - 문서 제목 내용 태그 띄우기
+SHOULD: 완료 - 문서 수정 삭제 버튼 연동
+COULD: 하단에 해당하는 카테고리 문서 목록 띄우기
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
+*/
+
 
 function GetDocs() {
   const { title } = useParams();
@@ -69,7 +70,7 @@ function GetDocs() {
     //tag 누르면 tag 리스트로 연결
     let selectedTag = e.target.textContent.substr(1);
     console.log(selectedTag);
-    navigate(`/tag/${e.target.key}`);
+    navigate(`/tag/${selectedTag}`);
   }
 
   if (loding) {
