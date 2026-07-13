@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
+import WelcomeHeaderButton from '../welcome/WelcomeHeaderButton';
+import { isWelcomePeriod } from '../welcome/WelcomeTimeSet';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -14,6 +16,7 @@ function Header() {
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
   const isLoggedIn = Boolean(token);
   const navigate = useNavigate();
+  const showWelcomeButton = isWelcomePeriod(); // 신입 부원 모집 버튼 보이기 bool
 
   const closeLoginModal = () => {
     setIsLoginOpen(false);
@@ -52,6 +55,7 @@ function Header() {
         <Link to={`/`}>SGCC Wiki</Link>
       </div>
       <div className='header-rightside'>
+        { showWelcomeButton && <WelcomeHeaderButton /> }
         <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} />
         <div className="loginbtn">
           {isLoggedIn ? (

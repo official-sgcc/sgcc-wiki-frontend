@@ -1,0 +1,14 @@
+.inside {
+    align-content: center;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.poster {
+    width: 90%;
+    margin: 0 5%;
+}
+
+.text {
+    text-align: center;
+}

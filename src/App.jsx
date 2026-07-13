@@ -9,6 +9,7 @@ import MyPage from './component/account/MyPage'
 import UserPage from './component/account/UserPage'
 import MakeAccount from './component/account/MakeAccount'
 import TagList from './component/docs/tagview/TagList'
+import WelcomePage from './component/welcome/WelcomePage'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/users/:userID" element={<Layout content={<UserPage />}/>} />
         <Route path="/signup" element={<Layout content={<MakeAccount />}/>} />
         <Route path="/tag/:tag" element={<Layout content={<TagList />}/>} />
+        <Route path="/welcome" element={<Layout content={<WelcomePage />}/>} />
         <Route path="*" element={<Layout content={<NotFound />}/>} />
       </Routes>
     </BrowserRouter>
