@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
-import WelcomeHeaderButton from '../welcome/WelcomeHeaderButton';
-import { isWelcomePeriod } from '../welcome/WelcomeTimeSet';
+import WelcomeHeaderButton from '../page/welcome/WelcomeHeaderButton';
+import { isWelcomePeriod } from '../page/welcome/WelcomeTimeSet';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';

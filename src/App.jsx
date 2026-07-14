@@ -9,7 +9,7 @@ import MyPage from './component/account/MyPage'
 import UserPage from './component/account/UserPage'
 import MakeAccount from './component/account/MakeAccount'
 import TagList from './component/docs/tagview/TagList'
-import WelcomePage from './component/welcome/WelcomePage'
+import WelcomePage from './component/page/welcome/WelcomePage'
 
 function App() {
 

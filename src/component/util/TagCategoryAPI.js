@@ -34,3 +34,78 @@ export async function GetListOfCategories() {
         return null;
     }
 }
+
+// Get Category
+export async function GetCategory(name) {
+  try {
+    const response = await axios.get(`${api_url}/categories/${name}`);
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+// Create Category
+export async function CreateCategory(name, parent = null) {
+  try {
+    const response = await axios.post(
+      `${api_url}/categories`,
+      {
+        name,
+        parent,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          auth: sessionStorage.getItem("token"),
+        },
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
+// Update Category (백엔드 구현 후 사용)
+export async function UpdateCategory(oldName, newName, parent) {
+  try {
+    const response = await axios.put(
+      `${api_url}/categories/${oldName}`,
+      {
+        name: newName,
+        parent,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          auth: sessionStorage.getItem("token"),
+        },
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
+// Delete Category
+export async function DeleteCategory(name) {
+  try {
+    const response = await axios.delete(`${api_url}/categories/${name}`, {
+      headers: {
+        auth: sessionStorage.getItem("token"),
+      },
+    });
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
