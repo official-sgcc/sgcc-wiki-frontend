@@ -1,9 +1,10 @@
-import React, { useState, useEffect,useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import SimpleMDE from "react-simplemde-editor"; //MD Editor
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories, GetTagList } from "../../util/TagCategoryAPI";//태그 관련 API
-import {SubmitDocs, ModifyDocs, GetDocsDetail} from "../../util/DocsAPI";//문서 API
+import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI";//문서 API
+import { flattenCategories } from "../../util/CategoryTree";
 import "./DocsEditor.css";//css
 import "easymde/dist/easymde.min.css";//mde css
 
@@ -32,6 +33,12 @@ function DocsEditor() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [categories, setCategories] = useState([]);
+  const categoryOptions = useMemo(
+    () => {
+      return flattenCategories(categories);
+    },
+    [categories]
+  );
   const location = useLocation();
   const mdeOptions = useMemo(
     () => ({
@@ -61,27 +68,47 @@ function DocsEditor() {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const response = GetListOfCategories();
 
-        setCategories(response.data);
+        const response = await GetListOfCategories();
 
-        //카테고리로 넘어온 location 값이 get으로 받은 리스트에 존재하는지 확인 후 처리
+        // console.log(response);
+
+        setCategories(response);
+
+        const options = flattenCategories(response);
         if (
           location.state?.category &&
-          response.data.some(
+          options.some(
             c => c.name === location.state.category
           )
         ) {
-          setCategory(location.state.category);
+          setCategory(
+            location.state.category
+          );
+
         }
-        else if (response.data.length > 0) {
-          setCategory(response.data[0].name);
+        else {
+
+          const firstLeaf =
+            options.find(
+              c => c.isLeaf
+            );
+
+          setCategory(
+            firstLeaf?.name ?? ""
+          );
+
         }
+
+
       } catch (e) {
+
         console.error(e);
 
         setCategories([]);
+
         setCategory("");
+
       }
     }
 
@@ -159,12 +186,21 @@ function DocsEditor() {
       //   );
       //   return;
       // }
-      
-      
+
+
       //카테고리가 존재하지 않는 경우
       // console.log(categories);
       // console.log(category);
-      if(categories.length===0||!categories.map(cat=>cat.name).includes(category)){
+      const leafCategories =
+        categoryOptions.filter(c => c.isLeaf);
+
+
+      if (
+        leafCategories.length === 0 ||
+        !leafCategories.some(
+          c => c.name === category
+        )
+      ) {
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
       }
@@ -208,19 +244,21 @@ function DocsEditor() {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          {categories.length === 0 ? (
+          {categoryOptions.length === 0 ? (
             <option value="">
               카테고리 없음
             </option>
           ) : (
-            categories.map((c) => (
-              <option
-                key={c.name}
-                value={c.name}
-              >
-                {c.name}
-              </option>
-            ))
+            categoryOptions
+              .filter(c => c.isLeaf)
+              .map((c) => (
+                <option
+                  key={c.name}
+                  value={c.name}
+                >
+                  {c.path.join(" - ")}
+                </option>
+              ))
           )}
         </select>
       </div>

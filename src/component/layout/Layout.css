@@ -1,20 +1,22 @@
 #entire{
-    display: flex;
-    flex-direction: column;
-    height: 100svh;
-    overflow: hidden;
+    display:flex;
+    flex-direction:column;
+    height:100svh;
+    overflow:hidden;   /* 이건 유지 가능 */
 }
 
 #main{
     flex:1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    flex-wrap: wrap;
-    overflow-x: auto;
-    overflow: hidden;
-    margin-top: 10vh; /*header 높이 만큼 내려주기*/
+    display:flex;
+    flex-direction:column;
+
+    width:100%;
+    margin-top:10vh;
+
+    overflow-y:auto;
+    overflow-x:hidden;
 }
 content{
-    flex:1
+    flex:1;
+    overflow-y:auto;
 }
