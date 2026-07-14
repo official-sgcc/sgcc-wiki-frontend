@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './WelcomePage.css'
 import { isWelcomePeriod } from './WelcomeTimeSet';
-import poster from '../../assets/25-2 recruiting poster.png' // 신입부원 모집 포스터. 임시로 25-2 포스터를 넣어둠
+import poster from '../../../assets/25-2 recruiting poster.png' // 신입부원 모집 포스터. 임시로 25-2 포스터를 넣어둠
 
 function TerminalText({ children }) {
   const textRef = useRef(null);
