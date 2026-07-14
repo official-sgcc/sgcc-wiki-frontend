@@ -1,0 +1,14 @@
+.padding {
+    margin: 3%;
+
+}
+
+.accountName {
+    font-size: 36pt;
+}
+
+.accountNotice {
+    margin-top: 16px;
+    font-size: 14pt;
+    color: #555555;
+}

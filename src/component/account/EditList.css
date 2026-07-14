@@ -1,0 +1,43 @@
+.editList {
+    margin-top: 32px;
+}
+
+.editListTitle {
+    margin-bottom: 12px;
+    font-size: 20pt;
+}
+
+.editListItems {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.editListItem {
+    padding: 14px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.editListLink {
+    color: rgb(4, 4, 76);
+    font-size: 14pt;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.editListLink:hover {
+    text-decoration: underline;
+}
+
+.editListMeta {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+    color: #666666;
+    font-size: 11pt;
+}
+
+.editListEmpty {
+    color: #666666;
+    font-size: 12pt;
+}

@@ -1,0 +1,10 @@
+.head-of-404{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height : 100svh;
+}
+h3{
+   font-size: 20px; 
+}
