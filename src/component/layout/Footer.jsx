@@ -8,7 +8,7 @@ function Footer() {
     <footer>
         <div className="FooterContainer">
             <a href="https://github.com/Sogang-Computer-Club" target="_blank"><img className="logo" src={githubLogo} alt="GitHub" />SGCC 공식 GitHub</a>
-            <a href="https://www.instagram.com/sgcc_sogang/" target="_blank"><img className="logo" src={instaLogo} alt="Insta" />SGCC 공식 인스타</a>
+            <a href="https://www.instagram.com/sgcc_sogang/" target="_blank"><img className="logo" src={instaLogo} alt="Insta" />SGCC 공식 Instagram</a>
         </div>
     </footer>
   )

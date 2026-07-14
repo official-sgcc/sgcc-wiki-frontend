@@ -10,11 +10,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.header-logo{
+.header-logo a{
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 600;
   margin-left: 3vw;
   padding: 3px;
 }
@@ -29,19 +30,21 @@
 }
 
 .loginbtn{
-    font-size: 1rem;
-    margin: 3vw;
-    padding: 5px;
-    color: #5d5d5d;
+    font-size: 1.1rem;
+    margin-right: 3vw;
+    margin-left: 15px;
+    color: #000000;
+    position: relative;
+    top: 4px;
 }
 .footer-item-login {
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 650;
 }
 
 .footer-item-login:hover {
   text-decoration: none;
-  color: #000000;
+  color: #5d5d5d;
 }
 
 /* 로그인 모달 배경 */
