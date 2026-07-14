@@ -122,10 +122,22 @@ export async function DeleteCategory(name) {
 
 
 // Get List of Docs associated with specific Category
-export async function GetDocsFromCategory(name) {
+export async function GetDocsFromCategory(
+  name,
+  recursive = false,
+  limit = 20,
+  offset = 0
+) {
   try {
     const response = await axios.get(
-      `${api_url}/categories/${name}`
+      `${api_url}/categories/${name}/documents`,
+      {
+        params: {
+          recursive,
+          limit,
+          offset,
+        },
+      }
     );
 
     return response.data;

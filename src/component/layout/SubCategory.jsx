@@ -19,7 +19,7 @@ function SubCategory() {
       const data = await GetDocsFromCategory(subcategory);
 
       if (data) {
-        setWikiData(data.children);
+        setWikiData(data);
       }
 
     }
@@ -29,14 +29,6 @@ function SubCategory() {
   }, [subcategory]);
 
 
-
-  // 원래 리스트에서 주소창 검색어가 포함된 것만 필터링
-  const filteredPostList = wikiData.filter((post) =>
-    post.title
-      .toLowerCase()
-      .includes(searchKeyword.toLowerCase())
-  );
-  console.log(filteredPostList);
 
 
   return (
@@ -53,7 +45,7 @@ function SubCategory() {
 
       </h2>
 
-      <DocsList docsdata={filteredPostList} />
+      <DocsList docsdata={wikiData} />
     </div>
   );
 }
