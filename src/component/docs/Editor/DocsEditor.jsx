@@ -191,7 +191,16 @@ function DocsEditor() {
       //카테고리가 존재하지 않는 경우
       // console.log(categories);
       // console.log(category);
-      if (categories.length === 0 || !categories.map(cat => cat.name).includes(category)) {
+      const leafCategories =
+        categoryOptions.filter(c => c.isLeaf);
+
+
+      if (
+        leafCategories.length === 0 ||
+        !leafCategories.some(
+          c => c.name === category
+        )
+      ) {
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
       }
@@ -235,19 +244,21 @@ function DocsEditor() {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          {categories.length === 0 ? (
+          {categoryOptions.length === 0 ? (
             <option value="">
               카테고리 없음
             </option>
           ) : (
-            categories.map((c) => (
-              <option
-                key={c.name}
-                value={c.name}
-              >
-                {c.name}
-              </option>
-            ))
+            categoryOptions
+              .filter(c => c.isLeaf)
+              .map((c) => (
+                <option
+                  key={c.name}
+                  value={c.name}
+                >
+                  {c.path.join(" - ")}
+                </option>
+              ))
           )}
         </select>
       </div>

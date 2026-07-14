@@ -1,27 +1,42 @@
-export function flattenCategories(nodes, depth = 0){
+export function flattenCategories(
+  nodes,
+  depth = 0,
+  parentPath = []
+){
 
   let result = [];
 
   nodes.forEach(node => {
 
+    const currentPath = [
+      ...parentPath,
+      node.name
+    ];
+
+    const hasChildren =
+      node.children &&
+      node.children.length > 0;
+
     const isLeaf =
-      !node.children ||
-      node.children.length === 0;
+      !hasChildren &&
+      depth > 0;
 
 
     result.push({
       name: node.name,
       depth,
-      isLeaf
+      isLeaf,
+      path: currentPath
     });
 
 
-    if(node.children?.length){
+    if(hasChildren){
 
       result.push(
         ...flattenCategories(
           node.children,
-          depth + 1
+          depth + 1,
+          currentPath
         )
       );
 
