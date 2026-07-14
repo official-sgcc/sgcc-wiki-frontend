@@ -1,6 +1,67 @@
+import { useEffect, useRef, useState } from 'react'
 import './WelcomePage.css'
 import { isWelcomePeriod } from './WelcomeTimeSet';
 import poster from '../../assets/25-2 recruiting poster.png' // 신입부원 모집 포스터. 임시로 25-2 포스터를 넣어둠
+
+function TerminalText({ children }) {
+  const textRef = useRef(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [typedText, setTypedText] = useState('');
+  const fullText = String(children);
+
+  useEffect(() => {
+    const element = textRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio >= 1) {
+          setHasStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasStarted || typedText.length >= fullText.length) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setTypedText(fullText.slice(0, typedText.length + 1));
+    }, 45);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [fullText, hasStarted, typedText]);
+
+  return (
+    <div className='text' ref={textRef}>
+      <div className='terminal-dots' aria-hidden='true'>
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className='terminal-line'>
+        <span className='terminal-prompt'>$</span>
+        <span>{typedText}</span>
+        <span className='terminal-cursor' aria-hidden='true' />
+      </div>
+    </div>
+  )
+}
 
 function WelcomePage() {
 
@@ -10,9 +71,9 @@ function WelcomePage() {
   return showWelcomePage ? (
     <div className='inside'>
       <img src={poster} className='poster' />
-      <div className='text'>
+      <TerminalText>
         SGCC에 오신 것을 환영합니다!
-      </div>
+      </TerminalText>
       <button className='button' onClick={goAdmissionForm}>
         지원하기
       </button>
@@ -20,9 +81,9 @@ function WelcomePage() {
   )
   : (
     <div className='inside'>
-      <div className='text'>
+      <TerminalText>
         지금은 모집 기간이 아닙니다. 다음에 봐요!
-      </div>
+      </TerminalText>
     </div>
   )
 }
