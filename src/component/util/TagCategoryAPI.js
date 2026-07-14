@@ -13,15 +13,25 @@ export async function GetTagList() {
     }
 }
 
-//Get List of Docs associated with specific Tag
-export async function GetDocsFromTag(tag) {
-    try {
-        const response = await axios.get(`${api_url}/tags/${tag}`);
-        return response.data;
-    } catch (e) {
-        alert(e);
-        return null;
-    }
+// Get List of Docs associated with specific Tag
+export async function GetDocsFromTag(tag, limit = 20, offset = 0) {
+  try {
+    const response = await axios.get(
+      `${api_url}/tags/${tag}/documents`,
+      {
+        params: {
+          limit,
+          offset,
+        },
+      }
+    );
+
+    return response.data;
+
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
 
 //Get List of Categories

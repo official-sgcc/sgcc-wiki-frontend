@@ -204,12 +204,26 @@ function DocsEditor() {
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
       }
+      const selectedCategory =
+        categoryOptions.find(
+          c => c.name === category
+        );
+
+      const categoryData = {
+        name: selectedCategory.name,
+        parent:
+          selectedCategory.path.length > 1
+            ? selectedCategory.path[
+            selectedCategory.path.length - 2
+            ]
+            : null
+      };
 
       //문서 저장 및 수정
       if (isEditMode)
-        await ModifyDocs(title, value, tags, category);
+        await ModifyDocs(title, value, tags, categoryData);
       else
-        await SubmitDocs(title, value, tags, category);
+        await SubmitDocs(title, value, tags, categoryData);
 
       navigate(`/wiki/detail/${title}`);
     }

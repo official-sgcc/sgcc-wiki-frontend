@@ -15,16 +15,25 @@ export function formatDate(dateString) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export async function SubmitDocs(Title, Content, Tags, Category) {
+export async function SubmitDocs(
+  Title,
+  Content,
+  Tags,
+  Category
+) {
   await axios.post(`${api_url}/documents`, {
     title: Title,
     content: Content,
+
     tags: Tags.map(tag => ({
       name: tag,
     })),
+
     category: {
-      name: Category,
+      name: Category.name,
+      parent: Category.parent,
     }
+
   }, {
     headers: {
       "Content-Type": "application/json",
@@ -32,15 +41,24 @@ export async function SubmitDocs(Title, Content, Tags, Category) {
     },
   });
 }
-export async function ModifyDocs(Title, Content, Tags, Category) {
+export async function ModifyDocs(
+  Title,
+  Content,
+  Tags,
+  Category
+) {
   await axios.put(`${api_url}/documents/${Title}`, {
     content: Content,
+
     tags: Tags.map(tag => ({
       name: tag,
     })),
+
     category: {
-      name: Category,
+      name: Category.name,
+      parent: Category.parent,
     }
+
   }, {
     headers: {
       "Content-Type": "application/json",
@@ -65,18 +83,26 @@ export async function GetDocsDetail(title) {
 }
 export async function DeleteDocs(title){
   try {
-    const response = await axios.delete(`${api_url}/documents/${title}`,{headers:{
-      "Content-Type":"application/json",
-      auth: sessionStorage.getItem("token"),
-    }});
+    const response = await axios.delete(
+      `${api_url}/documents/${title}`,
+      {
+        headers:{
+          "Content-Type":"application/json",
+          auth: sessionStorage.getItem("token"),
+        }
+      }
+    );
+
     return {
       ok: true,
       data: response.data,
     };
+
   } catch (e) {
     return {
       ok: false,
-      status: e.response.status,
+      status: e.response?.status ?? 500,
+      message: e.response?.data?.detail ?? "삭제 실패",
     };
   }
 }
