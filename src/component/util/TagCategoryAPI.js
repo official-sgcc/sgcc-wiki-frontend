@@ -119,3 +119,19 @@ export async function DeleteCategory(name) {
     throw e;
   }
 }
+
+
+// Get List of Docs associated with specific Category
+export async function GetDocsFromCategory(name) {
+  try {
+    const response = await axios.get(
+      `${api_url}/categories/${name}`
+    );
+
+    return response.data;
+
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
