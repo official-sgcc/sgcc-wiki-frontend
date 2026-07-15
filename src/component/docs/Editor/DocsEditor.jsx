@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import SimpleMDE from "react-simplemde-editor"; //MD Editor
 import NotFound from "../../ui/NotFound";
-import { GetListOfCategories, GetTagList } from "../../util/TagCategoryAPI";//태그 관련 API
-import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI";//문서 API
+import { GetListOfCategories, GetTagList } from "../../util/TagCategoryAPI"; //태그 관련 API
+import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI"; //문서 API
 import { flattenCategories } from "../../util/CategoryTree";
-import "./DocsEditor.css";//css
-import "easymde/dist/easymde.min.css";//mde css
+import "./DocsEditor.css"; //css
+import "easymde/dist/easymde.min.css"; //mde css
 
 /*
 
@@ -33,42 +33,33 @@ function DocsEditor() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [categories, setCategories] = useState([]);
-  const categoryOptions = useMemo(
-    () => {
-      return flattenCategories(categories);
-    },
-    [categories]
-  );
+  const categoryOptions = useMemo(() => {
+    return flattenCategories(categories);
+  }, [categories]);
   const location = useLocation();
   const mdeOptions = useMemo(
     () => ({
       spellChecker: false,
     }),
-    []
+    [],
   );
 
-  const initialCategory =
-    location.state?.category ?? "";
+  const initialCategory = location.state?.category ?? "";
   const { prevtitle } = useParams();
 
   // console.log("DocsEditor Render");//debug 용
 
-
   const isEditMode = prevtitle !== undefined;
-  const [category, setCategory] = useState(
-    location.state?.category ?? ""
-  );
+  const [category, setCategory] = useState(location.state?.category ?? "");
   const navigate = useNavigate();
 
-
   if (sessionStorage.getItem("token") == null) {
-    return (<NotFound status={0} message="먼저 로그인을 해주세요" />);
+    return <NotFound status={0} message="먼저 로그인을 해주세요" />;
   }
   //카테고리 리스트 받아오기
   useEffect(() => {
     async function loadCategories() {
       try {
-
         const response = await GetListOfCategories();
 
         // console.log(response);
@@ -78,37 +69,20 @@ function DocsEditor() {
         const options = flattenCategories(response);
         if (
           location.state?.category &&
-          options.some(
-            c => c.name === location.state.category
-          )
+          options.some((c) => c.name === location.state.category)
         ) {
-          setCategory(
-            location.state.category
-          );
+          setCategory(location.state.category);
+        } else {
+          const firstLeaf = options.find((c) => c.isLeaf);
 
+          setCategory(firstLeaf?.name ?? "");
         }
-        else {
-
-          const firstLeaf =
-            options.find(
-              c => c.isLeaf
-            );
-
-          setCategory(
-            firstLeaf?.name ?? ""
-          );
-
-        }
-
-
       } catch (e) {
-
         console.error(e);
 
         setCategories([]);
 
         setCategory("");
-
       }
     }
 
@@ -120,9 +94,7 @@ function DocsEditor() {
 
         if (!rtn.ok) {
           if (
-            confirm(
-              "이전 문서를 불러오는데 실패했습니다. 다시 시도할까요?"
-            )
+            confirm("이전 문서를 불러오는데 실패했습니다. 다시 시도할까요?")
           ) {
             init();
           } else {
@@ -134,13 +106,9 @@ function DocsEditor() {
         setTitle(rtn.data.title);
         setValue(rtn.data.content);
 
-        setTags(
-          rtn.data.tags?.map(tag => tag.name) ?? []
-        );
+        setTags(rtn.data.tags?.map((tag) => tag.name) ?? []);
 
-        setCategory(
-          rtn.data.category?.name ?? ""
-        );
+        setCategory(rtn.data.category?.name ?? "");
       }
     }
 
@@ -187,47 +155,44 @@ function DocsEditor() {
       //   return;
       // }
 
+      //현재 작성중인 태그가 있다면 자동 등록
+      const finalTags = [...tags];
+
+      const trimmed = tagInput.trim();
+
+      if (trimmed && !finalTags.includes(trimmed)) {
+        finalTags.push(trimmed);
+      }
 
       //카테고리가 존재하지 않는 경우
       // console.log(categories);
       // console.log(category);
-      const leafCategories =
-        categoryOptions.filter(c => c.isLeaf);
-
+      const leafCategories = categoryOptions.filter((c) => c.isLeaf);
 
       if (
         leafCategories.length === 0 ||
-        !leafCategories.some(
-          c => c.name === category
-        )
+        !leafCategories.some((c) => c.name === category)
       ) {
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
       }
-      const selectedCategory =
-        categoryOptions.find(
-          c => c.name === category
-        );
+      const selectedCategory = categoryOptions.find((c) => c.name === category);
 
       const categoryData = {
         name: selectedCategory.name,
         parent:
           selectedCategory.path.length > 1
-            ? selectedCategory.path[
-            selectedCategory.path.length - 2
-            ]
-            : null
+            ? selectedCategory.path[selectedCategory.path.length - 2]
+            : null,
       };
+      console.log(tags);
 
       //문서 저장 및 수정
-      if (isEditMode)
-        await ModifyDocs(title, value, tags, categoryData);
-      else
-        await SubmitDocs(title, value, tags, categoryData);
+      if (isEditMode) await ModifyDocs(title, value, tags, categoryData);
+      else await SubmitDocs(title, value, tags, categoryData);
 
       navigate(`/wiki/detail/${title}`);
-    }
-    catch (e) {
+    } catch (e) {
       if (e.response?.status === 401) {
         alert("문서 작성 권한이 없습니다.");
         // console.error(e);
@@ -235,8 +200,7 @@ function DocsEditor() {
         alert("문서 저장 중 오류가 발생했습니다.");
         console.error(e);
       }
-    }
-    finally {
+    } finally {
       setSaving(false);
     }
   }
@@ -249,9 +213,7 @@ function DocsEditor() {
   return (
     <div className="editor-container">
       <div className="editor-category">
-        <label htmlFor="category-select">
-          카테고리
-        </label>
+        <label htmlFor="category-select">카테고리</label>
 
         <select
           id="category-select"
@@ -259,17 +221,12 @@ function DocsEditor() {
           onChange={(e) => setCategory(e.target.value)}
         >
           {categoryOptions.length === 0 ? (
-            <option value="">
-              카테고리 없음
-            </option>
+            <option value="">카테고리 없음</option>
           ) : (
             categoryOptions
-              .filter(c => c.isLeaf)
+              .filter((c) => c.isLeaf)
               .map((c) => (
-                <option
-                  key={c.name}
-                  value={c.name}
-                >
+                <option key={c.name} value={c.name}>
                   {c.path.join(" - ")}
                 </option>
               ))
@@ -296,18 +253,10 @@ function DocsEditor() {
       <div className="editor-footer">
         <div className="tag-container">
           {tags.map((tag) => (
-            <div
-              key={tag}
-              className="tag-chip"
-            >
-              <span>
-                #{tag}
-              </span>
+            <div key={tag} className="tag-chip">
+              <span>#{tag}</span>
 
-              <button
-                className="tag-remove-btn"
-                onClick={() => removeTag(tag)}
-              >
+              <button className="tag-remove-btn" onClick={() => removeTag(tag)}>
                 ×
               </button>
             </div>
