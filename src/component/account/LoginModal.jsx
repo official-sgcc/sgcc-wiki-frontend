@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import api from '../../backend/axios.js';
 import './LoginModal.css';
+import logoImg from  '../../assets/sgccCharacter1.png';
+import { FiUser, FiLock } from 'react-icons/fi';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -59,22 +61,35 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
       {showCloseButton && (
         <button className="close-btn" onClick={onClose} type="button">X</button>
       )}
-      <h2>LOGIN</h2>
+      <div className='login-header-content'> 
+        <img src={logoImg} alt="SGCC 로고" className="login-header-logo" />
+        <div className='login-header-title'> 
+          <h2>SGCC Wiki</h2>
+          <h1>로그인하여 위키에 참여하세요 !</h1>
+        </div>
+      </div>
       <form onSubmit={handleLoginSubmit}>
-        <input
-          type="text"
-          placeholder="아이디"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-        />
+    
+        <div className='input-with-icon'> 
+          <FiUser className="input-icon" />
+          <input
+            type="text"
+            placeholder=" 학번 또는 아이디"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            required
+          />
+        </div>
+        <div className='input-with-icon'>
+          <FiLock className="input-icon" />
+          <input
+            type="password"
+            placeholder=" 비밀번호 입력"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
+        </div>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <button className="login-submit-btn" type="submit" disabled={isSubmitting}>
           {isSubmitting ? '로그인 중...' : 'LOGIN'}
