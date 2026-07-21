@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
+import { FiSearch } from 'react-icons/fi';
 
 const wikiData = {
   "subcategory1-1": [

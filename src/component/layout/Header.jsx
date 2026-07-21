@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
 import WelcomeHeaderButton from '../page/welcome/WelcomeHeaderButton';
 import { isWelcomePeriod } from '../page/welcome/WelcomeTimeSet';
+import { FiUser, FiLock, FiSearch } from 'react-icons/fi';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -56,7 +57,9 @@ function Header() {
       </div>
       <div className='header-rightside'>
         { showWelcomeButton && <WelcomeHeaderButton /> }
-        <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} />
+        <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} >
+          <FiSearch />
+        </button>
         <div className="loginbtn">
           {isLoggedIn ? (
             <>
@@ -74,6 +77,7 @@ function Header() {
                 setIsLoginOpen(true)
             }}
             >
+              <FiUser className="input-icon" />
               Login
             </p>
           )}

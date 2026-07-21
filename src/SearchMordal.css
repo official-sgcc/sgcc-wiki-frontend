@@ -1,6 +1,5 @@
 :root{
     --mordal_content_height: 10vh;
-    --srchbtn_bgimage: url('./assets/srch.jpg');
 }
 
 .modal_overlay {
@@ -38,20 +37,16 @@ input{
     width: 500px;
     gap: 10px;
 }
+
 .srchbtn{
-    background-image: url('./assets/srch.jpg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 50px;
-    height: 50px;
-    background-color: #00000000;
-    border-color: #00000000;
-
-    background-color: transparent; /* 버튼의 기본 배경 제거 */
-    border: none;                  /* 버튼 기본 테두리 제거 */
-    cursor: pointer;               /* 마우스 올렸을 때 포인터로 변경 */
-
-    /* 이미지 내부의 흰색 배경을 헤더와 합성해서 투명하게 만듦 */
-    mix-blend-mode: multiply;     
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  color: rgb(0, 0, 0);  
 }

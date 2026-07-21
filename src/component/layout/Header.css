@@ -22,7 +22,7 @@
 
 .header-rightside{
     flex: 1;
-    gap: 1vw;
+    gap: 0.1rem;
     display: flex;
     flex-direction: row;
     justify-content: right;
@@ -30,16 +30,30 @@
 }
 
 .loginbtn{
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     margin-right: 2vw;
-    margin-left: 18px;
+    margin-left: 10px;
     color: #000000;
     position: relative;
     top: 1px;
 }
+
 .footer-item-login {
   cursor: pointer;
   font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 20px;
+  color: rgb(0, 0, 0);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.footer-item-login .input-icon {
+  font-size: 1.1rem; 
+  color: inherit; 
 }
 
 .footer-item-login:hover {
