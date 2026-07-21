@@ -8,6 +8,7 @@
   justify-content: center; /* 세로 중앙 정렬 */
   align-items: center;    /* 가로 중앙 정렬 */
   min-height: 80vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
+
 }
 
 .body-container h1 {
@@ -48,17 +49,26 @@
 */
 
 .category-card {
+  background-color: #fff;
+  border-radius: 50px;
+  padding: 40px 40px;
+  width: 280px;
+  height: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px;             
-  box-sizing: border-box;
-  transition: transform 0.2s ease-in-out;
-  text-align: center;
-  cursor: pointer;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    0 16px 32px rgba(0, 0, 0, 0.12);
+}
 
 .character-wrapper {
   width: 250px;
@@ -72,23 +82,45 @@
 
 .category-img {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 200px;
+  height: 200px;
   object-fit: contain; /* 이미지 비율 유지 */
   z-index: 1;
 }
 
 .category-title {
-  color: rgb(150, 40, 40); 
+  color: rgb(0, 0, 0); 
   top: 10px;
   position: relative;
 }
 
 .category-card h3 {
   margin: 0;
-  padding-bottom: 5px;
+  padding-bottom: 12px;
   border-bottom: none;    
   font-size: 1.6rem;
+  transition: color 0.3s ease;
+}
+
+.category-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  border-radius: 2px;
+  background-color: #c0392b;
+  transition: width 0.3s ease;
+}
+
+.category-card:hover h3 {
+  color: #c0392b; 
+} 
+
+.category-card:hover h3::after {
+  width: 40px;
 }
 
 .sub-list {

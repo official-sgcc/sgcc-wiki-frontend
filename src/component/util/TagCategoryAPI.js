@@ -80,15 +80,32 @@ export async function CreateCategory(name, parent = null) {
   }
 }
 
-// Update Category (백엔드 구현 후 사용)
-export async function UpdateCategory(oldName, newName, parent) {
+// Update Category
+export async function UpdateCategory(
+  originalName,
+  newName = "",
+  newParent = ""
+) {
+  if (!newName && !newParent) {
+    throw new Error("변경할 내용이 없습니다.");
+  }
+
+  const body = {};
+
+  // 이름 변경
+  if (newName) {
+    body.name = newName;
+  }
+
+  // 부모 변경
+  if (newParent !== "") {
+    body.parent = newParent;
+  }
+
   try {
     const response = await axios.put(
-      `${api_url}/categories/${oldName}`,
-      {
-        name: newName,
-        parent,
-      },
+      `${api_url}/categories/${originalName}`,
+      body,
       {
         headers: {
           "Content-Type": "application/json",

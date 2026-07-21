@@ -15,12 +15,6 @@ function Body() {
     const loadCategories = async () => {
       try {
         const data = await GetListOfCategories();
-
-        // console.log("카테고리 응답:", data);
-        // console.log("배열 여부:", Array.isArray(data));
-
-        // API 응답이 배열일 때만 state에 저장
-        // 아닐 경우 빈 배열을 저장하여 렌더링 오류 방지
         setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("카테고리 불러오기 실패:", error);
@@ -31,7 +25,6 @@ function Body() {
     loadCategories();
   }, []);
 
-  // 렌더링 시에도 한 번 더 배열 여부를 보장
   const mainCategories = Array.isArray(categories)
     ? categories.filter((category) => category.parent === null)
     : [];
@@ -47,12 +40,13 @@ function Body() {
           );
 
           return (
-            <div key={category.name} className="category-card">
-              <div
-                className="character-wrapper"
-                onMouseEnter={() => setHoveredCategory(category.name)}
-                onMouseLeave={() => setHoveredCategory(null)}
-              >
+            <div
+              key={category.name}
+              className="category-card"
+              onMouseEnter={() => setHoveredCategory(category.name)}
+              onMouseLeave={() => setHoveredCategory(null)}
+            >
+              <div className="character-wrapper">
                 <img
                   src={
                     hoveredCategory === category.name

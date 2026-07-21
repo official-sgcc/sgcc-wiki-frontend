@@ -3,8 +3,10 @@ import {
     GetListOfCategories,
     CreateCategory,
     DeleteCategory,
+    UpdateCategory,
 } from "../../util/TagCategoryAPI";
 import "./CategoryTreeEditor.css";
+import { flattenCategories } from "../../util/CategoryTree";
 
 /*
 
@@ -78,6 +80,9 @@ export default function CategoryTreeEditor() {
     const [newName, setNewName] = useState("");
     const [parent, setParent] = useState("");
 
+    const [rename, setRename] = useState("");
+    const [moveParent, setMoveParent] = useState("");
+
     async function loadTree() {
         const data = await GetListOfCategories();
 
@@ -90,21 +95,51 @@ export default function CategoryTreeEditor() {
         loadTree();
     }, []);
 
-    function flatten(nodes) {
-        let arr = [];
+    async function handleMoveParent() {
+        if (!selected) return;
 
-        for (const node of nodes) {
-            arr.push(node);
+        try {
+            await UpdateCategory(
+                selected.name,
+                "",
+                moveParent === "" ? null : moveParent
+            );
 
-            if (node.children?.length) {
-                arr = arr.concat(flatten(node.children));
-            }
+            await loadTree();
+
+        } catch (e) {
+            console.error(e);
+            alert("부모 변경 실패");
         }
-
-        return arr;
     }
 
-    const allCategories = flatten(tree);
+    async function handleRename() {
+        if (!selected) return;
+
+        try {
+            await UpdateCategory(
+                selected.name,
+                rename,
+                ""
+            );
+
+            await loadTree();
+
+            setSelected({
+                ...selected,
+                name: rename,
+            });
+
+        } catch (e) {
+            console.error(e);
+            alert("이름 변경 실패");
+        }
+    }
+
+    const allCategories = flattenCategories(tree);
+    const selectedInfo = allCategories.find(
+        (c) => c.name === selected?.name
+    );
 
     async function handleCreate() {
         if (!newName.trim()) return;
@@ -171,6 +206,9 @@ export default function CategoryTreeEditor() {
                     onClick={() => {
                         setSelected(null);
                         setParent("");
+
+                        setRename("");
+                        setMoveParent("");
                     }}
                 >
                     <span className="tree-arrow"></span>
@@ -188,6 +226,18 @@ export default function CategoryTreeEditor() {
                             onSelect={(node) => {
                                 setSelected(node);
                                 setParent(node.name);
+
+                                const info = allCategories.find(
+                                    (c) => c.name === node.name
+                                );
+
+                                setRename(node.name);
+
+                                setMoveParent(
+                                    info && info.path.length > 1
+                                        ? info.path[info.path.length - 2]
+                                        : ""
+                                );
                             }}
                         />
                     ))}
@@ -214,13 +264,46 @@ export default function CategoryTreeEditor() {
                             {selected.children?.length ?? 0}개
                         </p>
 
-                        <button disabled>
-                            이름 변경 (구현 예정)
-                        </button>
+                        <div className="form-group">
+                            <label>새 이름</label>
 
-                        <button disabled>
-                            부모 변경 (구현 예정)
-                        </button>
+                            <input
+                                value={rename}
+                                onChange={(e) => setRename(e.target.value)}
+                            />
+
+                            <button onClick={handleRename}>
+                                이름 변경
+                            </button>
+                        </div>
+
+                        <div className="form-group">
+                            <label>새 부모</label>
+
+                            <select
+                                value={moveParent}
+                                onChange={(e) => setMoveParent(e.target.value)}
+                            >
+                                <option value="">
+                                    Root (null)
+                                </option>
+
+                                {allCategories
+                                    .filter(c => c.name !== selected.name)
+                                    .map(c => (
+                                        <option
+                                            key={c.name}
+                                            value={c.name}
+                                        >
+                                            {c.path.join(" - ")}
+                                        </option>
+                                    ))}
+                            </select>
+
+                            <button onClick={handleMoveParent}>
+                                부모 변경
+                            </button>
+                        </div>
 
                         <button
                             onClick={handleDelete}
