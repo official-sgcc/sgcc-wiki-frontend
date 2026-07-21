@@ -92,10 +92,10 @@ function MakeAccount() {
                 onChange={(event) => setPassword(event.target.value)}
                 required
             />
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button className="signup-submit-btn" type="submit" disabled={isSubmitting}>
             {isSubmitting ? '처리 중...' : '회원가입 신청'}
             </button>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
         </form>
     </>
 }
