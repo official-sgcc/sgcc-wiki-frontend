@@ -25,14 +25,27 @@ function getLoginErrorMessage(error) {
 
 export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [passwordinput, setPasswordInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const hashSHA256Async = async (message) => {
+        const msgUint8 = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('');
+            
+        return hashHex;
+    };
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
     setIsSubmitting(true);
+
+    const password = (await hashSHA256Async(passwordinput));
 
     try {
       const response = await api.post('/login', {
@@ -85,8 +98,8 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
           <input
             type="password"
             placeholder=" 비밀번호 입력"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            value={passwordinput}
+            onChange={(event) => setPasswordInput(event.target.value)}
             required
           />
         </div>

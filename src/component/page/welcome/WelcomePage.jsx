@@ -3,6 +3,7 @@ import './WelcomePage.css'
 import { isWelcomePeriod } from './WelcomeTimeSet';
 import poster from '../../../assets/25-2 recruiting poster.png' // 신입부원 모집 포스터. 임시로 25-2 포스터를 넣어둠
 
+// 터미널 모양 만드는 HTML 요소 함수
 function TerminalText({ children }) {
   const textRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);

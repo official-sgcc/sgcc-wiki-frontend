@@ -7,8 +7,8 @@
   flex-direction: column; 
   justify-content: center; /* 세로 중앙 정렬 */
   align-items: center;    /* 가로 중앙 정렬 */
-  min-height: 80vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
-
+  min-height: 70vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
+  overflow: hidden;
 }
 
 .body-container h1 {
