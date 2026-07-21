@@ -99,10 +99,11 @@ export default function CategoryTreeEditor() {
         if (!selected) return;
 
         try {
+            console.log(moveParent);
             await UpdateCategory(
                 selected.name,
                 "",
-                moveParent === "" ? null : moveParent
+                moveParent == "" ? null : moveParent
             );
 
             await loadTree();
@@ -113,27 +114,28 @@ export default function CategoryTreeEditor() {
         }
     }
 
+    //기능 미지원
     async function handleRename() {
-        if (!selected) return;
+        // if (!selected) return;
 
-        try {
-            await UpdateCategory(
-                selected.name,
-                rename,
-                ""
-            );
+        // try {
+        //     await UpdateCategory(
+        //         selected.name,
+        //         rename,
+        //         ""
+        //     );
 
-            await loadTree();
+        //     await loadTree();
 
-            setSelected({
-                ...selected,
-                name: rename,
-            });
+        //     setSelected({
+        //         ...selected,
+        //         name: rename,
+        //     });
 
-        } catch (e) {
-            console.error(e);
-            alert("이름 변경 실패");
-        }
+        // } catch (e) {
+        //     console.error(e);
+        //     alert("이름 변경 실패");
+        // }
     }
 
     const allCategories = flattenCategories(tree);
@@ -270,9 +272,10 @@ export default function CategoryTreeEditor() {
                             <input
                                 value={rename}
                                 onChange={(e) => setRename(e.target.value)}
+                                disabled={true}
                             />
 
-                            <button onClick={handleRename}>
+                            <button onClick={handleRename} disabled={true}>
                                 이름 변경
                             </button>
                         </div>

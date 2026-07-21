@@ -10,7 +10,7 @@ export async function GetUserInfo(username = null) {
 
   // 조회할 username이 없으면 요청하지 않음
   if (!targetUsername) {
-    console.error("username이 없습니다.");
+    // console.error("username이 없습니다.");
     return null;
   }
 
