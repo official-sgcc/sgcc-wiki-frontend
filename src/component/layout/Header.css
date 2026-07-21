@@ -31,11 +31,11 @@
 
 .loginbtn{
     font-size: 1.1rem;
-    margin-right: 3vw;
-    margin-left: 15px;
+    margin-right: 2vw;
+    margin-left: 18px;
     color: #000000;
     position: relative;
-    top: 4px;
+    top: 1px;
 }
 .footer-item-login {
   cursor: pointer;

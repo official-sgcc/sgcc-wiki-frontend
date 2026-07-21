@@ -28,18 +28,16 @@ function Body() {
       <div className="category-grid">
         {mainCategories.map((category) => (
           <div 
-            key={category.name} className="category-card"
+            key={category.name} 
+            className="category-card"
+            onMouseEnter={() => setHoveredCategory(category.name)}
+            onMouseLeave={() => setHoveredCategory(null)}
           >
 
-            <div 
-              className="character-wrapper"
-              onMouseEnter={() => setHoveredCategory(category.name)}
-              onMouseLeave={() => setHoveredCategory(null)}
-            >
+            <div className="character-wrapper">
               <img 
                 src={hoveredCategory === category.name ? sgccCharacter2 : sgccCharacter1} 
                 alt={category.name} className="category-img"
-                
               />
 
               {hoveredCategory === category.name && (
