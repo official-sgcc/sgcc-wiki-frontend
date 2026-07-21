@@ -1,0 +1,232 @@
+.alert-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgb(15 16 27 / 48%);
+  backdrop-filter: blur(3px);
+
+  animation: alert-overlay-show 0.15s ease-out;
+}
+
+.alert-modal {
+  position: relative;
+
+  width: min(284px, 100%);
+  padding: 24px 22px 18px;
+
+  background: #fff;
+  border-radius: 22px;
+
+  box-shadow:
+    0 20px 48px rgb(0 0 0 / 22%),
+    0 4px 12px rgb(0 0 0 / 8%);
+
+  animation: alert-modal-show 0.18s ease-out;
+}
+
+.alert-modal.loading {
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.alert-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  display: grid;
+  place-items: center;
+
+  width: 20px;
+  height: 20px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #777b8b;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.alert-close:hover {
+  color: #222634;
+}
+
+.alert-icon {
+  display: grid;
+  place-items: center;
+
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+
+  border-radius: 12px;
+
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 오류 모달: 첨부 이미지의 붉은 계열 */
+.alert-icon.error {
+  background: #ffe9e7;
+  color: #e94337;
+}
+
+/* 확인 모달 등에서 사용할 수 있는 경고 계열 */
+.alert-icon.warning {
+  background: #fff3dc;
+  color: #db8b00;
+}
+
+.alert-title {
+  margin: 0;
+
+  color: #171927;
+
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+}
+
+.alert-message {
+  margin: 7px 0 18px;
+
+  color: #727687;
+
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.025em;
+
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.alert-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.alert-buttons button {
+  flex: 1;
+
+  height: 36px;
+  padding: 0 16px;
+
+  border-radius: 12px;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    filter 0.15s ease,
+    background 0.15s ease;
+}
+
+.alert-confirm {
+  border: 0;
+  background: var(--modal-accent);
+  color: #fff;
+}
+
+.alert-confirm:hover {
+  background: var(--modal-accent-hover);
+  filter: none;
+}
+
+
+
+.alert-cancel {
+  border: 1px solid #e2e4e9;
+  background: #fff;
+  color: #555968;
+}
+
+.alert-cancel:hover {
+  background: #f6f7f9;
+}
+
+.alert-buttons button:active {
+  transform: scale(0.98);
+}
+
+.alert-buttons button:focus-visible,
+.alert-close:focus-visible {
+  outline: 3px solid rgb(201 58 46 / 25%);
+  outline-offset: 2px;
+}
+
+.alert-spinner {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 18px;
+
+  border: 4px solid #f0f1f3;
+  border-top-color: var(--modal-accent);
+  border-radius: 50%;
+
+  animation: alert-spin 0.75s linear infinite;
+}
+
+
+@keyframes alert-overlay-show {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes alert-modal-show {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes alert-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 기본 색상: red */
+.alert-modal--red {
+  --modal-accent: #c93a2e;
+  --modal-accent-hover: #ad3027;
+}
+
+/* 경고 */
+.alert-modal--yellow {
+  --modal-accent: #d99500;
+  --modal-accent-hover: #bd7f00;
+}
+
+/* 성공 */
+.alert-modal--green {
+  --modal-accent: #219653;
+  --modal-accent-hover: #187a42;
+}
