@@ -164,3 +164,20 @@ export async function GetDocsFromCategory(
     return null;
   }
 }
+
+// Delete Tag
+export async function DeleteTag(name) {
+  try {
+    const response = await axios.delete(`${api_url}/tags/${name}`, {
+      headers: {
+        "Content-Type": "application/json",
+        auth: sessionStorage.getItem("token"),
+      },
+    });
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
