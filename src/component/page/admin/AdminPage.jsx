@@ -4,6 +4,7 @@ import CategoryTreeEditor from "./CategoryTreeEditor";
 import { GetUserInfo } from "../../util/authapi";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../../ui/Alert";
+import TagManager from "./TagManager";
 
 /*
 
@@ -31,7 +32,7 @@ MUST: 완료 - 관리자 권한 확인
 MUST: 완료 - 비로그인/권한 없음 접근 차단
 MUST: 완료 - 로딩/경고 모달 처리
 SHOULD: 완료 - 카테고리 관리 탭
-SHOULD: 진행 예정 - 태그 관리
+SHOULD: 완료 - 태그 관리
 SHOULD: 진행 예정 - 사용자 관리
 COULD: 관리자 대시보드(통계/로그) 추가
 
@@ -152,10 +153,7 @@ export default function AdminPage() {
             )}
 
             {selectedTab === "tag" && (
-              <>
-                <h2>태그 관리</h2>
-                <p>추후 구현 예정</p>
-              </>
+              <TagManager />
             )}
 
             {selectedTab === "user" && (
