@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import {
-    GetListOfCategories,
-    CreateCategory,
-    DeleteCategory,
-    UpdateCategory,
+  GetListOfCategories,
+  CreateCategory,
+  DeleteCategory,
+  UpdateCategory,
+  GetDocsFromCategory,
 } from "../../util/TagCategoryAPI";
 import "./CategoryTreeEditor.css";
 import { flattenCategories } from "../../util/CategoryTree";
+import { useNavigate } from "react-router-dom";
 
 /*
 
@@ -17,255 +19,243 @@ import { flattenCategories } from "../../util/CategoryTree";
 
 */
 
+function TreeNode({ node, level = 0, selected, onSelect }) {
+  const [open, setOpen] = useState(true);
 
+  return (
+    <>
+      <div
+        className={`tree-row ${selected === node.name ? "selected" : ""}`}
+        style={{ paddingLeft: `${level * 20}px` }}
+        onClick={() => onSelect(node)}
+      >
+        {node.children?.length > 0 ? (
+          <span
+            className="tree-arrow"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(!open);
+            }}
+          >
+            {open ? "▼" : "▶"}
+          </span>
+        ) : (
+          <span className="tree-arrow"></span>
+        )}
 
+        <span className="tree-icon">
+          {node.children?.length > 0 ? "📂" : "📄"}
+        </span>
 
-function TreeNode({
-    node,
-    level = 0,
-    selected,
-    onSelect,
-}) {
-    const [open, setOpen] = useState(true);
+        <span className="tree-name">{node.name}</span>
+      </div>
 
-    return (
-        <>
-            <div
-                className={`tree-row ${selected === node.name ? "selected" : ""
-                    }`}
-                style={{ paddingLeft: `${level * 20}px` }}
-                onClick={() => onSelect(node)}
-            >
-                {node.children?.length > 0 ? (
-                    <span
-                        className="tree-arrow"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setOpen(!open);
-                        }}
-                    >
-                        {open ? "▼" : "▶"}
-                    </span>
-                ) : (
-                    <span className="tree-arrow"></span>
-                )}
-
-                <span className="tree-icon">
-                    {node.children?.length > 0 ? "📂" : "📄"}
-                </span>
-
-                <span className="tree-name">
-                    {node.name}
-                </span>
-            </div>
-
-            {open &&
-                node.children?.map((child) => (
-                    <TreeNode
-                        key={child.name}
-                        node={child}
-                        level={level + 1}
-                        selected={selected}
-                        onSelect={onSelect}
-                    />
-                ))}
-        </>
-    );
+      {open &&
+        node.children?.map((child) => (
+          <TreeNode
+            key={child.name}
+            node={child}
+            level={level + 1}
+            selected={selected}
+            onSelect={onSelect}
+          />
+        ))}
+    </>
+  );
 }
 
 export default function CategoryTreeEditor() {
-    const [tree, setTree] = useState([]);
-    const [selected, setSelected] = useState(null);
+  const navigate = useNavigate();
+  const [tree, setTree] = useState([]);
+  const [selected, setSelected] = useState(null);
 
-    const [newName, setNewName] = useState("");
-    const [parent, setParent] = useState("");
+  const [newName, setNewName] = useState("");
+  const [parent, setParent] = useState("");
 
-    const [rename, setRename] = useState("");
-    const [moveParent, setMoveParent] = useState("");
+  const [rename, setRename] = useState("");
+  const [moveParent, setMoveParent] = useState("");
 
-    async function loadTree() {
-        const data = await GetListOfCategories();
+  const [docsCount, setDocsCount] = useState(0);
 
-        if (data) {
-            setTree(data);
-        }
+  async function loadDocsCount(selectedName) {
+    if (!selectedName) {
+      setDocsCount(0);
+      return;
     }
+    const data = await GetDocsFromCategory(selectedName);
+    const dataArr = Array.isArray(data) ? data : [];
+    console.log("docsCount", dataArr.length);
+    setDocsCount(dataArr.length);
+  }
 
-    useEffect(() => {
-        loadTree();
-    }, []);
+  async function loadTree() {
+    const data = await GetListOfCategories();
 
-    async function handleMoveParent() {
-        if (!selected) return;
-
-        try {
-            console.log(moveParent);
-            await UpdateCategory(
-                selected.name,
-                "",
-                moveParent == "" ? null : moveParent
-            );
-
-            await loadTree();
-
-        } catch (e) {
-            console.error(e);
-            alert("부모 변경 실패");
-        }
+    if (data) {
+      setTree(data);
     }
+  }
 
-    //기능 미지원
-    async function handleRename() {
-        // if (!selected) return;
+  useEffect(() => {
+    loadTree();
+  }, []);
 
-        // try {
-        //     await UpdateCategory(
-        //         selected.name,
-        //         rename,
-        //         ""
-        //     );
+  //트리의 부모 변경
+  async function handleMoveParent() {
+    if (!selected) return;
 
-        //     await loadTree();
+    try {
+      console.log(moveParent);
+      await UpdateCategory(
+        selected.name,
+        "",
+        moveParent == "" ? null : moveParent,
+      );
 
-        //     setSelected({
-        //         ...selected,
-        //         name: rename,
-        //     });
-
-        // } catch (e) {
-        //     console.error(e);
-        //     alert("이름 변경 실패");
-        // }
+      await loadTree();
+    } catch (e) {
+      console.error(e);
+      alert("부모 변경 실패");
     }
+  }
 
-    const allCategories = flattenCategories(tree);
-    const selectedInfo = allCategories.find(
-        (c) => c.name === selected?.name
+  //기능 미지원
+  async function handleRename() {
+    // if (!selected) return;
+    // try {
+    //     await UpdateCategory(
+    //         selected.name,
+    //         rename,
+    //         ""
+    //     );
+    //     await loadTree();
+    //     setSelected({
+    //         ...selected,
+    //         name: rename,
+    //     });
+    // } catch (e) {
+    //     console.error(e);
+    //     alert("이름 변경 실패");
+    // }
+  }
+
+  const allCategories = flattenCategories(tree);
+  const selectedInfo = allCategories.find((c) => c.name === selected?.name);
+
+  async function handleCreate() {
+    if (!newName.trim()) return;
+
+    try {
+      await CreateCategory(newName, parent === "" ? null : parent);
+
+      setNewName("");
+      await loadTree();
+    } catch (e) {
+      console.error(e);
+      alert("카테고리 생성 실패");
+    }
+  }
+
+  async function handleDelete() {
+    if (!selected) return;
+
+    const confirmDelete = window.confirm(
+      `${selected.name} 카테고리를 삭제하시겠습니까?`,
     );
 
-    async function handleCreate() {
-        if (!newName.trim()) return;
+    if (!confirmDelete) return;
 
-        try {
-            await CreateCategory(
-                newName,
-                parent === "" ? null : parent
-            );
+    try {
+      await DeleteCategory(selected.name);
 
-            setNewName("");
-            await loadTree();
-        } catch (e) {
-            console.error(e);
-            alert("카테고리 생성 실패");
-        }
+      setSelected(null);
+
+      setParent("");
+
+      await loadTree();
+    } catch (e) {
+      console.error(e);
+
+      alert("카테고리 삭제 실패");
     }
+  }
 
-    async function handleDelete() {
+  return (
+    <div className="category-editor">
+      {/* ===== 왼쪽 트리 ===== */}
+      <div className="tree-panel">
+        <h2>카테고리</h2>
 
-        if (!selected) return;
-
-
-        const confirmDelete =
-            window.confirm(
-                `${selected.name} 카테고리를 삭제하시겠습니까?`
-            );
-
-
-        if (!confirmDelete) return;
-
-
-        try {
-
-            await DeleteCategory(selected.name);
-
-
+        <div
+          className={`tree-row ${selected === null ? "selected" : ""}`}
+          onClick={() => {
             setSelected(null);
-
             setParent("");
 
-            await loadTree();
+            setRename("");
+            setMoveParent("");
+          }}
+        >
+          <span className="tree-arrow"></span>
+          <span className="tree-icon">📁</span>
+          <span>Root</span>
+        </div>
 
+        <div className="tree">
+          {tree.map((node) => (
+            <TreeNode
+              key={node.name}
+              node={node}
+              level={0}
+              selected={selected?.name}
+              onSelect={(node) => {
+                setSelected(node);
+                setParent(node.name);
 
-        } catch (e) {
+                const info = allCategories.find((c) => c.name === node.name);
 
-            console.error(e);
+                setRename(node.name);
+                loadDocsCount(node.name);
 
-            alert("카테고리 삭제 실패");
+                setMoveParent(
+                  info && info.path.length > 1
+                    ? info.path[info.path.length - 2]
+                    : "",
+                );
+              }}
+            />
+          ))}
+        </div>
+      </div>
 
-        }
+      {/* ===== 오른쪽 편집 ===== */}
+      <div className="editor-panel">
+        <h2>선택된 카테고리</h2>
 
-    }
+        {selected ? (
+          <>
+            <p>
+              <b>이름</b> : {selected.name}
+            </p>
 
-    return (
-        <div className="category-editor">
-            {/* ===== 왼쪽 트리 ===== */}
-            <div className="tree-panel">
-                <h2>카테고리</h2>
+            <p>
+              <b>부모</b> : {selected.parent ?? "Root"}
+            </p>
 
-                <div
-                    className={`tree-row ${selected === null ? "selected" : ""
-                        }`}
-                    onClick={() => {
-                        setSelected(null);
-                        setParent("");
-
-                        setRename("");
-                        setMoveParent("");
-                    }}
-                >
-                    <span className="tree-arrow"></span>
-                    <span className="tree-icon">📁</span>
-                    <span>Root</span>
-                </div>
-
-                <div className="tree">
-                    {tree.map((node) => (
-                        <TreeNode
-                            key={node.name}
-                            node={node}
-                            level={0}
-                            selected={selected?.name}
-                            onSelect={(node) => {
-                                setSelected(node);
-                                setParent(node.name);
-
-                                const info = allCategories.find(
-                                    (c) => c.name === node.name
-                                );
-
-                                setRename(node.name);
-
-                                setMoveParent(
-                                    info && info.path.length > 1
-                                        ? info.path[info.path.length - 2]
-                                        : ""
-                                );
-                            }}
-                        />
-                    ))}
-                </div>
+            <p>
+              <b>자식</b> : {selected.children?.length ?? 0}개
+            </p>
+            <div
+              onClick={() => {
+                navigate(`/wiki/${encodeURIComponent(selected.name)}`);
+              }}
+              style={{ cursor: "pointer", color: "#007bff" }}
+            >
+              <p>
+                <b>문서 개수</b> : {docsCount}개
+              </p>
             </div>
-
-            {/* ===== 오른쪽 편집 ===== */}
-            <div className="editor-panel">
-                <h2>선택된 카테고리</h2>
-
-                {selected ? (
-                    <>
-                        <p>
-                            <b>이름</b> : {selected.name}
-                        </p>
-
-                        <p>
-                            <b>부모</b> :{" "}
-                            {selected.parent ?? "Root"}
-                        </p>
-
-                        <p>
-                            <b>자식</b> :{" "}
-                            {selected.children?.length ?? 0}개
-                        </p>
-
+            {/* 이름 변경 기능 미지원
                         <div className="form-group">
                             <label>새 이름</label>
 
@@ -279,102 +269,69 @@ export default function CategoryTreeEditor() {
                                 이름 변경
                             </button>
                         </div>
+                        */}
 
-                        <div className="form-group">
-                            <label>새 부모</label>
+            <div className="form-group">
+              <label>새 부모</label>
 
-                            <select
-                                value={moveParent}
-                                onChange={(e) => setMoveParent(e.target.value)}
-                            >
-                                <option value="">
-                                    Root (null)
-                                </option>
+              <select
+                value={moveParent}
+                onChange={(e) => setMoveParent(e.target.value)}
+              >
+                <option value="">Root (null)</option>
 
-                                {allCategories
-                                    .filter(c => c.name !== selected.name)
-                                    .map(c => (
-                                        <option
-                                            key={c.name}
-                                            value={c.name}
-                                        >
-                                            {c.path.join(" - ")}
-                                        </option>
-                                    ))}
-                            </select>
+                {allCategories
+                  .filter((c) => c.name !== selected.name)
+                  .map((c) => (
+                    <option key={c.name} value={c.name}>
+                      {c.path.join(" - ")}
+                    </option>
+                  ))}
+              </select>
 
-                            <button onClick={handleMoveParent}>
-                                부모 변경
-                            </button>
-                        </div>
-
-                        <button
-                            onClick={handleDelete}
-                        >
-                            삭제
-                        </button>
-                    </>
-                ) : (
-                    <p>Root 선택됨</p>
-                )}
-
-                <hr />
-
-                <h3>새 카테고리 생성</h3>
-
-                <div className="category-create-form">
-
-                    <div className="form-group">
-                        <label>
-                            이름
-                        </label>
-
-                        <input
-                            value={newName}
-                            placeholder="카테고리 이름"
-                            onChange={(e) =>
-                                setNewName(e.target.value)
-                            }
-                        />
-                    </div>
-
-
-                    <div className="form-group">
-                        <label>
-                            부모
-                        </label>
-
-                        <select
-                            value={parent}
-                            onChange={(e) =>
-                                setParent(e.target.value)
-                            }
-                        >
-                            <option value="">
-                                Root (null)
-                            </option>
-
-                            {allCategories.map((c) => (
-                                <option
-                                    key={c.name}
-                                    value={c.name}
-                                >
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                </div>
-
-
-                <button
-                    className="create-button"
-                    onClick={handleCreate}
-                >
-                    생성
-                </button>
+              <button onClick={handleMoveParent}>부모 변경</button>
             </div>
+
+            <button onClick={handleDelete}>삭제</button>
+          </>
+        ) : (
+          <p>Root 선택됨</p>
+        )}
+
+        <hr />
+
+        <h3>새 카테고리 생성</h3>
+
+        <div className="category-create-form">
+          <div className="form-group">
+            <label>이름</label>
+
+            <input
+              value={newName}
+              placeholder="카테고리 이름"
+              onChange={(e) => setNewName(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>부모</label>
+
+            <select value={parent} onChange={(e) => setParent(e.target.value)}>
+              <option value="">Root (null)</option>
+
+              {allCategories.map((c) => (
+                <option key={c.name} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-    );
+
+        <button className="create-button" onClick={handleCreate}>
+          생성
+        </button>
+      </div>
+    </div>
+  );
 }
