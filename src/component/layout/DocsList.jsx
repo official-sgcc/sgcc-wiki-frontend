@@ -1,52 +1,95 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../util/DocsAPI";
-
-//해야하는 과업: 페이지 번호로 호출할 수 있도록
+import "./DocsList.css";
 
 /*
-목적: 공용 리스트 컴포넌트
+  목적: 공용 문서 목록 컴포넌트
 
-사용법:
-<DocsList
-  getDocsList={({ limit, offset }) =>
-    GetDocsFromCategory("카테고리명", false, limit, offset)
-  }
-/>
+  사용법:
+  <DocsList
+    getDocsList={({ limit, offset } = {}) =>
+      GetDocsFromCategory("카테고리명", false, limit, offset)
+    }
+  />
 
-설명:
-- getDocsList 함수를 prop으로 받아 내부에서 문서 리스트를 조회함
-- 좌상단에서 limit(몇 개씩 볼지) 선택 가능
-- 하단에서 이전/다음 페이지 이동 가능
+  설명:
+  - 문서 목록을 조회하고 화면에 렌더링하는 공용 컴포넌트
+  - getDocsList 함수를 prop으로 받아 목록 조회 방식을 부모에서 결정
+  - 좌측 상단에서 페이지당 표시할 문서 개수(limit) 선택 가능
+  - 하단 페이지네이션으로 이전/다음 페이지 및 특정 페이지 이동 가능
+  - 문서 제목 클릭 시 해당 문서 상세 페이지로 이동
+  - 목록 조회 중에는 로딩 메시지 표시
+  - 목록 조회 실패 시 에러 메시지 표시
+  - 문서가 없으면 빈 목록 안내 메시지 표시
 
-주의:
-- 현재 API에는 총 문서 수 / 총 페이지 수를 반환하는 기능이 없음
-- 따라서 정확한 마지막 페이지 계산은 불가능
-- 임시로 "이번 페이지 데이터 개수가 limit보다 적으면 마지막 페이지일 가능성 높음" 정도만 처리
+  페이지네이션 방식:
+  - 현재 페이지 목록은 limit, offset 값을 이용해 조회
+  - offset 계산식: (현재 페이지 - 1) * 페이지당 문서 수
+  - 예시:
+    - 1페이지, 20개씩 보기 → limit: 20, offset: 0
+    - 2페이지, 20개씩 보기 → limit: 20, offset: 20
+    - 3페이지, 20개씩 보기 → limit: 20, offset: 40
+
+  총 문서 수 계산 방식:
+  - 현재 API는 totalCount 또는 totalPages를 직접 반환하지 않음
+  - 따라서 limit, offset 없이 전체 문서 목록을 한 번 요청
+  - 응답 배열의 length를 totalCount로 사용
+  - 총 페이지 수 계산식: Math.ceil(totalCount / limit)
+
+  주의:
+  - 문서 수가 많아질수록 전체 목록을 받아 length를 계산하는 방식은 비효율적일 수 있음
+  - 추후 백엔드 API에서 totalCount를 함께 반환하도록 개선하는 것을 권장
+  - totalPages가 매우 커질 경우 모든 페이지 번호를 렌더링하지 말고
+    "1 ... 8 9 10 ... 30" 형태의 페이지 그룹 UI 적용 권장
+
+  개발 현황:
+  MUST: 완료 - limit, offset 기반 문서 목록 조회
+  MUST: 완료 - 이전/다음 페이지 이동
+  MUST: 완료 - 특정 페이지 번호 이동
+  MUST: 완료 - 페이지당 문서 수 선택
+  MUST: 완료 - 전체 목록 length 기반 총 문서 수 계산
+  MUST: 완료 - 로딩/에러/빈 목록 상태 처리
+  SHOULD: 완료 - 문서 제목 클릭 시 상세 페이지 이동
+  COULD: 진행 예정 - API totalCount 응답 기반으로 조회 방식 개선
+  COULD: 진행 예정 - 많은 페이지 대응용 페이지 그룹 UI 적용
 */
 
-export default function DocsList({
-  getDocsList,
-  initialLimit = 20,
-}) {
+export default function DocsList({ getDocsList, initialLimit = 20 }) {
   const navigate = useNavigate();
 
   const [docsdata, setDocsData] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(initialLimit);
+  const [totalCount, setTotalCount] = useState(0);
+
   const [loading, setLoading] = useState(false);
+  const [countLoading, setCountLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // TODO:
-  // 총 문서 개수(total count)를 반환하는 API가 생기면
-  // totalCount, totalPages 상태를 추가해서
-  // 정확한 페이지 번호 목록(1,2,3,4...) 렌더링 가능
-  //
-  // 예시:
-  // const [totalCount, setTotalCount] = useState(0);
-  // const totalPages = Math.ceil(totalCount / limit);
-
   const offset = (page - 1) * limit;
+  const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+
+  useEffect(() => {
+    async function fetchTotalCount() {
+      if (!getDocsList) return;
+
+      setCountLoading(true);
+
+      try {
+        // limit, offset 없이 요청하면 전체 목록을 받는 API라는 전제
+        const allDocs = await getDocsList({});
+        setTotalCount(Array.isArray(allDocs) ? allDocs.length : 0);
+      } catch (e) {
+        console.error(e);
+        setTotalCount(0);
+      } finally {
+        setCountLoading(false);
+      }
+    }
+
+    fetchTotalCount();
+  }, [getDocsList]);
 
   useEffect(() => {
     async function fetchDocs() {
@@ -70,154 +113,77 @@ export default function DocsList({
     fetchDocs();
   }, [getDocsList, limit, offset]);
 
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
   const handleChangeLimit = (e) => {
-    const newLimit = Number(e.target.value);
-    setLimit(newLimit);
-    setPage(1); // limit 바뀌면 첫 페이지로 이동
+    setLimit(Number(e.target.value));
+    setPage(1);
   };
 
   const handlePrevPage = () => {
-    if (page > 1) {
-      setPage((prev) => prev - 1);
-    }
+    setPage((prev) => Math.max(1, prev - 1));
   };
 
   const handleNextPage = () => {
-    // TODO:
-    // 총 페이지 수를 알 수 있는 API가 생기면
-    // if (page < totalPages) setPage((prev) => prev + 1);
-    //
-    // 현재는 docsdata.length < limit 이면 마지막 페이지일 가능성이 높다고 보고 막음
-    if (docsdata.length === limit) {
-      setPage((prev) => prev + 1);
-    }
+    setPage((prev) => Math.min(totalPages, prev + 1));
   };
 
   const isFirstPage = page === 1;
-  const isLastPage = docsdata.length < limit;
+  const isLastPage = page === totalPages;
 
   return (
-    <div style={{ width: "100%" }}>
-      {/* 상단 컨트롤 영역 */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          marginBottom: "16px",
-          gap: "8px",
-        }}
-      >
-        <label
-          htmlFor="docs-limit-select"
-          style={{ fontSize: "0.95rem", color: "#444" }}
-        >
+    <div className="docs-list">
+      <div className="docs-list__controls">
+        <label htmlFor="docs-limit-select" className="docs-list__label">
           보기 옵션
         </label>
+
         <select
           id="docs-limit-select"
           value={limit}
           onChange={handleChangeLimit}
-          style={{
-            padding: "6px 10px",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-            fontSize: "0.95rem",
-          }}
+          className="docs-list__select"
         >
           <option value={20}>20개</option>
           <option value={50}>50개</option>
           <option value={100}>100개</option>
         </select>
+
+        {!countLoading && (
+          <span className="docs-list__total">전체 {totalCount}개</span>
+        )}
       </div>
 
-      {/* 로딩 / 에러 */}
       {loading ? (
-        <p
-          style={{
-            color: "#666",
-            textAlign: "center",
-            marginTop: "50px",
-          }}
-        >
-          문서 목록을 불러오는 중입니다...
-        </p>
+        <p className="docs-list__status">문서 목록을 불러오는 중입니다...</p>
       ) : error ? (
-        <p
-          style={{
-            color: "red",
-            textAlign: "center",
-            marginTop: "50px",
-          }}
-        >
-          {error}
-        </p>
+        <p className="docs-list__status docs-list__status--error">{error}</p>
       ) : docsdata.length > 0 ? (
         <>
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              width: "100%",
-            }}
-          >
+          <ul className="docs-list__items">
             {docsdata.map((post) => (
               <li
                 key={post.id ?? `${post.title}-${post.updated_at}`}
-                style={{
-                  textAlign: "left",
-                  borderBottom: "1px solid #eee",
-                  padding: "20px 10px",
-                  cursor: "pointer",
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  boxSizing: "border-box",
-                }}
+                className="docs-list__item"
                 onClick={() => navigate(`/wiki/detail/${post.title}`)}
               >
-                <h3
-                  style={{
-                    margin: "0 0 8px 0",
-                    color: "#007bff",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  {post.title}
-                </h3>
+                <h3 className="docs-list__title">{post.title}</h3>
 
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#888",
-                  }}
-                >
+                <div className="docs-list__meta">
                   <span>{formatDate(post.updated_at)}</span>
-                  <span style={{ margin: "0 10px" }}>|</span>
+                  <span className="docs-list__separator">|</span>
                   <span>{post.created_by}</span>
-                  <span style={{ margin: "0 10px" }}>|</span>
+                  <span className="docs-list__separator">|</span>
                   <span>{post.category?.name ?? "카테고리 없음"}</span>
                 </div>
 
-                <div
-                  style={{
-                    marginTop: "8px",
-                    display: "flex",
-                    gap: "8px",
-                    flexWrap: "wrap",
-                  }}
-                >
+                <div className="docs-list__tags">
                   {post.tags?.map((tag) => (
-                    <span
-                      key={tag.name}
-                      style={{
-                        background: "#f3f3f3",
-                        padding: "4px 8px",
-                        borderRadius: "999px",
-                        fontSize: "0.8rem",
-                      }}
-                    >
+                    <span key={tag.name} className="docs-list__tag">
                       #{tag.name}
                     </span>
                   ))}
@@ -226,79 +192,48 @@ export default function DocsList({
             ))}
           </ul>
 
-          {/* 하단 페이지네이션 */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "12px",
-              marginTop: "24px",
-            }}
-          >
+          <div className="docs-list__pagination">
             <button
+              type="button"
+              className="docs-list__page-button"
               onClick={handlePrevPage}
               disabled={isFirstPage}
-              style={{
-                padding: "8px 14px",
-                border: "1px solid #ccc",
-                borderRadius: "6px",
-                background: isFirstPage ? "#f5f5f5" : "#fff",
-                color: isFirstPage ? "#aaa" : "#333",
-                cursor: isFirstPage ? "not-allowed" : "pointer",
-              }}
             >
               이전
             </button>
 
-            <span
-              style={{
-                fontSize: "0.95rem",
-                color: "#444",
-                minWidth: "80px",
-                textAlign: "center",
-              }}
-            >
-              {page} 페이지
-            </span>
+            {Array.from({ length: totalPages }, (_, index) => {
+              const pageNumber = index + 1;
+              const isCurrentPage = pageNumber === page;
+
+              return (
+                <button
+                  type="button"
+                  key={pageNumber}
+                  className={`docs-list__page-button ${
+                    isCurrentPage
+                      ? "docs-list__page-button--active"
+                      : ""
+                  }`}
+                  onClick={() => setPage(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
 
             <button
+              type="button"
+              className="docs-list__page-button"
               onClick={handleNextPage}
               disabled={isLastPage}
-              style={{
-                padding: "8px 14px",
-                border: "1px solid #ccc",
-                borderRadius: "6px",
-                background: isLastPage ? "#f5f5f5" : "#fff",
-                color: isLastPage ? "#aaa" : "#333",
-                cursor: isLastPage ? "not-allowed" : "pointer",
-              }}
             >
               다음
             </button>
           </div>
-
-          {/* TODO:
-              총 페이지 수 API가 생기면 아래처럼 교체 가능
-
-              <div>
-                [이전] 1 2 3 4 5 [다음]
-              </div>
-
-              필요한 값:
-              - totalCount 또는 totalPages
-          */}
         </>
       ) : (
-        <p
-          style={{
-            color: "#666",
-            textAlign: "center",
-            marginTop: "50px",
-          }}
-        >
-          등록된 게시글이 없습니다.
-        </p>
+        <p className="docs-list__status">등록된 게시글이 없습니다.</p>
       )}
     </div>
   );
