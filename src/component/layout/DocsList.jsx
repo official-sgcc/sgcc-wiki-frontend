@@ -53,9 +53,10 @@ import "./DocsList.css";
   SHOULD: 완료 - 문서 제목 클릭 시 상세 페이지 이동
   COULD: 진행 예정 - API totalCount 응답 기반으로 조회 방식 개선
   COULD: 진행 예정 - 많은 페이지 대응용 페이지 그룹 UI 적용
+  COULD: 진행 예정 - 페이지 내 검색 기능은 프론트 엔드 단에서 url 파라미터 이용해서 구현 예정
 */
 
-export default function DocsList({ getDocsList, initialLimit = 20 }) {
+export default function DocsList({ getDocsList, initialLimit = 20, editFunc=null }) {
   const navigate = useNavigate();
 
   const [docsdata, setDocsData] = useState([]);
@@ -136,10 +137,44 @@ export default function DocsList({ getDocsList, initialLimit = 20 }) {
   const isLastPage = page === totalPages;
 
   return (
-    <div className="docs-list">
+    <section className="docs-list">
+      {/* ===== 상단 제목 / 검색 / 글쓰기 영역 ===== */}
+      <header className="docs-list__header">
+        <div className="docs-list__heading">
+          <h1 className="docs-list__heading-title">전체 게시글</h1>
+
+          <p className="docs-list__heading-count">
+            {countLoading ? "게시글 수를 불러오는 중..." : `${totalCount}개의 게시글`}
+          </p>
+        </div>
+
+        <div className="docs-list__actions">
+          {/* 검색 API 연결 전까지는 UI만 제공 */}
+          <input
+            className="docs-list__search"
+            type="search"
+            placeholder="검색..."
+            aria-label="게시글 검색"
+          />
+
+          {/*editFunc이 함수인 경우에만 글쓰기 버튼 노출*/}
+          {typeof editFunc === "function" && (
+            <button
+              type="button"
+              className="docs-list__write-button"
+              onClick={editFunc}
+            >
+              <span className="docs-list__write-icon">✎</span>
+              글쓰기
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* ===== 페이지당 게시글 수 선택 ===== */}
       <div className="docs-list__controls">
         <label htmlFor="docs-limit-select" className="docs-list__label">
-          보기 옵션
+          보기
         </label>
 
         <select
@@ -152,47 +187,82 @@ export default function DocsList({ getDocsList, initialLimit = 20 }) {
           <option value={50}>50개</option>
           <option value={100}>100개</option>
         </select>
-
-        {!countLoading && (
-          <span className="docs-list__total">전체 {totalCount}개</span>
-        )}
       </div>
 
+      {/* ===== 로딩 / 에러 상태 ===== */}
       {loading ? (
-        <p className="docs-list__status">문서 목록을 불러오는 중입니다...</p>
+        <p className="docs-list__status">게시글을 불러오는 중입니다...</p>
       ) : error ? (
         <p className="docs-list__status docs-list__status--error">{error}</p>
       ) : docsdata.length > 0 ? (
         <>
-          <ul className="docs-list__items">
-            {docsdata.map((post) => (
-              <li
-                key={post.id ?? `${post.title}-${post.updated_at}`}
-                className="docs-list__item"
-                onClick={() => navigate(`/wiki/detail/${post.title}`)}
-              >
-                <h3 className="docs-list__title">{post.title}</h3>
+          <div className="docs-list__table">
+            {/* 데스크톱 목록 헤더 */}
+            <div className="docs-list__table-header">
+              <span>제목</span>
+              <span>작성자</span>
+              <span>날짜</span>
+              <span>조회</span>
+            </div>
 
-                <div className="docs-list__meta">
-                  <span>{formatDate(post.updated_at)}</span>
-                  <span className="docs-list__separator">|</span>
-                  <span>{post.created_by}</span>
-                  <span className="docs-list__separator">|</span>
-                  <span>{post.category?.name ?? "카테고리 없음"}</span>
-                </div>
+            <ul className="docs-list__items">
+              {docsdata.map((post) => (
+                <li
+                  key={post.id ?? `${post.title}-${post.updated_at}`}
+                  className="docs-list__item"
+                  onClick={() =>
+                    navigate(`/wiki/detail/${encodeURIComponent(post.title)}`)
+                  }
+                >
+                  {/* 제목 / 태그 영역 */}
+                  <div className="docs-list__main">
+                    <div className="docs-list__title-row">
+                      {/* is_pinned 또는 pinned 값이 있을 때 고정 표시 */}
+                      {(post.is_pinned || post.pinned) && (
+                        <span className="docs-list__notice-badge">고정</span>
+                      )}
 
-                <div className="docs-list__tags">
-                  {post.tags?.map((tag) => (
-                    <span key={tag.name} className="docs-list__tag">
-                      #{tag.name}
-                    </span>
-                  ))}
-                </div>
-              </li>
-            ))}
-          </ul>
+                      <h2 className="docs-list__title">{post.title}</h2>
+                    </div>
 
-          <div className="docs-list__pagination">
+                    {post.tags?.length > 0 && (
+                      <div className="docs-list__tags">
+                        {post.tags.map((tag) => (
+                          <span key={tag.name} className="docs-list__tag">
+                            #{tag.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 작성자 */}
+                  <div className="docs-list__writer">
+                    <span className="docs-list__mobile-label">작성자</span>
+                    <span className="docs-list__meta-icon">♙</span>
+                    {post.created_by ?? "-"}
+                  </div>
+
+                  {/* 날짜 */}
+                  <div className="docs-list__date">
+                    <span className="docs-list__mobile-label">날짜</span>
+                    <span className="docs-list__meta-icon">◷</span>
+                    {formatDate(post.updated_at)}
+                  </div>
+
+                  {/* 조회수: API 필드명에 맞춰 view_count / views 중 하나 사용 */}
+                  <div className="docs-list__views">
+                    <span className="docs-list__mobile-label">조회</span>
+                    <span className="docs-list__meta-icon">◉</span>
+                    {post.view_count ?? post.views ?? 0}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ===== 페이지네이션 ===== */}
+          <nav className="docs-list__pagination" aria-label="페이지 이동">
             <button
               type="button"
               className="docs-list__page-button"
@@ -216,6 +286,7 @@ export default function DocsList({ getDocsList, initialLimit = 20 }) {
                       : ""
                   }`}
                   onClick={() => setPage(pageNumber)}
+                  aria-current={isCurrentPage ? "page" : undefined}
                 >
                   {pageNumber}
                 </button>
@@ -230,11 +301,11 @@ export default function DocsList({ getDocsList, initialLimit = 20 }) {
             >
               다음
             </button>
-          </div>
+          </nav>
         </>
       ) : (
         <p className="docs-list__status">등록된 게시글이 없습니다.</p>
       )}
-    </div>
+    </section>
   );
 }
