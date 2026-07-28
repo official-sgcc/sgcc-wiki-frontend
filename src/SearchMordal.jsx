@@ -40,7 +40,7 @@ function SearchModal({ onClose }) {
             document.removeEventListener('keydown', handleEscapeKey);
         };
     }, [onClose]);
-    
+
     const handleKeyDown=(e)=>{//enter키 처리
         if(e.key=='Enter'){
             handleSearch();
@@ -86,6 +86,7 @@ function SearchModal({ onClose }) {
                 <div className='srchbox'>
                     <input 
                         id='srchinput' 
+                        className='srchinput'
                         type="text" 
                         onChange={(e) => setKeyword(e.target.value)} 
                         placeholder='검색어를 입력하세요' 
