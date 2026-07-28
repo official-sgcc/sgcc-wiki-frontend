@@ -1,7 +1,7 @@
 import './Header.css'
 import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
 import WelcomeHeaderButton from '../page/welcome/WelcomeHeaderButton';
 import { isWelcomePeriod } from '../page/welcome/WelcomeTimeSet';
@@ -36,6 +36,13 @@ function Header() {
     navigate('/');
   };
 
+  const location = useLocation();
+
+const navItems = [
+  { label: '홈', path: '/' },
+  { label: '게시글', path: '/wiki/abc' },
+];
+
   useEffect(() => {
       // 스크롤 막기
       if(isLoginOpen||isSrchOpen){
@@ -55,6 +62,17 @@ function Header() {
       <div className="header-logo">
         <Link to={`/`}>SGCC Wiki</Link>
       </div>
+      <nav className="header-nav">
+        {navItems.map((item) => (
+        <Link
+          key={item.path}
+          to={item.path}
+          className={`header-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+        >
+          {item.label}
+        </Link>
+        ))}
+      </nav>
       <div className='header-rightside'>
         { showWelcomeButton && <WelcomeHeaderButton /> }
         <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} >
