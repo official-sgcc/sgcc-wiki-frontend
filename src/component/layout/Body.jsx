@@ -59,14 +59,14 @@ function Body() {
 
                 {hoveredCategory === category.name && (
                   <ul className="sub-list">
+                    <li className="sub-item sub-item-header">
+                      <span>{category.name}</span>
+                    </li>
                     {subCategories.length > 0 ? (
                       subCategories.map((subCategory) => (
                         <li
                           key={subCategory.path.join("/")}
                           className="sub-item"
-                          style={{
-                            paddingLeft: `${(subCategory.depth - 1) * 12}px`,
-                          }}
                         >
                           <Link
                             to={`/wiki/${encodeURIComponent(subCategory.name)}`}
