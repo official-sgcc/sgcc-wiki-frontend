@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../../backend/axios";
 import "./MakeAccount.css"
+import { FiUser, FiLock } from 'react-icons/fi';
 
 // 회원가입에서 이름과 학번도 입력하게 하고 싶다면
 // 이 코드에서 {/* 와 */} 를 모두 없애고
@@ -64,22 +65,28 @@ function MakeAccount() {
                 required
             />
             */}
-            <input
-                className="signup-id-input"
-                type="text"
-                placeholder="아이디"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                required
-            />
-            <input
-                className="signup-pw-input"
-                type="password"
-                placeholder="비밀번호"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-            />
+            <div className="input-with-icon">
+                <FiUser className="input-icon" />
+                <input
+                    className="signup-id-input"
+                    type="text"
+                    placeholder="아이디"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    required
+                />
+            </div>
+            <div className="input-with-icon">
+                <FiLock className="input-icon" />
+                <input
+                    className="signup-pw-input"
+                    type="password"
+                    placeholder="비밀번호"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    required
+                />
+            </div>
             <button className="signup-submit-btn" type="submit" disabled={isSubmitting}>
             {isSubmitting ? '처리 중...' : '회원가입 신청'}
             </button>
