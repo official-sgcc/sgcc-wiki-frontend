@@ -20,7 +20,7 @@ function SearchModal({ onClose }) {
     const [keyword,setKeyword]=useState("");
     const navigate=useNavigate();
 
-    // useEffect(() => {
+    useEffect(() => {
     //     // 스크롤 막기
     //     document.body.style.overflow = "hidden";
 
@@ -28,7 +28,19 @@ function SearchModal({ onClose }) {
     //     return () => {
     //     document.body.style.overflow = "auto";
     //     };
-    // }, []);
+        const handleEscapeKey = (event) => {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        document.addEventListener('keydown', handleEscapeKey);
+
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, [onClose]);
+    
     const handleKeyDown=(e)=>{//enter키 처리
         if(e.key=='Enter'){
             handleSearch();
