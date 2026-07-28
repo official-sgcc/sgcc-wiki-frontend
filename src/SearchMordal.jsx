@@ -82,6 +82,7 @@ function SearchModal({ onClose }) {
     return createPortal(
         <div className="modal_overlay" onClick={onClose}>
             <div className="mordal_content" onClick={(e) => e.stopPropagation()}>
+                <h2 className="srch-title">통합검색</h2>
                 <div className='srchbox'>
                     <input 
                         id='srchinput' 
@@ -91,7 +92,9 @@ function SearchModal({ onClose }) {
                         onKeyDown={handleKeyDown}
                         autoFocus
                     />
-                    <button className='srchbtn' onClick={handleSearch} />
+                    <button className='modalSrchbtn' onClick={handleSearch}>
+                        <FiSearch />
+                    </button>
                 </div>
             </div>
         </div>,
