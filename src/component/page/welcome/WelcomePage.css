@@ -83,16 +83,18 @@
 .button {
     margin-bottom: 35px;
     border-radius: 18px;
-    background-color: #1a1a5a;
+    background-color: #1a1a5a; /*#003cbc;*/
+    border-color: transparent;
     color: white;
+    cursor: pointer;
     font-size: 18px;
-    font-weight: 600;
-    padding: 10px 20px;
+    font-weight: 500;
+    padding: 12px 24px;
     text-align: center;
     text-anchor: middle;
-    transition: background-color 3ms;
+    transition: cubic-bezier(0.165, 0.84, 0.44, 1) background-color 300ms;
 }
 
 .button:hover {
-    background-color: #1d1d6b;
+    background-color: #1a1a7f;
 }
