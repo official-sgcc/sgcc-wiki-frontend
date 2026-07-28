@@ -59,7 +59,7 @@ function Body() {
 
                 {hoveredCategory === category.name && (
                   <ul className="sub-list">
-                    <li className="sub-item sub-item-header">
+                    <li className="sub-item-header">
                       <span>{category.name}</span>
                     </li>
                     {subCategories.length > 0 ? (
