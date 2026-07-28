@@ -18,17 +18,6 @@ function MakeAccount() {
     */}
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const hashSHA256Async = async (message) => {
-        const msgUint8 = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('');
-            
-        return hashHex;
-    };
     
     const handleMakeAccount = async (event) => {
         event.preventDefault();
@@ -38,10 +27,9 @@ function MakeAccount() {
         }
         setErrorMessage('');
         setIsSubmitting(true);
-        const hash = (await hashSHA256Async(password));
         
         try {
-            await api.post('/register', { username:username, password: hash });
+            await api.post('/register', { username:username, password: password });
             alert("회원으로 등록되었습니다. 로그인을 시도해 보세요!");
         }
         catch (error) {
