@@ -1,6 +1,6 @@
 .welcomebutton {
     border-radius: 21.65px;
-    background-color: #1a1a5a;
+    background-color: #c0392b;
     color: white;
     font-size: 20px;
     font-weight: 700;
@@ -13,7 +13,8 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: background-color 3ms;
 }
-
+/*
 .welcomebutton:hover {
     background-color: #1d1d6b;
 }
+*/
