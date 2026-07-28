@@ -1,11 +1,12 @@
 .signup-title {
-  margin: 40px auto 30px;
+  margin: 170px auto 30px;
   color: rgb(4, 4, 76);
   text-align: center;
+  font-weight: 700;
 }
 
 .signup-form {
-  width: max(350px, calc(50vw - 40px));
+  width: 500px;
   margin: 0 auto 40px;
   padding: 40px 50px;
   border-radius: 30px;
