@@ -4,13 +4,17 @@ import { isWelcomePeriod } from './WelcomeTimeSet';
 import poster from '../../../assets/25-2 recruiting poster.png' // 신입부원 모집 포스터. 임시로 25-2 포스터를 넣어둠
 
 // 터미널 모양 만드는 HTML 요소 함수
-function TerminalText({ children }) {
+function TerminalText({ children, shouldObserve = true }) {
   const textRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [typedText, setTypedText] = useState('');
   const fullText = String(children);
 
   useEffect(() => {
+    if (!shouldObserve) {
+      return;
+    }
+
     const element = textRef.current;
 
     if (!element) {
@@ -32,7 +36,7 @@ function TerminalText({ children }) {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [shouldObserve]);
 
   useEffect(() => {
     if (!hasStarted || typedText.length >= fullText.length) {
@@ -68,11 +72,31 @@ function WelcomePage() {
 
   const goAdmissionForm = () => { window.location.href = ''; } // 지원 폼 링크를 나중에 여기에 넣기
   const showWelcomePage = isWelcomePeriod(); // 신입 부원 모집 페이지 보이기 bool
+  const [posterReady, setPosterReady] = useState(false);
+
+  useEffect(() => {
+    if (!showWelcomePage) {
+      return;
+    }
+
+    const fallbackTimerId = setTimeout(() => {
+      setPosterReady(true);
+    }, 3000);
+
+    return () => {
+      clearTimeout(fallbackTimerId);
+    };
+  }, [showWelcomePage]);
 
   return showWelcomePage ? (
     <div className='inside'>
-      <img src={poster} className='poster' />
-      <TerminalText>
+      <img
+        src={poster}
+        className='poster'
+        onLoad={() => setPosterReady(true)}
+        onError={() => setPosterReady(true)}
+      />
+      <TerminalText shouldObserve={posterReady}>
         SGCC에 오신 것을 환영합니다!
       </TerminalText>
       <button className='button' onClick={goAdmissionForm}>
