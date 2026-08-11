@@ -83,7 +83,7 @@
 .button {
     margin-bottom: 35px;
     border-radius: 18px;
-    background-color: #1a1a5a; /*#003cbc;*/
+    background-color: #1b1b2e; /*#003cbc;*/
     border-color: transparent;
     color: white;
     cursor: pointer;
@@ -96,5 +96,5 @@
 }
 
 .button:hover {
-    background-color: #1a1a7f;
+    background-color: #c0392b;
 }
