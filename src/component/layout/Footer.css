@@ -1,6 +1,6 @@
 :root{
     --footerbgcolor: #1b1b2e;
-    --footertxtcolor: #ffffff;
+    --footertxtcolor: #d9d6d6;
 }
 footer{
     width: 100%;
@@ -23,7 +23,7 @@ a{
     height: 2vh;
     align-items: center;
     box-sizing: border-box;
-    gap: 5vw;
+    gap: 3vw;
     padding: 4vh;
     /*
     box-shadow: 0 -4px 16px rgba(27, 27, 46, 0.07);
@@ -33,4 +33,3 @@ a{
 .logo{
     height: 4vh;
 }
-
