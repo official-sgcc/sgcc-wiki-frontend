@@ -15,7 +15,7 @@ function SubCategory() {
   const handleEditButton = () => {
     navigate(`/wiki/edit`,{
       state:{
-        category: {subcategory},
+        category: subcategory,
       },
     });
   };
