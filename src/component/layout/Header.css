@@ -13,6 +13,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
@@ -164,8 +165,11 @@
 .header-nav {
   display: flex;
   gap: 8px;
-  margin-left: 500px;
+  margin-left: auto;
   white-space: nowrap;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .header-nav-item {
@@ -185,4 +189,56 @@
 .header-nav-item.active {
   background-color: rgba(255, 255, 255, 0.15);
   color: #fff;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .header-nav {
+    display: flex; /* 숨기지 않고 다시 보이게 */
+    position: fixed;
+    top: 14vh; /* 헤더 높이 바로 아래 */
+    left: 0;
+    width: 100%;
+    justify-content: center;
+    /* background-color: var(--headerbgcolor); */
+    padding: 10px 0;
+    gap: 4px;
+    z-index: 999;
+
+    left: 0;
+    transform: none;
+  }
+
+  .header-nav-item {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #79797c;
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .header-nav-item:hover {
+    background-color: rgba(139, 137, 137, 0.15);
+  }
+
+  .header-nav-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #000000;
+  }
+
+  .footer-item-login {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+
+  .loginbtn {
+    margin-right: 4vw;
+    margin-left: 4px;
+  }
+
+  .header-rightside {
+    gap: 0.3rem;
+  }
 }
