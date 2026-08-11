@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import './WelcomePage.css'
 import { isWelcomePeriod } from './WelcomeTimeSet';
 import poster from '../../../assets/26-2 포스터.png' // 신입부원 모집 포스터. 임시로 25-2 포스터를 넣어둠
-import { useNavigate } from 'react-router-dom';
 
 // 터미널 모양 만드는 HTML 요소 함수
 function TerminalText({ children, shouldObserve = true }) {
@@ -71,8 +70,7 @@ function TerminalText({ children, shouldObserve = true }) {
 
 function WelcomePage() {
 
-  const navigate = useNavigate();
-  const goAdmissionForm = () => { navigate('/recruit') } // 지원 폼 링크를 나중에 여기에 넣기
+  const goAdmissionForm = () => { window.open('https://forms.gle/754rMGsGUtHVco9v9') } // 지원 폼 링크를 나중에 여기에 넣기
   const showWelcomePage = isWelcomePeriod(); // 신입 부원 모집 페이지 보이기 bool
   const [posterReady, setPosterReady] = useState(false);
 

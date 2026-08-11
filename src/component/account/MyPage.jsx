@@ -73,9 +73,10 @@ function MyPage() {
         Hello, {user?.username || username}
       </div>
       <ShowPanel title="아이디" content={user?.username || username} />
-      <ShowPanel title="권한" content={user?.permission || '정보 없음'} />
-      <ShowPanel title="Email" content={user?.email || '정보 없음'} />
-      <ShowPanel title="Bio" content={user?.bio || '정보 없음'} />
+      <ShowPanel title="권한" content={user?.permission} />
+      <ShowPanel title="Email" content={user?.email} />
+      <ShowPanel title="Bio" content={user?.bio} />
+      <button className='editbutton'>정보 수정</button>
       <EditList edits={editList} />
     </div>
   )

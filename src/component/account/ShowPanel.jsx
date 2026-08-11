@@ -7,7 +7,7 @@ function ShowPanel({ title, content }) {
         {title}
       </div>
       <div className="showPanelContent">
-        {content}
+        {content || '정보 없음'}
       </div>
     </div>
   )
