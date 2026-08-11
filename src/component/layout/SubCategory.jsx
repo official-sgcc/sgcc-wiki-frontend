@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DocsList from "./DocsList";
 import { GetDocsFromCategory } from "../util/TagCategoryAPI";
 
 function SubCategory() {
+  const navigate=useNavigate();
   const { subcategory } = useParams();
 
   const getDocsList = useCallback(
@@ -11,6 +12,13 @@ function SubCategory() {
       GetDocsFromCategory(subcategory, false, limit, offset),
     [subcategory]
   );
+  const handleEditButton = () => {
+    navigate(`/wiki/edit`,{
+      state:{
+        category: {subcategory},
+      },
+    });
+  };
 
   return (
     <div
@@ -31,6 +39,7 @@ function SubCategory() {
       >
         {subcategory?.toUpperCase()}
       </h2>
+      <button onClick={handleEditButton}>글쓰기</button>
 
       <DocsList getDocsList={getDocsList} />
     </div>
