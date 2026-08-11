@@ -4,7 +4,7 @@ import './WelcomeHeaderButton.css'
 function WelcomeHeaderButton() {
     return (
         <Link to='/welcome' className='welcomebutton'>
-            (~9/10) 신입부원 모집중!
+            🎉 신입부원 모집중! (~9/10)
         </Link>
     )
 }

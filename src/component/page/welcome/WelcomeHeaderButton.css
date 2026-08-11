@@ -2,7 +2,7 @@
     border-radius: 21.65px;
     background-color: #c0392b;
     color: white;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     margin-right: 15px;
     padding: 10px 20px;
@@ -12,6 +12,7 @@
         0 4px 12px rgba(31, 32, 80, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: background-color 3ms;
+    white-space: nowrap;
 }
 /*
 .welcomebutton:hover {
