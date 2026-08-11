@@ -89,28 +89,35 @@ function WelcomePage() {
   }, [showWelcomePage]);
 
   return showWelcomePage ? (
-    <div className='inside'>
-      <img
-        src={poster}
-        className='poster'
-        onLoad={() => setPosterReady(true)}
-        onError={() => setPosterReady(true)}
-      />
-      <TerminalText shouldObserve={posterReady}>
-        SGCC에 오신 것을 환영합니다!
-      </TerminalText>
-      <button className='button' onClick={goAdmissionForm}>
-        지원하기
-      </button>
+    <div className="inside welcome-layout">
+      <div className="welcome-poster-area">
+        <img
+          src={poster}
+          className="poster"
+          alt="SGCC 모집 포스터"
+          onLoad={() => setPosterReady(true)}
+          onError={() => setPosterReady(true)}
+        />
+      </div>
+
+      <div className="welcome-content-area">
+        <TerminalText shouldObserve={posterReady}>
+          SGCC에 오신 것을 환영합니다!
+        </TerminalText>
+
+        <button className="button" onClick={goAdmissionForm}>
+          지원하기
+        </button>
+      </div>
     </div>
-  )
-  : (
-    <div className='inside'>
+  ) : (
+    <div className="inside closed-layout">
       <TerminalText>
         지금은 모집 기간이 아닙니다. 다음에 봐요!
       </TerminalText>
     </div>
   )
+
 }
 
 export default WelcomePage;
