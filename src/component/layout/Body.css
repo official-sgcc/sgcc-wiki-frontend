@@ -203,3 +203,33 @@
 .empty-category {
   padding: 14px 20px;
 }
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: 1fr; 
+    gap: 40px;
+  }
+
+  .category-card {
+    width: 90%;
+    max-width: 300px;
+    height: auto; 
+    padding: 30px;
+  }
+
+  .character-wrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .category-img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .body-container {
+    padding-top: 15vh;
+    min-height: auto; 
+  }
+}
