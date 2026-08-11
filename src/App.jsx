@@ -11,6 +11,7 @@ import MakeAccount from './component/account/MakeAccount'
 import TagList from './component/docs/tagview/TagList'
 import WelcomePage from './component/page/welcome/WelcomePage'
 import AdminPage from './component/page/admin/AdminPage'
+import { RecruitForm } from './component/page/welcome/Recruit'
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/signup" element={<Layout content={<MakeAccount />}/>} />
         <Route path="/tag/:tag" element={<Layout content={<TagList />}/>} />
         <Route path="/welcome" element={<Layout content={<WelcomePage />}/>} />
+        <Route path="/recruit" element={<Layout content={<RecruitForm />}/>} />
         <Route path="/admin" element={<Layout content={<AdminPage />}/>} />
         <Route path="*" element={<Layout content={<NotFound />}/>} />
       </Routes>
