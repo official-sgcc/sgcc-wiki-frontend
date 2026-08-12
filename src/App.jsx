@@ -11,6 +11,9 @@ import MakeAccount from './component/account/MakeAccount'
 import TagList from './component/docs/tagview/TagList'
 import WelcomePage from './component/page/welcome/WelcomePage'
 import AdminPage from './component/page/admin/AdminPage'
+import ForgotPassword from './component/account/ResetPWD/ForgotPassword'
+import VerifyEmail from './component/account/Email/VerifyEmail'
+import ResetPassword from './component/account/ResetPWD/ResetPassword'
 
 function App() {
 
@@ -25,6 +28,9 @@ function App() {
         <Route path="/mypage" element={<Layout content={<MyPage />}/>} />
         <Route path="/users/:userID" element={<Layout content={<UserPage />}/>} />
         <Route path="/signup" element={<Layout content={<MakeAccount />}/>} />
+        <Route path="/verify-email" element={<Layout content={<VerifyEmail />} />} />
+        <Route path="/forgot-password" element={<Layout content={<ForgotPassword />}/>} />
+        <Route path="/reset-password" element={<Layout content={<ResetPassword />} />} />
         <Route path="/tag/:tag" element={<Layout content={<TagList />}/>} />
         <Route path="/welcome" element={<Layout content={<WelcomePage />}/>} />
         <Route path="/admin" element={<Layout content={<AdminPage />}/>} />
