@@ -37,3 +37,59 @@ export async function GetUserInfo(username = null) {
     return null;
   }
 }
+
+//비밀번호 재설정 관련
+// Password Reset Request
+export async function RequestPasswordReset(username) {
+  try {
+    const response = await axios.post(
+      `${api_url}/password-reset/request`,
+      {
+        username: username,
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+// Password Reset Confirm
+export async function ConfirmPasswordReset(token, newPassword) {
+  try {
+    const response = await axios.post(
+      `${api_url}/password-reset/confirm`,
+      {
+        token: token,
+        new_password: newPassword,
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+//email 설정 관련
+//email verify func
+// 이메일 인증
+export async function VerifyEmail(token) {
+  try {
+    const response = await axios.post(
+      `${api_url}/email/verify`,
+      {
+        token: token,
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
