@@ -1,5 +1,5 @@
 .inside {
-    min-height: calc(100vh - 10vh);
+    height: calc(100vh - 10vh);
     box-sizing: border-box;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -11,10 +11,11 @@
 ========================= */
 .welcome-layout {
     width: min(1280px, 100%);
-    min-height: calc(100vh - 10vh);
+    height: calc(100vh - 10vh);
     margin: 0 auto;
     padding: clamp(28px, 5vw, 72px);
     box-sizing: border-box;
+    scrollbar-width: none;
 
     display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
