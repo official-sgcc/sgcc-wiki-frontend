@@ -1,12 +1,34 @@
 import { useEffect, useState } from 'react'
+import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi'
 import api from '../../backend/axios.js'
 import './MyPage.css'
 import AccountStatus from './AccountStatus.jsx'
 import EditList from './EditList.jsx'
+import EmailEdit from './EmailEdit.jsx'
 import ShowPanel from './ShowPanel.jsx'
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
+
+function EmailVerificationStatus({ isVerified }) {
+  const Icon = isVerified ? FiCheckCircle : FiAlertCircle;
+  const tooltip = isVerified
+    ? '이메일이 인증되었습니다.'
+    : '이메일이 인증되지 않았습니다.';
+
+  return (
+    <span
+      className={`email-verification-status ${isVerified ? 'is-verified' : 'is-unverified'}`}
+      tabIndex="0"
+      aria-label={tooltip}
+    >
+      <Icon className="email-verification-icon" aria-hidden="true" />
+      <span className="email-verification-tooltip" role="tooltip">
+        {tooltip}
+      </span>
+    </span>
+  );
+}
 
 function MyPage() {
   const token = sessionStorage.getItem(TOKEN_KEY);
@@ -15,10 +37,10 @@ function MyPage() {
   const [editList, setEditList] = useState([]);
   const [isLoading, setIsLoading] = useState(Boolean(token && username));
   const [errorMessage, setErrorMessage] = useState('');
+  const [isEmailEditOpen, setIsEmailEditOpen] = useState(false);
 
   useEffect(() => {
     if (!token || !username) {
-      setIsLoading(false);
       return;
     }
 
@@ -66,6 +88,13 @@ function MyPage() {
       <AccountStatus title="My Page" message={errorMessage} />
     )
   }
+
+  const emailContent = user?.email ? (
+    <span className="account-email">
+      <span className="account-email-address">{user.email}</span>
+      <EmailVerificationStatus isVerified={Boolean(user.email_verified)} />
+    </span>
+  ) : null;
   
   return ( 
     <div className="padding">
@@ -74,9 +103,16 @@ function MyPage() {
       </div>
       <ShowPanel title="아이디" content={user?.username || username} />
       <ShowPanel title="권한" content={user?.permission} />
-      <ShowPanel title="Email" content={user?.email} />
+      <ShowPanel title="Email" content={emailContent} />
       <ShowPanel title="Bio" content={user?.bio} />
-      <button className='editbutton'>정보 수정</button>
+      <button
+        className="editbutton"
+        type="button"
+        onClick={() => setIsEmailEditOpen((isOpen) => !isOpen)}
+      >
+        {isEmailEditOpen ? '수정 닫기' : '정보 수정'}
+      </button>
+      {isEmailEditOpen && <EmailEdit />}
       <EditList edits={editList} />
     </div>
   )
