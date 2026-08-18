@@ -28,6 +28,8 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMfaChallengeNow, setIsMfaChallengeNow] = useState(null);
+  const [mfaCode, setMfaCode] = useState('');
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
@@ -39,21 +41,53 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
         username,
         password,
       });
-      const token = response.data?.token;
 
-      if (!token) {
-        setErrorMessage('로그인 응답에 토큰이 없습니다.');
+      const mfa_required = response.data?.mfa_required;
+      if (mfa_required) {
+        const mfa_token = response.data?.mfa_token;
+        if (mfa_token == null) {
+          setErrorMessage('인증 정보에 문제가 발생했습니다.');
+          setIsSubmitting(false);
+          return;
+        }
+        setIsMfaChallengeNow({username, mfa_token});
+        setIsSubmitting(false);
         return;
       }
 
-      sessionStorage.setItem(TOKEN_KEY, token);
-      sessionStorage.setItem(USERNAME_KEY, username);
-      onSuccess?.({ username, token });
+      const token = response.data?.token;
+      completeLogin(token);
     } catch (error) {
       setErrorMessage(getLoginErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  const handleMfaChallenge = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await api.post('/login/2fa', {
+        mfa_token: isMfaChallengeNow.mfa_token,
+        code: mfaCode,
+      });
+      const token = response.data?.token;
+      completeLogin(token);
+      setIsMfaChallengeNow(null);
+    } catch (error) {
+      setErrorMessage(getLoginErrorMessage(error));
+    }
+  }
+
+  const completeLogin = (token) => {
+    if (!token) {
+      setErrorMessage('로그인 응답에 토큰이 없습니다.');
+      return;
+    }
+  
+    sessionStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.setItem(USERNAME_KEY, username);
+    onSuccess?.({ username, token });
   };
 
   return (
@@ -98,6 +132,29 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
           회원가입
         </Link>
       </form>
+      {isMfaChallengeNow && <form onSubmit={handleMfaChallenge}>
+        <div className='input-6code'>
+          
+        </div>
+        <input
+          className="two-factor__code-input"
+          id="two-factor-enable-code"
+          name="code"
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          pattern="[0-9]{6}"
+          maxLength="6"
+          placeholder="000000"
+          value={mfaCode}
+          onChange={(event) => setMfaCode(event.target.value)}
+          disabled={isSubmitting}
+          required
+        />
+        <button className='login-submit-btn' type='submit'>
+          인증
+        </button>
+        </form>}
     </>
   );
 }
