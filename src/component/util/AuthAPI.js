@@ -93,3 +93,71 @@ export async function VerifyEmail(token) {
     return null;
   }
 }
+
+//회원가입 관련
+
+// 회원가입 이메일 인증 요청
+export async function RequestRegisterEmailVerification(username, email) {
+  try {
+    const response = await axios.post(
+      `${api_url}/register/verify-email`,
+      {
+        username: username,
+        email: email,
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
+// 회원가입 이메일 인증 상태 확인
+export async function CheckRegisterVerifyStatus(username, email) {
+  try {
+    const response = await axios.post(
+      `${api_url}/register/verify-status`,
+      {
+        username: username,
+        email: email,
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
+// 최종 회원가입
+export async function RegisterUser(
+  username,
+  password,
+  email,
+  verificationToken = null
+) {
+  try {
+    const data = {
+      username: username,
+      password: password,
+      email: email,
+    };
+
+    if (verificationToken) {
+      data.verification_token = verificationToken;
+    }
+
+    const response = await axios.post(
+      `${api_url}/register`,
+      data
+    );
+
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
