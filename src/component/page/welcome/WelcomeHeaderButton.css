@@ -14,20 +14,16 @@
     transition: background-color 3ms;
     white-space: nowrap;
 }
-/*
-.welcomebutton:hover {
-    background-color: #1d1d6b;
-}
-*/
 
+/* 모바일 */
 @media (max-width: 768px) {
     .welcomebutton {
         position: fixed;
-        top: 10vh; /* 헤더 높이 바로 아래 */
+        top: 10vh; 
         left: 0;
         width: 100%;
         text-align: center;
-        z-index: 999; /* 헤더보다는 낮게 */
+        z-index: 999; 
         border-radius: 0;
     }
 

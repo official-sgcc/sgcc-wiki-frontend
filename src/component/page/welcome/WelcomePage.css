@@ -183,6 +183,7 @@
         align-items: stretch;
         gap: 28px;
         padding: 28px 20px 42px;
+        padding-top: 12vh;
     }
 
     /* JSX상 poster가 먼저 있어도 모바일에서는 아래로 이동 */
