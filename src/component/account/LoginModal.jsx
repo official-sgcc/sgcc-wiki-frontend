@@ -30,6 +30,7 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMfaChallengeNow, setIsMfaChallengeNow] = useState(null);
   const [mfaCode, setMfaCode] = useState('');
+  const [isMfaSubmitting, setIsMfaSubmitting] = useState(false);
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
@@ -66,6 +67,7 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
 
   const handleMfaChallenge = async (event) => {
     event.preventDefault();
+    setIsMfaSubmitting(true);
     try {
       const response = await api.post('/login/2fa', {
         mfa_token: isMfaChallengeNow.mfa_token,
@@ -76,6 +78,8 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
       setIsMfaChallengeNow(null);
     } catch (error) {
       setErrorMessage(getLoginErrorMessage(error));
+    } finally {
+      setIsMfaSubmitting(false);
     }
   }
 
@@ -151,8 +155,8 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
           disabled={isSubmitting}
           required
         />
-        <button className='login-submit-btn' type='submit'>
-          인증
+        <button className='login-submit-btn' type='submit' disabled={isMfaSubmitting}>
+          {isMfaSubmitting ? '인증 중...' : '인증'}
         </button>
         </form>}
     </>
