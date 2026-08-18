@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi'
+import { Link } from 'react-router-dom'
 import api from '../../backend/axios.js'
 import './MyPage.css'
 import AccountStatus from './AccountStatus.jsx'
@@ -105,13 +106,18 @@ function MyPage() {
       <ShowPanel title="권한" content={user?.permission} />
       <ShowPanel title="Email" content={emailContent} />
       <ShowPanel title="Bio" content={user?.bio} />
-      <button
-        className="editbutton"
-        type="button"
-        onClick={() => setIsEmailEditOpen((isOpen) => !isOpen)}
-      >
-        {isEmailEditOpen ? '수정 닫기' : '정보 수정'}
-      </button>
+      <div className="account-actions">
+        <button
+          className="editbutton"
+          type="button"
+          onClick={() => setIsEmailEditOpen((isOpen) => !isOpen)}
+        >
+          {isEmailEditOpen ? '수정 닫기' : '정보 수정'}
+        </button>
+        <Link className="account-security-link" to="/two-factor">
+          2단계 인증
+        </Link>
+      </div>
       {isEmailEditOpen && <EmailEdit />}
       <EditList edits={editList} />
     </div>

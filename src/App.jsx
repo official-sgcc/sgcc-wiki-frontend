@@ -14,6 +14,7 @@ import AdminPage from './component/page/admin/AdminPage'
 import ForgotPassword from './component/account/ResetPWD/ForgotPassword'
 import VerifyEmail from './component/account/Email/VerifyEmail'
 import ResetPassword from './component/account/ResetPWD/ResetPassword'
+import TwoFactor from './component/account/TwoFactor'
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/verify-email" element={<Layout content={<VerifyEmail />} />} />
         <Route path="/forgot-password" element={<Layout content={<ForgotPassword />}/>} />
         <Route path="/reset-password" element={<Layout content={<ResetPassword />} />} />
+        <Route path="/two-factor" element={<Layout content={<TwoFactor />} />} />
         <Route path="/tag/:tag" element={<Layout content={<TagList />}/>} />
         <Route path="/welcome" element={<Layout content={<WelcomePage />}/>} />
         <Route path="/admin" element={<Layout content={<AdminPage />}/>} />

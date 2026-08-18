@@ -6,6 +6,44 @@
 .accountName {
     font-size: 36pt;
 }
+
+.account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.editbutton,
+.account-security-link {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    box-sizing: border-box;
+    border: 1px solid #cfcfd8;
+    border-radius: 7px;
+    background-color: #ffffff;
+    color: #353544;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.editbutton:hover,
+.account-security-link:hover {
+    border-color: #a9a9b5;
+    background-color: #f1f1f5;
+}
+
+.editbutton:focus-visible,
+.account-security-link:focus-visible {
+    outline: 3px solid rgba(27, 27, 46, 0.22);
+    outline-offset: 2px;
+}
 .accountNotice {
     margin-top: 16px;
     font-size: 14pt;
