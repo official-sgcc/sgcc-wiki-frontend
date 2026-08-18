@@ -1,9 +1,5 @@
-:root{
-    --headerbgcolor: #1b1b2e;
-}
-
 .main-header{
-    background-color: var(--headerbgcolor);
+    background-color: var(--main-bg);
     position: fixed;
     top: 0;
     left: 0;
@@ -22,7 +18,7 @@
   font-weight: 600;
   margin-left: 3vw;
   padding: 3px;
-  color: #fff;
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -54,9 +50,9 @@
   align-items: center;
   gap: 10px;
   padding: 6px 16px;
-  border: 1px solid rgb(248, 248, 248);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  color: rgb(255, 255, 255);
+  color: var(--btn);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -77,7 +73,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--modal-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -86,12 +82,11 @@
 
 /* 로그인 모달 본체 */
 .login-modal-content {
-  background-color: white;
+  background-color: var(--bg);
   padding: 40px;
   border-radius: 12px;
   width: 330px;
   position: relative;
-  color: #fbf6f6;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
@@ -121,7 +116,7 @@
 
 /* 에러 메시지 스타일 */
 .error-message {
-  color: #d93025; 
+  color: var(--accent-red); 
   font-size: 0.85rem;
   margin-bottom: 15px;
   text-align: left;
@@ -132,8 +127,8 @@
   width: 90%;
   height: 40px;
   padding: 12px;
-  background-color: #1a1a5a;
-  color: white;
+  background-color: var(--primary-navy);
+  color: var(--text);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -142,7 +137,7 @@
 }
 
 .login-submit-btn:hover {
-  background-color: #2d2d7b;
+  background-color: var(--btn-hover);
 }
 
 /* 닫기 버튼 */
@@ -175,7 +170,7 @@
 .header-nav-item {
   padding: 8px 18px;
   border-radius: 20px;
-  color: #9698ab;
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 700;
@@ -188,7 +183,7 @@
 
 .header-nav-item.active {
   background-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--text);
 }
 
 /* 모바일 */
@@ -200,7 +195,6 @@
     left: 0;
     width: 100%;
     justify-content: center;
-    /* background-color: var(--headerbgcolor); */
     padding: 10px 0;
     gap: 4px;
     z-index: 999;
@@ -213,18 +207,17 @@
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
-    color: #79797c;
-    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   .header-nav-item:hover {
-    background-color: rgba(139, 137, 137, 0.15);
+    background-color: rgba(255, 255, 255, 0.15);
   }
 
   .header-nav-item.active {
     background-color: rgba(255, 255, 255, 0.15);
-    color: #000000;
+    color: var(--text-h);
   }
 
   .footer-item-login {

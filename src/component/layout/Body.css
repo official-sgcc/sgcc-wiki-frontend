@@ -49,7 +49,7 @@
 */
 
 .category-card {
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 50px;
   padding: 40px 40px;
   width: 280px;
@@ -111,12 +111,12 @@
   width: 0;
   height: 3px;
   border-radius: 2px;
-  background-color: #c0392b;
+  background-color: var(--accent-red);
   transition: width 0.3s ease;
 }
 
 .category-card:hover h3 {
-  color: #c0392b; 
+  color: var(--accent-red); 
 } 
 
 .category-card:hover h3::after {
@@ -171,7 +171,7 @@
 }
 
 .sub-item {
-  border: 2px solid #ffffff;
+  border: 2px solid var(--border);
   text-align: left;
   cursor: pointer;
   font-size: 0.95rem;
@@ -179,6 +179,10 @@
 
 .sub-item:hover {
   color: rgb(4, 4, 76);
+}
+
+.empty-category {
+  color: var(--text-h);
 }
 
 .sub-link {
@@ -191,12 +195,12 @@
 }
 
 .sub-item-header {
-  background: #c0392b;
-  color: #ffffff;
+  background: var(--accent-red);
+  color: var(--text-h);
   font-weight: 700;
   font-size: 1.0rem;
   padding: 14px 20px;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--border);
   text-align: left;
 }
 

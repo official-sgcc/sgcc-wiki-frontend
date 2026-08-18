@@ -131,8 +131,8 @@
 .button {
     border: 1px solid rgba(117, 255, 198, 0.2);
     border-radius: 14px;
-    background-color: #1b1b2e;
-    color: white;
+    background-color: var(--main-bg);
+    color: var(--text);
     cursor: pointer;
 
     font-size: 18px;
@@ -146,9 +146,9 @@
 }
 
 .button:hover {
-    background-color: #c0392b;
+    background-color: var(--accent-red);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(192, 57, 43, 0.3);
+    box-shadow: 0 8px 24px var(--accent-red);
 }
 
 .button:active {

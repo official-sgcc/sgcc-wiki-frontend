@@ -1,7 +1,3 @@
-:root{
-    --footerbgcolor: #1b1b2e;
-    --footertxtcolor: #d9d6d6;
-}
 footer{
     width: 100%;
     box-sizing: border-box;
@@ -10,15 +6,16 @@ a{
     text-decoration: none;
     text-transform: none;
     font-weight: 500;
-    color: var(--footertxtcolor);
+    color: var(--text);
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .FooterContainer{
     display: flex;
     justify-content:left;
-    background-color: var(--footerbgcolor);
+    background-color: var(--main-bg);
     width: 100%;
     height: 2vh;
     align-items: center;
@@ -42,7 +39,7 @@ a{
     padding: 0;
     border: 0;
     background: none;
-    color: var(--footertxtcolor);
+    color: var(--text);
     font: inherit;
     font-weight: 500;
     cursor: pointer;
