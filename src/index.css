@@ -9,7 +9,7 @@
   --main-bg: #1b1b2e;               /* 메인 배경 */       
   --primary-navy: #1a1a5a;          /* 로그인 버튼, 제목 등에 반복되는 남색 */
   --btn-hover: #2d2d7b;
-  --accent-red: #c0392b;            /* hover 밑줄, 강조 텍스트 등 */
+  --accent-red: #ba3128;            /* hover 밑줄, 강조 텍스트 등 */
   --text-muted: #9698ab;            /* 네비 메뉴 비활성 색 */
   --card-bg: #ffffff;               /* 카드 배경 */
   --modal-bg: rgba(0, 0, 0, 0.7);   /* 모달 배경 */
@@ -37,7 +37,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #ffffff;
-    --text-h: #08060d;
+    --text-h: #ffffff;
     --bg: #16171d;
     --border: #e5e4e7;
     --code-bg: #1f2028;

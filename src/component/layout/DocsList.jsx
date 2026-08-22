@@ -56,7 +56,7 @@ import "./DocsList.css";
   COULD: 진행 예정 - 페이지 내 검색 기능은 프론트 엔드 단에서 url 파라미터 이용해서 구현 예정
 */
 
-export default function DocsList({ getDocsList, initialLimit = 20, editFunc=null }) {
+export default function DocsList({ getDocsList, initialLimit = 20, editFunc=null, category=null }) {
   const navigate = useNavigate();
 
   const [docsdata, setDocsData] = useState([]);
@@ -133,6 +133,20 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc=null
     setPage((prev) => Math.min(totalPages, prev + 1));
   };
 
+ const handleEditButton = () => {
+    if (typeof editFunc === "function") {
+      editFunc();
+      return;
+    }
+
+    navigate(`/wiki/edit`, {
+      state: {
+        category: category,
+      },
+    });
+  };
+
+
   const isFirstPage = page === 1;
   const isLastPage = page === totalPages;
 
@@ -157,17 +171,15 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc=null
             aria-label="게시글 검색"
           />
 
-          {/*editFunc이 함수인 경우에만 글쓰기 버튼 노출*/}
-          {typeof editFunc === "function" && (
-            <button
-              type="button"
-              className="docs-list__write-button"
-              onClick={editFunc}
-            >
-              <span className="docs-list__write-icon">✎</span>
-              글쓰기
-            </button>
-          )}
+          <button
+            type="button"
+            className="docs-list__write-button"
+            onClick={handleEditButton}
+          >
+            <span className="docs-list__write-icon">✎</span>
+            글쓰기
+          </button>
+          
         </div>
       </header>
 

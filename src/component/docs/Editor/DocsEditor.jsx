@@ -208,7 +208,7 @@ function DocsEditor() {
   return (
     <div className="editor-container">
       <div className="editor-category">
-        <label htmlFor="category-select">카테고리</label>
+        <label htmlFor="category-select" className="category-label">카테고리</label>
 
         <select
           id="category-select"

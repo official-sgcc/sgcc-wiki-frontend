@@ -30,30 +30,31 @@
 }
 
 .srchinput{
-    font-size: 1.3rem;
-    text-align: left;
-    margin-bottom: 100px;
-    margin-left: 40px;
-    width:800px;
-    height: 60px;
-    border: 2px solid var(--border);
-    border-radius: 20px;
-    padding-left: 16px;
-    box-sizing: border-box;
+  font-size: 1.3rem;
+  text-align: left;
+  margin-bottom: 100px;
+  margin-left: 40px;
+  width:800px;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding-left: 16px;
+  box-sizing: border-box;
 }
 
 .srchbox{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 600px;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 600px;
+  gap: 10px;
 }
 
 /* 헤더용 버튼 */
 .srchbtn{
   background-color: transparent;
   border: none;
+  border-radius: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -62,6 +63,10 @@
   height: 50px;
   font-size: 1.5rem;
   color: var(--btn);  
+}
+
+.srchbtn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 모달용 버튼 */

@@ -69,7 +69,7 @@
   padding: 0.75rem 1.15rem;
   border: 0;
   border-radius: 999rem;
-  background: #d43c30;
+  background: var(--main-bg);
   box-shadow: 0 0.2rem 0.4rem rgba(126, 37, 31, 0.18);
   color: #fff;
   font-size: clamp(0.8rem, 1.4vw, 0.95rem);
@@ -82,8 +82,9 @@
 }
 
 .docs-list__write-button:hover {
-  background: #ba3128;
-  transform: translateY(-0.0625rem);
+  /* background: var(--accent-red); */
+  /* transform: translateY(-0.0625rem); */
+  opacity: 0.9;
 }
 
 .docs-list__write-icon {

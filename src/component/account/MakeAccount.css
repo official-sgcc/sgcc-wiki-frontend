@@ -1,6 +1,6 @@
 .signup-title {
   margin: 170px auto 30px;
-  color: rgb(4, 4, 76);
+  color: var(--text-h);
   text-align: center;
   font-weight: 700;
 }

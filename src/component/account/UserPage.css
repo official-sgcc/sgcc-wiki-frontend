@@ -1,6 +1,6 @@
 .padding {
     margin: 3%;
-
+    color: var(--text-h);
 }
 
 .accountName {

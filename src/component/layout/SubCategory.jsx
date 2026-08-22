@@ -12,13 +12,6 @@ function SubCategory() {
       GetDocsFromCategory(subcategory, false, limit, offset),
     [subcategory]
   );
-  const handleEditButton = () => {
-    navigate(`/wiki/edit`,{
-      state:{
-        category: subcategory,
-      },
-    });
-  };
 
   return (
     <div
@@ -39,9 +32,8 @@ function SubCategory() {
       >
         {subcategory?.toUpperCase()}
       </h2>
-      <button onClick={handleEditButton}>글쓰기</button>
 
-      <DocsList getDocsList={getDocsList} />
+      <DocsList getDocsList={getDocsList} category={subcategory} />
     </div>
   );
 }
