@@ -3,7 +3,7 @@
   width: min(100%, 520px);
   margin: 24px auto;
   box-sizing: border-box;
-  border: 1px solid #e2e2e8;
+  border: none;
   border-radius: 8px;
   background-color: #ffffff;
   color: #292934;

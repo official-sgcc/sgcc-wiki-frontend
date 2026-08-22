@@ -1,63 +1,38 @@
+import React from 'react'
+import { FiChevronRight } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import './EditList.css'
 
-function formatDate(dateString) {
-  if (!dateString) {
-    return '날짜미상'
-  }
-
-  const date = new Date(dateString)
-
-  if (Number.isNaN(date.getTime())) {
-    return '날짜미상'
-  }
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-
-  return `${year}-${month}-${day} ${hours}:${minutes}`
-}
-
-function getEditTitle(edit) {
-  return edit?.wiki_doc_title || edit?.title || edit?.documentTitle || '제목 없음'
-}
-
 function EditList({ edits = [] }) {
-  if (!Array.isArray(edits) || edits.length === 0) {
-    return (
-      <section className="editList">
-        <h2 className="editListTitle">편집 목록</h2>
-        <p className="editListEmpty">아직 편집 기록이 없습니다.</p>
-      </section>
-    )
+  if (!edits || edits.length === 0) {
+    return <div className="editListEmpty">편집 내역이 없습니다.</div>;
   }
 
   return (
-    <section className="editList">
-      <h2 className="editListTitle">편집 목록</h2>
-      <ul className="editListItems">
-        {edits.map((edit, index) => {
-          const title = getEditTitle(edit)
-          const versionNumber = edit?.version_number || edit?.versionNumber
+    <ul className="editListItems">
+      {edits.map((item, index) => {
+        const version = item.version || item.rev || `v${index + 1}`;
+        const title = item.title || item.docTitle || item.document_title || '문서 제목';
+        const date = item.date || item.createdAt || item.updatedAt || '2026.08.18';
+        const linkPath = item.docId ? `/wiki/${item.docId}` : '#';
 
-          return (
-            <li className="editListItem" key={`${title}-${versionNumber || index}`}>
-              <Link className="editListLink" to={`/wiki/detail/${title}`}>
-                {title}
-              </Link>
-              <div className="editListMeta">
-                {versionNumber && <span>v{versionNumber}</span>}
-                <span>{formatDate(edit?.updated_at || edit?.updatedAt)}</span>
+        return (
+          <li key={item.id || index} className="editListItem">
+            <Link to={linkPath} className="editListLink">
+              <div className="editListLeft">
+                <span className="versionBadge">{version.startsWith('v') ? version : `v${version}`}</span>
+                <div className="editListInfo">
+                  <span className="editListTitle">{title}</span>
+                  <span className="editListDate">{date}</span>
+                </div>
               </div>
-            </li>
-          )
-        })}
-      </ul>
-    </section>
-  )
+              <FiChevronRight className="editListArrow" />
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
-export default EditList
+export default EditList;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi'
+import { FiAlertCircle, FiCheckCircle, FiUser, FiShield, FiMail, FiFileText, FiEdit2, FiLock } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import api from '../../backend/axios.js'
 import './MyPage.css'
@@ -90,36 +90,113 @@ function MyPage() {
     )
   }
 
+  const displayName = user?.username || username;
+
   const emailContent = user?.email ? (
     <span className="account-email">
       <span className="account-email-address">{user.email}</span>
       <EmailVerificationStatus isVerified={Boolean(user.email_verified)} />
     </span>
-  ) : null;
-  
+  ) : '정보 없음';
+
   return ( 
-    <div className="padding">
-      <div className="accountName">
-        Hello, {user?.username || username}
+    <div className="mypage-wrapper">
+      <div className="mypage-container">
+        {/* 상단 프로필 헤더 */}
+        <div className="profileHero">
+          <div className="profileAvatar">
+            {displayName.charAt(0).toUpperCase()}
+          </div>
+          <div className="profileHello">Hello, {displayName}</div>
+          <div className="profileRoleBadge">
+            <FiShield size={12} />
+            <span>{user?.permission || 'login_user'}</span>
+          </div>
+        </div>
+
+        {/* 프로필 정보 + 액션 카드 */}
+        <div className="profileMain">
+          <div className="profileInfoCard">
+  <div className="profileInfoTitle">프로필 정보</div>
+  <div className="profileInfoList">
+    <div className="infoItem">
+      <div className="infoLabel">
+        <FiUser className="infoIcon" />
+        <span>아이디</span>
       </div>
-      <ShowPanel title="아이디" content={user?.username || username} />
-      <ShowPanel title="권한" content={user?.permission} />
-      <ShowPanel title="Email" content={emailContent} />
-      <ShowPanel title="Bio" content={user?.bio} />
-      <div className="account-actions">
-        <button
-          className="editbutton"
-          type="button"
-          onClick={() => setIsEmailEditOpen((isOpen) => !isOpen)}
-        >
-          {isEmailEditOpen ? '수정 닫기' : '정보 수정'}
-        </button>
-        <Link className="account-security-link" to="/two-factor">
-          2단계 인증
-        </Link>
+      <div className="infoValue hasValue">{displayName}</div>
+    </div>
+
+    <div className="infoItem">
+      <div className="infoLabel">
+        <FiShield className="infoIcon" />
+        <span>권한</span>
       </div>
-      {isEmailEditOpen && <EmailEdit />}
-      <EditList edits={editList} />
+      <div className="infoValue hasValue">{user?.permission || 'login_user'}</div>
+    </div>
+
+    <div className="infoItem">
+      <div className="infoLabel">
+        <FiMail className="infoIcon" />
+        <span>Email</span>
+      </div>
+      <div className={`infoValue ${user?.email ? 'hasValue' : 'noValue'}`}>
+        {emailContent || '정보 없음'}
+      </div>
+    </div>
+
+    <div className="infoItem">
+      <div className="infoLabel">
+        <FiFileText className="infoIcon" />
+        <span>Bio</span>
+      </div>
+      <div className={`infoValue ${user?.bio ? 'hasValue' : 'noValue'}`}>
+        {user?.bio || '정보 없음'}
+      </div>
+    </div>
+  </div>
+</div>
+
+          <div className="profileActions">
+            <button
+              className="actionCard blueCard"
+              type="button"
+              onClick={() => setIsEmailEditOpen((isOpen) => !isOpen)}
+            >
+              <div className="actionIcon actionIconBlue">
+                <FiEdit2 />
+              </div>
+              <div className="actionTitle">
+                {isEmailEditOpen ? '수정 닫기' : '정보 수정'}
+              </div>
+              <div className="actionDesc">프로필 정보를 변경합니다</div>
+            </button>
+
+            <Link className="actionCard purpleCard" to="/two-factor">
+              <div className="actionIcon actionIconPurple">
+                <FiLock />
+              </div>
+              <div className="actionTitle">2단계 인증</div>
+              <div className="actionDesc">계정 보안을 강화합니다</div>
+            </Link>
+          </div>
+        </div>
+
+        {isEmailEditOpen && (
+          <div className="profileInfoCard" style={{ marginBottom: '20px' }}>
+            <EmailEdit />
+          </div>
+        )}
+
+        {/* 편집 목록 */}
+        <div className="editListCard">
+          <div className="editListHeader">
+            <div className="profileInfoTitle" style={{ marginBottom: 0 }}>편집 목록</div>
+            <span className="countPill">{editList.length}개</span>
+          </div>
+          <EditList edits={editList} />
+        </div>
+      </div>
     </div>
   )
 }

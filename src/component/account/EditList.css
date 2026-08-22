@@ -1,43 +1,81 @@
-.editList {
-    margin-top: 32px;
-}
-
-.editListTitle {
-    margin-bottom: 12px;
-    font-size: 20pt;
-}
-
 .editListItems {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .editListItem {
-    padding: 14px 0;
-    border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.editListItem:last-child {
+  border-bottom: none;
 }
 
 .editListLink {
-    color: rgb(4, 4, 76);
-    font-size: 14pt;
-    font-weight: bold;
-    text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
 }
 
-.editListLink:hover {
-    text-decoration: underline;
+.editListLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.editListMeta {
-    display: flex;
-    gap: 12px;
-    margin-top: 6px;
-    color: #666666;
-    font-size: 11pt;
+/* v1, v2 보라색 스퀘어 뱃지 */
+.versionBadge {
+  width: 38px;
+  height: 38px;
+  background-color: #eef2ff;
+  color: #6366f1;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* 제목과 날짜 수직 배치 */
+.editListInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 좌측 시작점 통일 */
+  text-align: left;        /* 텍스트 왼쪽 정렬 */
+}
+
+.editListTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.editListDate {
+  font-size: 13px;
+  color: #a0aec0;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* 우측 옅은 화살표 */
+.editListArrow {
+  font-size: 18px;
+  color: #cbd5e1;
 }
 
 .editListEmpty {
-    color: #666666;
-    font-size: 12pt;
+  color: #a0aec0;
+  font-size: 14px;
+  padding: 20px 0;
+  text-align: center;
 }
