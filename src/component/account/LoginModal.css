@@ -154,3 +154,41 @@
   color: #333333;
 }
 
+.mfa-notice {
+  margin-top: 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.two-factor-code-input {
+  width: 100%;
+  height: 50px;
+  flex: 1;
+  margin: 14px 0;
+  padding: 0 16px;
+  box-sizing: border-box;
+  border: 1px solid #cfcfd8;
+  border-radius: 7px;
+  outline: none;
+  background-color: #fcfcfe;
+  color: #20202b;
+  font: 700 1.15rem/1 ui-monospace, Consolas, monospace;
+  letter-spacing: 0.18em;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.two-factor-code-input::placeholder {
+  color: #aaaab3;
+}
+
+.two-factor-code-input:focus {
+  border-color: #283a62;
+  box-shadow: 0 0 0 3px rgba(40, 58, 98, 0.14);
+}
+
+.two-factor-code-input:disabled {
+  cursor: not-allowed;
+  background-color: #eeeeF2;
+}
