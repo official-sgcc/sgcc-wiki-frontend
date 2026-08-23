@@ -137,11 +137,11 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
         </Link>
       </form>
       {isMfaChallengeNow && <form onSubmit={handleMfaChallenge}>
-        <div className='input-6code'>
-          
+        <div className='mfa-notice'>
+          2FA 코드 입력:
         </div>
         <input
-          className="two-factor__code-input"
+          className="two-factor-code-input"
           id="two-factor-enable-code"
           name="code"
           type="text"
