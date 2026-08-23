@@ -20,7 +20,6 @@ function UserPage() {
 
   useEffect(() => {
     if (!token || !myusername) {
-      setIsLoading(false);
       return;
     }
 
