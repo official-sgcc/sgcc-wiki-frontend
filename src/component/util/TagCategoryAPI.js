@@ -51,10 +51,14 @@ export async function GetCategory(name) {
     const response = await axios.get(`${api_url}/categories/${name}`);
     return response.data;
   } catch (e) {
-    console.error(e);
+    if (e.response?.status !== 404) {
+      console.error(e);
+    }
+
     return null;
   }
 }
+
 
 // Create Category
 export async function CreateCategory(name, parent = null) {
