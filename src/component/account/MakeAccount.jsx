@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MakeAccount.css";
 import { FiUser, FiLock, FiMail } from "react-icons/fi";
@@ -118,7 +118,6 @@ function MakeAccount() {
   const [password, setPassword] = useState("");
 
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [modal, setModal] = useState(null);
 
   /*
     const [name, setName] = useState('');
@@ -133,19 +132,20 @@ function MakeAccount() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 이미 로그인한 사용자는 회원가입 페이지에 접근할 수 없음
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (token) {
-      setModal({
-        type: "alert",
-        color: "yellow",
-        title: "이미 로그인되어 있습니다.",
-        content: "로그인된 상태에서는 회원가입을 할 수 없습니다.",
-        confirmText: "확인",
-      });
+  const [modal, setModal] = useState(() => {
+    if (!sessionStorage.getItem("token")) {
+      return null;
     }
-  }, []);
+
+    return {
+      type: "alert",
+      color: "yellow",
+      title: "이미 로그인되어 있습니다.",
+      content: "로그인된 상태에서는 회원가입을 할 수 없습니다.",
+      confirmText: "확인",
+    };
+  });
+
   // 비밀번호 정책 검사
   const validatePassword = (password) => {
     if (password.length < 8) {
