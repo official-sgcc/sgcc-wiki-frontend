@@ -5,8 +5,6 @@ import api from '../../backend/axios.js'
 import './MyPage.css'
 import AccountStatus from './AccountStatus.jsx'
 import EditList from './EditList.jsx'
-import EmailEdit from './EmailEdit.jsx'
-import ShowPanel from './ShowPanel.jsx'
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -38,7 +36,6 @@ function MyPage() {
   const [editList, setEditList] = useState([]);
   const [isLoading, setIsLoading] = useState(Boolean(token && username));
   const [errorMessage, setErrorMessage] = useState('');
-  const [isEmailEditOpen, setIsEmailEditOpen] = useState(false);
 
   useEffect(() => {
     if (!token || !username) {
@@ -117,61 +114,57 @@ function MyPage() {
         {/* 프로필 정보 + 액션 카드 */}
         <div className="profileMain">
           <div className="profileInfoCard">
-  <div className="profileInfoTitle">프로필 정보</div>
-  <div className="profileInfoList">
-    <div className="infoItem">
-      <div className="infoLabel">
-        <FiUser className="infoIcon" />
-        <span>아이디</span>
-      </div>
-      <div className="infoValue hasValue">{displayName}</div>
-    </div>
+            <div className="profileInfoTitle">프로필 정보</div>
+            <div className="profileInfoList">
+              <div className="infoItem">
+                <div className="infoLabel">
+                  <FiUser className="infoIcon" />
+                  <span>아이디</span>
+                </div>
+                <div className="infoValue hasValue">{displayName}</div>
+              </div>
 
-    <div className="infoItem">
-      <div className="infoLabel">
-        <FiShield className="infoIcon" />
-        <span>권한</span>
-      </div>
-      <div className="infoValue hasValue">{user?.permission || 'login_user'}</div>
-    </div>
+              <div className="infoItem">
+                <div className="infoLabel">
+                  <FiShield className="infoIcon" />
+                  <span>권한</span>
+                </div>
+                <div className="infoValue hasValue">{user?.permission || 'login_user'}</div>
+              </div>
 
-    <div className="infoItem">
-      <div className="infoLabel">
-        <FiMail className="infoIcon" />
-        <span>Email</span>
-      </div>
-      <div className={`infoValue ${user?.email ? 'hasValue' : 'noValue'}`}>
-        {emailContent || '정보 없음'}
-      </div>
-    </div>
+              <div className="infoItem">
+                <div className="infoLabel">
+                  <FiMail className="infoIcon" />
+                  <span>Email</span>
+                </div>
+                <div className={`infoValue ${user?.email ? 'hasValue' : 'noValue'}`}>
+                  {emailContent}
+                </div>
+              </div>
 
-    <div className="infoItem">
-      <div className="infoLabel">
-        <FiFileText className="infoIcon" />
-        <span>Bio</span>
-      </div>
-      <div className={`infoValue ${user?.bio ? 'hasValue' : 'noValue'}`}>
-        {user?.bio || '정보 없음'}
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="infoItem">
+                <div className="infoLabel">
+                  <FiFileText className="infoIcon" />
+                  <span>Bio</span>
+                </div>
+                <div className={`infoValue ${user?.bio ? 'hasValue' : 'noValue'}`}>
+                  {user?.bio || '정보 없음'}
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="profileActions">
-            <button
-              className="actionCard blueCard"
-              type="button"
-              onClick={() => setIsEmailEditOpen((isOpen) => !isOpen)}
-            >
+            {/* 정보 수정: EditProfile 페이지로 이동하도록 Link로 변경 */}
+            <Link className="actionCard blueCard" to="/edit-profile">
               <div className="actionIcon actionIconBlue">
                 <FiEdit2 />
               </div>
-              <div className="actionTitle">
-                {isEmailEditOpen ? '수정 닫기' : '정보 수정'}
-              </div>
+              <div className="actionTitle">정보 수정</div>
               <div className="actionDesc">프로필 정보를 변경합니다</div>
-            </button>
+            </Link>
 
+            {/* 2단계 인증 */}
             <Link className="actionCard purpleCard" to="/two-factor">
               <div className="actionIcon actionIconPurple">
                 <FiLock />
@@ -181,12 +174,6 @@ function MyPage() {
             </Link>
           </div>
         </div>
-
-        {isEmailEditOpen && (
-          <div className="profileInfoCard" style={{ marginBottom: '20px' }}>
-            <EmailEdit />
-          </div>
-        )}
 
         {/* 편집 목록 */}
         <div className="editListCard">

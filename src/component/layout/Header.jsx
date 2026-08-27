@@ -40,7 +40,7 @@ function Header() {
 
 const navItems = [
   { label: '홈', path: '/' },
-  { label: '게시글', path: '/wiki/abc' },
+  { label: '게시글', path: '/wiki/string' },
 ];
 
   useEffect(() => {
@@ -82,7 +82,8 @@ const navItems = [
           {isLoggedIn ? (
             <>
               <Link className="footer-item-login" to="/mypage">
-                {currentUsername || 'My Page'}
+                <FiUser className="input-icon"/>
+                {'Mypage'}
               </Link>
               <p className="footer-item-login" onClick={handleLogout}>
                 Logout
