@@ -13,7 +13,7 @@ const USERNAME_KEY = 'username';
 function Header() {
   const [isSrchOpen, setIsSrchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [currentUsername, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
+  const [, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
   const isLoggedIn = Boolean(token);
   const navigate = useNavigate();
