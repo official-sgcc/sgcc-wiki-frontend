@@ -53,6 +53,99 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  aws-build:
+    name: Build AWS production bundle
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare AWS production environment
+        shell: bash
+        env:
+          FRONTEND_ENV_PRODUCTION: ${{ secrets.FRONTEND_ENV_PRODUCTION }}
+        run: |
+          if [ -z "$FRONTEND_ENV_PRODUCTION" ]; then
+            echo "FRONTEND_ENV_PRODUCTION is not configured."
+            exit 1
+          fi
+
+          printf '%s\n' "$FRONTEND_ENV_PRODUCTION" > .env.production
+
+          node --input-type=module <<'NODE'
+          import { loadEnv } from 'vite';
+
+          const apiBaseUrl = loadEnv('production', process.cwd(), '').VITE_API_BASE_URL;
+
+          if (!apiBaseUrl) {
+            console.error('VITE_API_BASE_URL is missing from FRONTEND_ENV_PRODUCTION.');
+            process.exit(1);
+          }
+
+          let parsedUrl;
+
+          try {
+            parsedUrl = new URL(apiBaseUrl);
+          } catch {
+            console.error('VITE_API_BASE_URL is not a valid absolute URL.');
+            process.exit(1);
+          }
+
+          if (
+            parsedUrl.protocol !== 'https:' ||
+            parsedUrl.username ||
+            parsedUrl.password ||
+            parsedUrl.search ||
+            parsedUrl.hash ||
+            ['localhost', '127.0.0.1'].includes(parsedUrl.hostname)
+          ) {
+            console.error('VITE_API_BASE_URL must be a production HTTPS URL.');
+            process.exit(1);
+          }
+          NODE
+
+      - name: Build AWS production bundle
+        run: npm run build
+
+      - name: Verify AWS production bundle
+        run: |
+          test -f dist/index.html
+          if grep -R -E "https?://(localhost|127\\.0\\.0\\.1)(:|/)" dist; then
+            echo "AWS production bundle contains a local URL."
+            exit 1
+          fi
+
+          api_base_url="$(
+            node --input-type=module -e \
+              "import { loadEnv } from 'vite'; process.stdout.write(loadEnv('production', process.cwd(), '').VITE_API_BASE_URL);"
+          )"
+
+          if ! grep -R -F -q -- "$api_base_url" dist; then
+            echo "AWS production bundle does not contain VITE_API_BASE_URL."
+            exit 1
+          fi
+
+      - name: Upload AWS production bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-dist-aws-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -125,7 +218,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=frontend-image
   deploy:
     name: Deploy to S3 + CloudFront
-    needs: build
+    needs: aws-build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -142,7 +235,7 @@ jobs:
       - name: Download production bundle
         uses: actions/download-artifact@v8
         with:
-          name: frontend-dist-${{ github.sha }}
+          name: frontend-dist-aws-${{ github.sha }}
           path: dist/
 
       - name: Configure AWS credentials
