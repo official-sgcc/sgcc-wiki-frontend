@@ -15,7 +15,10 @@ import "./Alert.css";
   onClose={() => {}}
   confirmText="확인"
   cancelText="취소"
-/>
+  closable={true}
+>
+  추가 내용
+</AlertModal>
 
 설명:
 - alert
@@ -37,6 +40,16 @@ props:
 - onClose      : 취소, ESC, 배경 클릭, X 버튼 클릭 시 실행
 - confirmText  : 확인 버튼 텍스트
 - cancelText   : 취소 버튼 텍스트
+- closable     : 모달 닫기 가능 여부
+- children     : 버튼 등 추가로 표시할 내용
+
+closable:
+- true
+  - 기존과 동일하게 ESC, 배경, X 버튼으로 닫을 수 있음
+- false
+  - ESC, 배경, X 버튼으로 닫을 수 없음
+  - alert / confirm의 확인 및 취소 버튼도 표시하지 않음
+  - 서버 장애 등 사용자가 임의로 닫으면 안 되는 상황에 사용
 
 개발 현황
 MUST
@@ -45,6 +58,7 @@ MUST
 - 완료 : Loading 모달
 - 완료 : ESC 닫기
 - 완료 : 배경 클릭 닫기(loading 제외)
+- 완료 : 닫기 가능 여부 제어
 
 SHOULD
 - 완료 : 색상 테마 지원(red / yellow / green)
@@ -65,12 +79,14 @@ export default function AlertModal({
   onClose = () => {},
   confirmText = "확인",
   cancelText = "취소",
+  closable = true,
+  children,
 }) {
   const isLoading = type === "loading";
   const isConfirm = type === "confirm";
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || !closable) return;
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") onClose();
@@ -81,15 +97,19 @@ export default function AlertModal({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isLoading, onClose]);
+  }, [isLoading, closable, onClose]);
 
-  if (!title && !content) return null;
+  if (!title && !content && !children) return null;
 
   return (
     <div
       className="alert-overlay"
       role="presentation"
-      onClick={isLoading ? undefined : onClose}
+      onClick={
+        isLoading || !closable
+          ? undefined
+          : onClose
+      }
     >
       <section
         className={`alert-modal alert-modal--${color} ${
@@ -99,7 +119,7 @@ export default function AlertModal({
         aria-modal="true"
         onClick={(event) => event.stopPropagation()}
       >
-        {!isLoading && (
+        {!isLoading && closable && (
           <button
             type="button"
             className="alert-close"
@@ -114,9 +134,15 @@ export default function AlertModal({
 
         <h2 className="alert-title">{title}</h2>
 
-        {content && <p className="alert-message">{content}</p>}
+        {content && (
+          <p className="alert-message">
+            {content}
+          </p>
+        )}
 
-        {!isLoading && (
+        {children}
+
+        {!isLoading && closable && (
           <div className="alert-buttons">
             {isConfirm && (
               <button
