@@ -123,3 +123,36 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           cache-from: type=gha,scope=frontend-image
           cache-to: type=gha,mode=max,scope=frontend-image
+  deploy:
+    name: Deploy to S3 + CloudFront
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download production bundle
+        uses: actions/download-artifact@v8
+        with:
+          name: frontend-dist-${{ github.sha }}
+          path: dist/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}/" --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"
