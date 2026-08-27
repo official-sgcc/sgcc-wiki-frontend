@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./AdminPage.css";
 import CategoryTreeEditor from "./CategoryTreeEditor";
-import { GetUserInfo } from "../../util/authapi";
+import { GetUserInfo } from "../../util/AuthApi";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../../ui/Alert";
 import TagManager from "./TagManager";
