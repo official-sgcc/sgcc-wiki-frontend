@@ -81,7 +81,7 @@
 }
 
 .docs-content blockquote {
-  border-left: 4px solid #ccc;
+  border-left: 4px solid var(--text-muted);
 
   margin: 1.5em 0;
   padding-left: 1em;

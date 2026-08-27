@@ -1,0 +1,429 @@
+.two-factor-page {
+  width: min(100%, 880px);
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+  box-sizing: border-box;
+  color: #292934;
+  text-align: left;
+}
+
+.two-factor__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 24px;
+  color: #555563;
+  font-size: 0.9rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.two-factor__back-link:hover {
+  color: #1b1b2e;
+}
+
+.two-factor__back-link:focus-visible,
+.two-factor__button:focus-visible,
+.two-factor__icon-button:focus-visible {
+  outline: 3px solid rgba(27, 27, 46, 0.22);
+  outline-offset: 3px;
+}
+
+.two-factor__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.two-factor__heading-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  place-items: center;
+  border-radius: 8px;
+  background-color: #1b1b2e;
+  color: #ffffff;
+  font-size: 1.35rem;
+}
+
+.two-factor__title {
+  margin: 0 0 6px;
+  color: #1b1b2e;
+  font-size: 1.7rem;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.two-factor__description,
+.two-factor__start p,
+.two-factor__step p,
+.two-factor__disable p,
+.two-factor__qr-caption {
+  color: #656572;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.two-factor__panel {
+  position: relative;
+  padding: 30px;
+  border: 1px solid #dedee5;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 28px rgba(28, 28, 43, 0.07);
+}
+
+.two-factor__panel--centered {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.two-factor__empty-icon {
+  margin-bottom: 14px;
+  color: #b45309;
+  font-size: 2rem;
+}
+
+.two-factor__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 4px 10px;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.two-factor__status.is-enabled {
+  border-color: #acd3bc;
+  background-color: #eef8f2;
+  color: #22633e;
+}
+
+.two-factor__status.is-disabled {
+  border-color: #e5c89d;
+  background-color: #fff8e8;
+  color: #8a4b08;
+}
+
+.two-factor__start,
+.two-factor__disable {
+  max-width: 560px;
+  margin-top: 28px;
+}
+
+.two-factor__start h2,
+.two-factor__step h2,
+.two-factor__disable h2 {
+  margin: 0 0 8px;
+  color: #242430;
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.two-factor__start .two-factor__button {
+  margin-top: 22px;
+}
+
+.two-factor__setup-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(300px, 1.2fr);
+  gap: 38px;
+  margin-top: 28px;
+}
+
+.two-factor__qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.two-factor__qr-frame {
+  display: grid;
+  width: 244px;
+  height: 244px;
+  max-width: 100%;
+  box-sizing: border-box;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #d9d9df;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.two-factor__qr-frame svg {
+  display: block;
+  width: 220px;
+  max-width: calc(100% - 24px);
+  height: auto;
+}
+
+.two-factor__qr-caption {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.two-factor__steps {
+  min-width: 0;
+}
+
+.two-factor__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.two-factor__step-number {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  place-items: center;
+  border-radius: 50%;
+  background-color: #e9edf6;
+  color: #253860;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.two-factor__secret {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 26px 38px;
+  padding: 10px 10px 10px 13px;
+  border: 1px solid #d9d9e0;
+  border-radius: 6px;
+  background-color: #f7f7f9;
+  color: #4a4a58;
+}
+
+.two-factor__secret code {
+  min-width: 0;
+  padding: 0;
+  overflow-wrap: anywhere;
+  background: transparent;
+  color: #1f2633;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.two-factor__icon-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid #cfcfd7;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #353543;
+  cursor: pointer;
+}
+
+.two-factor__icon-button:hover {
+  background-color: #ededf2;
+}
+
+.two-factor__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.two-factor__label {
+  display: block;
+  margin-bottom: 6px;
+  color: #32323e;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.two-factor__step .two-factor__label {
+  margin: 0 0 4px;
+}
+
+.two-factor__code-input {
+  width: 100%;
+  height: 50px;
+  margin: 14px 0;
+  padding: 0 16px;
+  box-sizing: border-box;
+  border: 1px solid #cfcfd8;
+  border-radius: 7px;
+  outline: none;
+  background-color: #fcfcfe;
+  color: #20202b;
+  font: 700 1.15rem/1 ui-monospace, Consolas, monospace;
+  letter-spacing: 0.18em;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.two-factor__code-input::placeholder {
+  color: #aaaab3;
+}
+
+.two-factor__code-input:focus {
+  border-color: #283a62;
+  box-shadow: 0 0 0 3px rgba(40, 58, 98, 0.14);
+}
+
+.two-factor__code-input:disabled {
+  cursor: not-allowed;
+  background-color: #eeeeF2;
+}
+
+.two-factor__button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 17px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.two-factor__button--primary {
+  background-color: #1b1b2e;
+  color: #ffffff;
+}
+
+.two-factor__button--primary:hover:not(:disabled) {
+  background-color: #30305a;
+}
+
+.two-factor__button--danger {
+  background-color: #ffffff;
+  border-color: #d9a6a6;
+  color: #9d2d2d;
+}
+
+.two-factor__button--danger:hover:not(:disabled) {
+  background-color: #fff0f0;
+  border-color: #c97e7e;
+}
+
+.two-factor__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.two-factor__disable .two-factor__label {
+  margin-top: 22px;
+}
+
+.two-factor__disable .two-factor__code-input {
+  max-width: 320px;
+  margin-top: 0;
+}
+
+.two-factor__message {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 20px;
+  padding: 11px 13px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.two-factor__message svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.two-factor__message--success {
+  border-color: #b9dcc8;
+  background-color: #eef8f2;
+  color: #22633e;
+}
+
+.two-factor__message--error {
+  border-color: #efc2c2;
+  background-color: #fff2f2;
+  color: #a12525;
+}
+
+.two-factor__loading {
+  padding: 80px 24px;
+  color: #60606d;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .two-factor-page {
+    padding: 28px 16px 48px;
+  }
+
+  .two-factor__panel {
+    padding: 22px 18px;
+  }
+
+  .two-factor__setup-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .two-factor__qr-frame {
+    width: min(244px, 100%);
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .two-factor__secret {
+    margin-left: 0;
+  }
+
+  .two-factor__button {
+    width: 100%;
+  }
+
+  .two-factor__disable .two-factor__code-input {
+    max-width: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .two-factor__header {
+    gap: 12px;
+  }
+
+  .two-factor__heading-icon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .two-factor__title {
+    font-size: 1.45rem;
+  }
+
+  .two-factor__secret {
+    grid-template-columns: minmax(0, 1fr) 36px;
+  }
+
+  .two-factor__secret > svg {
+    display: none;
+  }
+}

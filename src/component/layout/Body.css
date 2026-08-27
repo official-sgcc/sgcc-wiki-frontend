@@ -7,7 +7,8 @@
   flex-direction: column; 
   justify-content: center; /* 세로 중앙 정렬 */
   align-items: center;    /* 가로 중앙 정렬 */
-  min-height: 80vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
+  min-height: 70vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
+  overflow: hidden;
 }
 
 .body-container h1 {
@@ -48,17 +49,26 @@
 */
 
 .category-card {
+  background-color: var(--card-bg);
+  border-radius: 50px;
+  padding: 40px 40px;
+  width: 280px;
+  height: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px;             
-  box-sizing: border-box;
-  transition: transform 0.2s ease-in-out;
-  text-align: center;
-  cursor: pointer;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    0 16px 32px rgba(0, 0, 0, 0.12);
+}
 
 .character-wrapper {
   width: 250px;
@@ -72,45 +82,97 @@
 
 .category-img {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 200px;
+  height: 200px;
   object-fit: contain; /* 이미지 비율 유지 */
   z-index: 1;
 }
 
 .category-title {
-  color: rgb(150, 40, 40); 
+  color: rgb(0, 0, 0); 
   top: 10px;
   position: relative;
 }
 
 .category-card h3 {
   margin: 0;
-  padding-bottom: 5px;
+  padding-bottom: 12px;
   border-bottom: none;    
   font-size: 1.6rem;
+  transition: color 0.3s ease;
+}
+
+.category-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--accent-red);
+  transition: width 0.3s ease;
+}
+
+.category-card:hover h3 {
+  color: var(--accent-red); 
+} 
+
+.category-card:hover h3::after {
+  width: 40px;
 }
 
 .sub-list {
-  position: absolute;  
-  top: 15px;            
+  position: absolute;
+  bottom: 100%;
   left: 50%;
-  transform: translateX(-50%); 
-  
-  list-style: none;
+  transform: translateX(-50%);
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  min-width: 250px;
   padding: 0;
-  margin: 0;
-  z-index: 2;
+  list-style: none;
+  z-index: 20;
+  animation: fadeSlideUp 0.2s ease;
+}
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3px;            
-  width: 100%;
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.sub-list::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: #fff;
+}
+
+.sub-item-header {
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+.sub-item:last-child, .empty-category {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
 }
 
 .sub-item {
-  padding: 8px 0;
+  border: 2px solid var(--border);
+  text-align: left;
   cursor: pointer;
   font-size: 0.95rem;
 }
@@ -119,10 +181,59 @@
   color: rgb(4, 4, 76);
 }
 
+.empty-category {
+  color: var(--text-h);
+}
+
 .sub-link {
-  color: #c0bcbc;          
   text-decoration: none;   
   font-size: 0.95rem;
-  display: inline-block;
+  display: block;
+  padding: 14px 20px;
   transition: color 0.2s ease;
+  color: #000000;
+}
+
+.sub-item-header {
+  background: var(--accent-red);
+  color: var(--text-h);
+  font-weight: 700;
+  font-size: 1.0rem;
+  padding: 14px 20px;
+  border: 2px solid var(--border);
+  text-align: left;
+}
+
+.empty-category {
+  padding: 14px 20px;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: 1fr; 
+    gap: 40px;
+  }
+
+  .category-card {
+    width: 90%;
+    max-width: 300px;
+    height: auto; 
+    padding: 30px;
+  }
+
+  .character-wrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .category-img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .body-container {
+    padding-top: 15vh;
+    min-height: auto; 
+  }
 }

@@ -1,15 +1,15 @@
-:root{
-    --headerbgcolor: #e7e3e3;
-}
-
 .main-header{
-    background-color: var(--headerbgcolor);
+    background-color: var(--main-bg);
     position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 10vh;
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
@@ -18,11 +18,13 @@
   font-weight: 600;
   margin-left: 3vw;
   padding: 3px;
+  color: var(--text);
+  white-space: nowrap;
 }
 
 .header-rightside{
     flex: 1;
-    gap: 1vw;
+    gap: 0.1rem;
     display: flex;
     flex-direction: row;
     justify-content: right;
@@ -30,16 +32,33 @@
 }
 
 .loginbtn{
-    font-size: 1.1rem;
-    margin-right: 3vw;
-    margin-left: 15px;
-    color: #000000;
+    font-size: 0.8rem;
+    margin-right: 2vw;
+    margin-left: 10px;
     position: relative;
-    top: 4px;
+    top: 1px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 }
+
 .footer-item-login {
   cursor: pointer;
   font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--btn);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.footer-item-login .input-icon {
+  font-size: 1.1rem; 
+  color: inherit; 
 }
 
 .footer-item-login:hover {
@@ -54,7 +73,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--modal-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -63,12 +82,11 @@
 
 /* 로그인 모달 본체 */
 .login-modal-content {
-  background-color: white;
+  background-color: var(--bg);
   padding: 40px;
   border-radius: 12px;
   width: 330px;
   position: relative;
-  color: #fbf6f6;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
@@ -98,7 +116,7 @@
 
 /* 에러 메시지 스타일 */
 .error-message {
-  color: #d93025; 
+  color: var(--accent-red); 
   font-size: 0.85rem;
   margin-bottom: 15px;
   text-align: left;
@@ -109,8 +127,8 @@
   width: 90%;
   height: 40px;
   padding: 12px;
-  background-color: #1a1a5a;
-  color: white;
+  background-color: var(--primary-navy);
+  color: var(--text);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -119,7 +137,7 @@
 }
 
 .login-submit-btn:hover {
-  background-color: #2d2d7b;
+  background-color: var(--btn-hover);
 }
 
 /* 닫기 버튼 */
@@ -136,4 +154,84 @@
 
 .close-btn:hover {
   color: #333;
+}
+
+/* 네비게이션 메뉴 */
+.header-nav {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  white-space: nowrap;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.header-nav-item {
+  padding: 8px 18px;
+  border-radius: 20px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.header-nav-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--text);
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .header-nav {
+    display: flex; /* 숨기지 않고 다시 보이게 */
+    position: fixed;
+    top: 15vh; /* 헤더 높이 바로 아래 */
+    left: 0;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 0;
+    gap: 4px;
+    z-index: 999;
+
+    left: 0;
+    transform: none;
+  }
+
+  .header-nav-item {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .header-nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .header-nav-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-h);
+  }
+
+  .footer-item-login {
+    padding: 6px 10px;
+    font-size: 3.75rem;
+    gap: 4px;
+  }
+
+  .loginbtn {
+    margin-right: 4vw;
+    margin-left: 4px;
+  }
+
+  .header-rightside {
+    gap: 0.3rem;
+  }
 }

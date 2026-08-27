@@ -1,63 +1,68 @@
+import React from 'react'
+import { FiChevronRight } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import './EditList.css'
 
-function formatDate(dateString) {
-  if (!dateString) {
-    return '날짜미상'
+function formatEditDate(value) {
+  if (!value) {
+    return '날짜 정보 없음';
   }
 
-  const date = new Date(dateString)
+  const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return '날짜미상'
+    return value;
   }
 
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-
-  return `${year}-${month}-${day} ${hours}:${minutes}`
-}
-
-function getEditTitle(edit) {
-  return edit?.wiki_doc_title || edit?.title || edit?.documentTitle || '제목 없음'
+  return new Intl.DateTimeFormat('ko-KR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
 }
 
 function EditList({ edits = [] }) {
-  if (!Array.isArray(edits) || edits.length === 0) {
-    return (
-      <section className="editList">
-        <h2 className="editListTitle">편집 목록</h2>
-        <p className="editListEmpty">아직 편집 기록이 없습니다.</p>
-      </section>
-    )
+  if (!edits || edits.length === 0) {
+    return <div className="editListEmpty">편집 내역이 없습니다.</div>;
   }
 
   return (
-    <section className="editList">
-      <h2 className="editListTitle">편집 목록</h2>
-      <ul className="editListItems">
-        {edits.map((edit, index) => {
-          const title = getEditTitle(edit)
-          const versionNumber = edit?.version_number || edit?.versionNumber
+    <ul className="editListItems">
+      {edits.map((item, index) => {
+        const version = item.version_number ?? item.version ?? item.rev ?? index + 1;
+        const versionText = String(version);
+        const documentTitle = item.wiki_doc_title || item.title || item.docTitle || item.document_title;
+        const displayTitle = documentTitle || '문서 제목 없음';
+        const date = formatEditDate(
+          item.updated_at ?? item.date ?? item.createdAt ?? item.updatedAt,
+        );
+        const linkPath = documentTitle
+          ? `/wiki/detail/${encodeURIComponent(documentTitle)}`
+          : '#';
+        const itemKey = item.id ?? (
+          documentTitle
+            ? `${documentTitle}-${versionText}`
+            : `document-${index}`
+        );
 
-          return (
-            <li className="editListItem" key={`${title}-${versionNumber || index}`}>
-              <Link className="editListLink" to={`/wiki/detail/${title}`}>
-                {title}
-              </Link>
-              <div className="editListMeta">
-                {versionNumber && <span>v{versionNumber}</span>}
-                <span>{formatDate(edit?.updated_at || edit?.updatedAt)}</span>
+        return (
+          <li key={itemKey} className="editListItem">
+            <Link to={linkPath} className="editListLink">
+              <div className="editListLeft">
+                <span className="versionBadge">
+                  {versionText.startsWith('v') ? versionText : `v${versionText}`}
+                </span>
+                <div className="editListInfo">
+                  <span className="editListTitle">{displayTitle}</span>
+                  <span className="editListDate">{date}</span>
+                </div>
               </div>
-            </li>
-          )
-        })}
-      </ul>
-    </section>
-  )
+              <FiChevronRight className="editListArrow" />
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
-export default EditList
+export default EditList;

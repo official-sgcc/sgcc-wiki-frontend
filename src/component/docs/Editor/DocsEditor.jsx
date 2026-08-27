@@ -1,42 +1,53 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import SimpleMDE from "react-simplemde-editor"; //MD Editor
+import SimpleMDE from "react-simplemde-editor";
 import NotFound from "../../ui/NotFound";
-import { GetListOfCategories, GetTagList } from "../../util/TagCategoryAPI"; //태그 관련 API
-import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI"; //문서 API
+import { GetListOfCategories } from "../../util/TagCategoryAPI";
+import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI";
 import { flattenCategories } from "../../util/CategoryTree";
-import "./DocsEditor.css"; //css
-import "easymde/dist/easymde.min.css"; //mde css
+import "./DocsEditor.css";
+import "easymde/dist/easymde.min.css";
 
 /*
-
 목적: 문서 편집기
 
-사용법: navigate (with params).
-URL: 
-작성모드 - /wiki/edit
-수정모드 - /wiki/detail/:prevtitle/edit
-파라미터: 선택사항(수정 모드) - 문서 제목 prevtitle
+작성 모드
+- /wiki/edit
 
-설명: 문서 작성 및 수정용 페이지
+수정 모드
+- /wiki/detail/:prevtitle/edit
 
-개발 현황
-MUST: 완료 - 문서 편집
-SHOULD: 완료 - 문서 수정
-
+SubCategory에서 전달하는 기존 state 구조:
+navigate("/wiki/edit", {
+  state: {
+    category: { subcategory },
+  },
+});
 */
 
 function DocsEditor() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { prevtitle } = useParams();
+
+  const isEditMode = prevtitle !== undefined;
+
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [saving, setSaving] = useState(false);
+
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
+
   const [categories, setCategories] = useState([]);
+
+  const initialCategory = location.state?.category ?? "";
+  const [category, setCategory] = useState(initialCategory);
+
   const categoryOptions = useMemo(() => {
     return flattenCategories(categories);
   }, [categories]);
-  const location = useLocation();
+
   const mdeOptions = useMemo(
     () => ({
       spellChecker: false,
@@ -44,139 +55,120 @@ function DocsEditor() {
     [],
   );
 
-  const initialCategory = location.state?.category ?? "";
-  const { prevtitle } = useParams();
-
-  // console.log("DocsEditor Render");//debug 용
-
-  const isEditMode = prevtitle !== undefined;
-  const [category, setCategory] = useState(location.state?.category ?? "");
-  const navigate = useNavigate();
-
-  if (sessionStorage.getItem("token") == null) {
-    return <NotFound status={0} message="먼저 로그인을 해주세요" />;
-  }
-  //카테고리 리스트 받아오기
   useEffect(() => {
     async function loadCategories() {
       try {
         const response = await GetListOfCategories();
 
-        // console.log(response);
-
+        // 기존 카테고리 목록 로딩 방식 유지
         setCategories(response);
 
         const options = flattenCategories(response);
-        if (
-          location.state?.category &&
-          options.some((c) => c.name === location.state.category)
-        ) {
-          setCategory(location.state.category);
-        } else {
-          const firstLeaf = options.find((c) => c.isLeaf);
 
+        // SubCategory에서 전달받은 하위 카테고리가 실제 목록에 존재하면 선택
+        if (
+          initialCategory &&
+          options.some((item) => item.name === initialCategory)
+        ) {
+          setCategory(initialCategory);
+        } else {
+          // 전달된 카테고리가 없거나 유효하지 않다면 첫 leaf 카테고리 선택
+          const firstLeaf = options.find((item) => item.isLeaf);
           setCategory(firstLeaf?.name ?? "");
         }
       } catch (e) {
-        console.error(e);
-
+        console.error("카테고리 목록 조회 실패:", e);
         setCategories([]);
-
         setCategory("");
       }
     }
 
-    loadCategories();
-    //수정인 경우 이전 파일을 에디터에 띄우기 위한 용도
     async function init() {
-      if (isEditMode) {
+      if (!isEditMode) return;
+
+      try {
         const rtn = await GetDocsDetail(prevtitle);
 
         if (!rtn.ok) {
           if (
-            confirm("이전 문서를 불러오는데 실패했습니다. 다시 시도할까요?")
+            window.confirm(
+              "이전 문서를 불러오는데 실패했습니다. 다시 시도할까요?",
+            )
           ) {
             init();
           } else {
             navigate(-1);
           }
+
           return;
         }
 
-        setTitle(rtn.data.title);
-        setValue(rtn.data.content);
-
+        setTitle(rtn.data.title ?? "");
+        setValue(rtn.data.content ?? "");
         setTags(rtn.data.tags?.map((tag) => tag.name) ?? []);
-
         setCategory(rtn.data.category?.name ?? "");
+      } catch (e) {
+        console.error("기존 문서 조회 실패:", e);
+        alert("이전 문서를 불러오는 중 오류가 발생했습니다.");
+        navigate(-1);
       }
     }
 
+    loadCategories();
     init();
+
+    // 기존 코드 흐름처럼 최초 진입 시 1회만 로드
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   function addTag() {
     const trimmed = tagInput.trim();
 
     if (!trimmed) return;
 
-    // 중복 방지
     if (tags.includes(trimmed)) {
       setTagInput("");
       return;
     }
 
-    setTags([...tags, trimmed]);
+    setTags((prevTags) => [...prevTags, trimmed]);
     setTagInput("");
   }
 
   function removeTag(target) {
-    setTags(tags.filter((tag) => tag !== target));
+    setTags((prevTags) => prevTags.filter((tag) => tag !== target));
   }
+
   async function handleSubmit() {
     try {
       setSaving(true);
 
-      // 태그 존재 여부는 백단에서 처리하기로 합의
-      // //tag 리스트 item들 존재 여부
-      // const ServerTags = await GetTagList();
-      // const serverTagNames = ServerTags.map(
-      //   tag => tag.name
-      // );
-
-      // const missingTags = tags.filter(
-      //   tag => !serverTagNames.includes(tag)
-      // );
-      // // console.log(missingTags);
-
-      // if (missingTags.length > 0) {
-      //   alert(
-      //     `존재하지 않는 태그: ${missingTags.join(", ")}`
-      //   );
-      //   return;
-      // }
-
-      //현재 작성중인 태그가 있다면 자동 등록
-      const finalTags = [...tags];
-
-      const trimmed = tagInput.trim();
-
-      if (trimmed && !finalTags.includes(trimmed)) {
-        finalTags.push(trimmed);
+      if (!title.trim()) {
+        alert("문서 제목을 입력해주세요.");
+        return;
       }
 
-      //카테고리가 존재하지 않는 경우
-      // console.log(categories);
-      // console.log(category);
-      const leafCategories = categoryOptions.filter((c) => c.isLeaf);
+      // 태그 입력창에 남아 있는 값도 저장할 태그 목록에 포함
+      const finalTags = [...tags];
+      const trimmedTag = tagInput.trim();
+
+      if (trimmedTag && !finalTags.includes(trimmedTag)) {
+        finalTags.push(trimmedTag);
+      }
+
+      const leafCategories = categoryOptions.filter((item) => item.isLeaf);
 
       if (
         leafCategories.length === 0 ||
-        !leafCategories.some((c) => c.name === category)
+        !leafCategories.some((item) => item.name === category)
       ) {
         alert(`존재하지 않는 카테고리: ${category}`);
         return;
       }
-      const selectedCategory = categoryOptions.find((c) => c.name === category);
+
+      const selectedCategory = categoryOptions.find(
+        (item) => item.name === category,
+      );
 
       const categoryData = {
         name: selectedCategory.name,
@@ -185,17 +177,17 @@ function DocsEditor() {
             ? selectedCategory.path[selectedCategory.path.length - 2]
             : null,
       };
-      console.log(tags);
 
-      //문서 저장 및 수정
-      if (isEditMode) await ModifyDocs(title, value, tags, categoryData);
-      else await SubmitDocs(title, value, tags, categoryData);
+      if (isEditMode) {
+        await ModifyDocs(title.trim(), value, finalTags, categoryData);
+      } else {
+        await SubmitDocs(title.trim(), value, finalTags, categoryData);
+      }
 
-      navigate(`/wiki/detail/${title}`);
+      navigate(`/wiki/detail/${title.trim()}`);
     } catch (e) {
       if (e.response?.status === 401) {
         alert("문서 작성 권한이 없습니다.");
-        // console.error(e);
       } else {
         alert("문서 저장 중 오류가 발생했습니다.");
         console.error(e);
@@ -204,16 +196,19 @@ function DocsEditor() {
       setSaving(false);
     }
   }
-  if (saving) {
-    return (
-      //임시로 Notfound 재사용
-      <NotFound status={0} message="저장 중 . . ." />
-    );
+
+  if (sessionStorage.getItem("token") == null) {
+    return <NotFound status={0} message="먼저 로그인을 해주세요" />;
   }
+
+  if (saving) {
+    return <NotFound status={0} message="저장 중 . . ." />;
+  }
+
   return (
     <div className="editor-container">
       <div className="editor-category">
-        <label htmlFor="category-select">카테고리</label>
+        <label htmlFor="category-select" className="category-label">카테고리</label>
 
         <select
           id="category-select"
@@ -224,15 +219,16 @@ function DocsEditor() {
             <option value="">카테고리 없음</option>
           ) : (
             categoryOptions
-              .filter((c) => c.isLeaf)
-              .map((c) => (
-                <option key={c.name} value={c.name}>
-                  {c.path.join(" - ")}
+              .filter((item) => item.isLeaf)
+              .map((item) => (
+                <option key={item.name} value={item.name}>
+                  {item.path.join(" - ")}
                 </option>
               ))
           )}
         </select>
       </div>
+
       <div className="editor-topbar">
         <input
           type="text"
@@ -243,20 +239,31 @@ function DocsEditor() {
           readOnly={isEditMode}
         />
 
-        <button className="save-btn" onClick={handleSubmit}>
+        <button
+          type="button"
+          className="save-btn"
+          onClick={handleSubmit}
+          disabled={saving}
+        >
           저장
         </button>
       </div>
+
       <div data-color-mode="light">
         <SimpleMDE value={value} onChange={setValue} options={mdeOptions} />
       </div>
+
       <div className="editor-footer">
         <div className="tag-container">
           {tags.map((tag) => (
             <div key={tag} className="tag-chip">
               <span>#{tag}</span>
 
-              <button className="tag-remove-btn" onClick={() => removeTag(tag)}>
+              <button
+                type="button"
+                className="tag-remove-btn"
+                onClick={() => removeTag(tag)}
+              >
                 ×
               </button>
             </div>

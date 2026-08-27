@@ -1,29 +1,71 @@
 .inside {
-    align-content: center;
-    min-height: 0;
     height: calc(100vh - 10vh);
+    box-sizing: border-box;
     overflow-y: auto;
     scrollbar-width: thin;
 }
 
-.poster {
-    width: 90%;
-    margin: 0 5%;
+/* =========================
+   모집 기간 페이지: PC 레이아웃
+   왼쪽 포스터 / 오른쪽 터미널
+========================= */
+.welcome-layout {
+    width: min(1280px, 100%);
+    height: calc(100vh - 10vh);
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 72px);
+    box-sizing: border-box;
+    scrollbar-width: none;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+    align-items: center;
+    gap: clamp(32px, 6vw, 96px);
 }
 
+/* 포스터 영역 */
+.welcome-poster-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.poster {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100vh - 180px);
+    object-fit: contain;
+    border-radius: 16px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.35);
+}
+
+/* 터미널 + 버튼 영역 */
+.welcome-content-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+/* =========================
+   터미널 UI
+========================= */
 .text {
-    width: min(680px, calc(100% - 40px));
-    margin: 32px auto;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 0 28px;
     padding: 42px 28px 28px;
     position: relative;
+
     border: 1px solid rgba(117, 255, 198, 0.24);
-    border-radius: 12px;
+    border-radius: 18px;
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent),
         #0c1017;
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.28),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+
     box-sizing: border-box;
     color: #d8ffe8;
     font-family: Consolas, Monaco, 'Courier New', monospace;
@@ -80,5 +122,107 @@
 @keyframes terminal-cursor-blink {
     50% {
         opacity: 0;
+    }
+}
+
+/* =========================
+   지원 버튼
+========================= */
+.button {
+    border: 1px solid rgba(117, 255, 198, 0.2);
+    border-radius: 14px;
+    background-color: var(--main-bg);
+    color: var(--text);
+    cursor: pointer;
+
+    font-size: 18px;
+    font-weight: 600;
+    padding: 13px 30px;
+
+    transition:
+        background-color 300ms cubic-bezier(0.165, 0.84, 0.44, 1),
+        transform 200ms ease,
+        box-shadow 200ms ease;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--accent-red);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+/* =========================
+   모집 마감 페이지
+========================= */
+.closed-layout {
+    min-height: calc(100vh - 10vh);
+    padding: 24px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closed-layout .text {
+    margin: 0;
+}
+
+/* =========================
+   모바일 레이아웃
+   터미널/버튼 위 → 포스터 아래
+========================= */
+@media (max-width: 768px) {
+    .welcome-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 28px;
+        padding: 28px 20px 42px;
+        padding-top: 12vh;
+    }
+
+    /* JSX상 poster가 먼저 있어도 모바일에서는 아래로 이동 */
+    .welcome-content-area {
+        order: 1;
+        align-items: stretch;
+    }
+
+    .welcome-poster-area {
+        order: 2;
+    }
+
+    .text {
+        margin: 0 0 20px;
+        padding: 38px 22px 24px;
+        font-size: 1rem;
+    }
+
+    .button {
+        width: 100%;
+        padding: 14px 24px;
+    }
+
+    .poster {
+        width: 100%;
+        max-width: 440px;
+        max-height: none;
+        border-radius: 12px;
+    }
+}
+
+/* 작은 모바일 */
+@media (max-width: 390px) {
+    .welcome-layout {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .text {
+        padding: 36px 18px 22px;
+        font-size: 0.93rem;
     }
 }

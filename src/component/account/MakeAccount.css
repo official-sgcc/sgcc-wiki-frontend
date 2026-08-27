@@ -1,48 +1,69 @@
 .signup-title {
-  margin: 40px auto 30px;
-  color: rgb(4, 4, 76);
+  margin: 170px auto 30px;
+  color: var(--text-h);
   text-align: center;
+  font-weight: 700;
 }
 
 .signup-form {
-  width: min(350px, calc(100vw - 40px));
+  width: 500px;
   margin: 0 auto 40px;
-  padding: 40px;
-  border-radius: 12px;
+  padding: 40px 50px;
+  border-radius: 30px;
   background-color: #ffffff;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-.signup-id-input,
-.signup-pw-input {
+.signup-form .input-with-icon {
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #dddddd;
-  border-radius: 6px;
+  height: 60px;
+  padding: 0 18px;
+  margin-bottom: 25px;
+  background-color: #fcfcfe;
+  border: 1px solid #dfdfdf;
+  border-radius: 30px;
   box-sizing: border-box;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.signup-id-input:focus,
-.signup-pw-input:focus {
+.signup-form .input-with-icon:focus-within {
   outline: none;
   border-color: rgb(4, 4, 76);
   box-shadow: 0 0 5px rgba(4, 4, 76, 0.2);
 }
 
+.signup-form .input-icon {
+  color: #8a8a9a;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.signup-id-input,
+.signup-pw-input {
+  flex: 1;
+  height: 100%;
+  padding: 0 0 0 12px;
+  border: none;
+  outline: none;
+  background: none;
+  box-sizing: border-box;
+  font-size: 1.1rem;
+}
+
 .signup-submit-btn {
   width: 100%;
   padding: 12px;
-  background-color: rgb(4, 4, 76);
+  background-color: #1b1b2e;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  margin-top: 15px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
@@ -55,4 +76,42 @@
 .signup-submit-btn:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .signup-title {
+    margin: 100px auto 20px; 
+    font-size: 1.3rem;
+    padding: 0 20px;
+  }
+
+  .signup-form {
+    width: 90%; 
+    max-width: 400px;
+    margin: 0 auto 30px;
+    padding: 30px 24px;
+    border-radius: 24px;
+  }
+
+  .signup-form .input-with-icon {
+    height: 52px; 
+    padding: 0 14px;
+    margin-bottom: 18px;
+  }
+
+  .signup-form .input-icon {
+    font-size: 1.1rem;
+  }
+
+  .signup-id-input,
+  .signup-pw-input {
+    font-size: 1rem;
+    padding-left: 10px;
+  }
+
+  .signup-submit-btn {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
 }

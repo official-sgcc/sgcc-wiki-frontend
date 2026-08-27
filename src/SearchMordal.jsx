@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
+import { FiSearch } from 'react-icons/fi';
 
 const wikiData = {
   "subcategory1-1": [
@@ -19,7 +20,7 @@ function SearchModal({ onClose }) {
     const [keyword,setKeyword]=useState("");
     const navigate=useNavigate();
 
-    // useEffect(() => {
+    useEffect(() => {
     //     // 스크롤 막기
     //     document.body.style.overflow = "hidden";
 
@@ -27,7 +28,19 @@ function SearchModal({ onClose }) {
     //     return () => {
     //     document.body.style.overflow = "auto";
     //     };
-    // }, []);
+        const handleEscapeKey = (event) => {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        document.addEventListener('keydown', handleEscapeKey);
+
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, [onClose]);
+
     const handleKeyDown=(e)=>{//enter키 처리
         if(e.key=='Enter'){
             handleSearch();
@@ -69,16 +82,20 @@ function SearchModal({ onClose }) {
     return createPortal(
         <div className="modal_overlay" onClick={onClose}>
             <div className="mordal_content" onClick={(e) => e.stopPropagation()}>
+                <h2 className="srch-title">통합검색</h2>
                 <div className='srchbox'>
                     <input 
                         id='srchinput' 
+                        className='srchinput'
                         type="text" 
                         onChange={(e) => setKeyword(e.target.value)} 
                         placeholder='검색어를 입력하세요' 
                         onKeyDown={handleKeyDown}
                         autoFocus
                     />
-                    <button className='srchbtn' onClick={handleSearch} />
+                    <button className='modalSrchbtn' onClick={handleSearch}>
+                        <FiSearch />
+                    </button>
                 </div>
             </div>
         </div>,

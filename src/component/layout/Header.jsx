@@ -1,10 +1,11 @@
 import './Header.css'
 import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
 import WelcomeHeaderButton from '../page/welcome/WelcomeHeaderButton';
 import { isWelcomePeriod } from '../page/welcome/WelcomeTimeSet';
+import { FiUser, FiLock, FiSearch } from 'react-icons/fi';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -12,7 +13,7 @@ const USERNAME_KEY = 'username';
 function Header() {
   const [isSrchOpen, setIsSrchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [currentUsername, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
+  const [, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
   const isLoggedIn = Boolean(token);
   const navigate = useNavigate();
@@ -35,6 +36,13 @@ function Header() {
     navigate('/');
   };
 
+  const location = useLocation();
+
+const navItems = [
+  { label: '홈', path: '/' },
+  { label: '게시글', path: '/wiki/' },
+];
+
   useEffect(() => {
       // 스크롤 막기
       if(isLoginOpen||isSrchOpen){
@@ -54,14 +62,28 @@ function Header() {
       <div className="header-logo">
         <Link to={`/`}>SGCC Wiki</Link>
       </div>
+      <nav className="header-nav">
+        {navItems.map((item) => (
+        <Link
+          key={item.path}
+          to={item.path}
+          className={`header-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+        >
+          {item.label}
+        </Link>
+        ))}
+      </nav>
       <div className='header-rightside'>
         { showWelcomeButton && <WelcomeHeaderButton /> }
-        <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} />
+        <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} >
+          <FiSearch />
+        </button>
         <div className="loginbtn">
           {isLoggedIn ? (
             <>
               <Link className="footer-item-login" to="/mypage">
-                {currentUsername || 'My Page'}
+                <FiUser className="input-icon"/>
+                {'Mypage'}
               </Link>
               <p className="footer-item-login" onClick={handleLogout}>
                 Logout
@@ -74,6 +96,7 @@ function Header() {
                 setIsLoginOpen(true)
             }}
             >
+              <FiUser className="input-icon" />
               Login
             </p>
           )}
