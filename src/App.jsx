@@ -4,11 +4,11 @@ import Body from './component/layout/Body'
 import SubCategory from './component/layout/SubCategory'
 import GetDocs from './component/docs/DocsDetail/GetDocs'
 import NotFound from './component/ui/NotFound'
-import DocsEditor from './component/docs/editor/DocsEditor'
+import DocsEditor from './component/docs/Editor/DocsEditor'
 import MyPage from './component/account/MyPage'
 import UserPage from './component/account/UserPage'
 import MakeAccount from './component/account/MakeAccount'
-import TagList from './component/docs/tagview/TagList'
+import TagList from './component/docs/Tagview/TagList'
 import WelcomePage from './component/page/welcome/WelcomePage'
 import AdminPage from './component/page/admin/AdminPage'
 import ForgotPassword from './component/account/ResetPWD/ForgotPassword'
@@ -17,7 +17,7 @@ import ResetPassword from './component/account/ResetPWD/ResetPassword'
 import TwoFactor from './component/account/TwoFactor'
 import EditProfile from "./component/account/EditProfile";
 import AlertModal from './component/ui/Alert'
-import { CheckHealth } from './component/util/authapi' // health check api
+import { CheckHealth } from './component/util/AuthAPI' // health check api
 import { useState, useEffect } from 'react'
 
 function App() {
