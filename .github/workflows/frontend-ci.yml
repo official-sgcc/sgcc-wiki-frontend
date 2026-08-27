@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: frontend-ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
@@ -128,7 +128,11 @@ jobs:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+
+    concurrency:
+      group: aws-frontend-production
+      cancel-in-progress: false
 
     permissions:
       contents: read
@@ -146,13 +150,56 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
+          allowed-account-ids: "567886497655"
 
-      - name: Deploy to S3
+      - name: Deploy versioned assets to S3
         run: |
-          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}/" --delete
+          aws s3 sync dist/assets/ "s3://${{ vars.S3_BUCKET }}/assets/" \
+            --cache-control "public,max-age=31536000,immutable" \
+            --only-show-errors
 
-      - name: Invalidate CloudFront cache
+      - name: Deploy other static files to S3
         run: |
-          aws cloudfront create-invalidation \
+          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}/" \
+            --delete \
+            --exclude "assets/*" \
+            --exclude "index.html" \
+            --cache-control "public,max-age=0,must-revalidate" \
+            --only-show-errors
+
+      - name: Deploy index to S3
+        run: |
+          aws s3 cp dist/index.html "s3://${{ vars.S3_BUCKET }}/index.html" \
+            --content-type "text/html" \
+            --cache-control "no-cache,max-age=0,must-revalidate" \
+            --only-show-errors
+
+      - name: Invalidate and wait for CloudFront
+        shell: bash
+        run: |
+          invalidation_id="$(
+            aws cloudfront create-invalidation \
+              --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+              --paths "/*" \
+              --query "Invalidation.Id" \
+              --output text
+          )"
+
+          aws cloudfront wait invalidation-completed \
             --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
-            --paths "/*"
+            --id "$invalidation_id"
+
+      - name: Verify deployed frontend
+        shell: bash
+        run: |
+          curl --fail --silent --show-error \
+            --retry 5 \
+            --retry-delay 2 \
+            --retry-all-errors \
+            "https://${{ vars.CLOUDFRONT_DOMAIN }}/" \
+            --output deployed-index.html
+
+          if ! cmp --silent dist/index.html deployed-index.html; then
+            echo "CloudFront did not return the deployed index.html."
+            exit 1
+          fi
