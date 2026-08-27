@@ -2,6 +2,7 @@ import api from "../../backend/axios"
 
 // Health Check
 const HEALTH_CHECK_KEY = "health_checked_at";
+const HEALTH_CHECK_INTERVAL = 2 * 60 * 1000; // 2분
 // - 최근 2분 이내에 성공한 헬스체크가 있다면 요청하지 않는다.
 // - 2분이 지났거나 기록이 없다면 /healthz를 호출한다.
 // - 정상 응답을 받은 경우 마지막 확인 시각을 sessionStorage에 저장한다.
@@ -12,6 +13,7 @@ const HEALTH_CHECK_KEY = "health_checked_at";
 // - 탭을 종료하면 기록이 사라져 다음 접속 시 다시 확인한다.
 export async function CheckHealth() {
   const lastChecked = sessionStorage.getItem(HEALTH_CHECK_KEY);
+  const now = Date.now();
 
   if (lastChecked) {
     const elapsed = now - Number(lastChecked);

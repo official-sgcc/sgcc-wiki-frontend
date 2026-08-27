@@ -50,7 +50,7 @@ function App() {
         );
 
         setHealthStatus("ok");
-      } catch (error) {
+      } catch {
         // 서버가 죽었거나 DB 연결에 실패한 경우
         setHealthStatus("error");
       }

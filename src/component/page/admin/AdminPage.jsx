@@ -75,7 +75,7 @@ export default function AdminPage() {
         setHasPermission(true);
         setCheckingPermission(false);
 
-      } catch (e) {
+      } catch {
         setAlert({
           open: true,
           type: "alert",
