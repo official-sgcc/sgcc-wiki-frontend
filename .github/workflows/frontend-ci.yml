@@ -105,7 +105,6 @@ jobs:
           }
 
           if (
-            parsedUrl.protocol !== 'https:' ||
             parsedUrl.username ||
             parsedUrl.password ||
             parsedUrl.search ||
