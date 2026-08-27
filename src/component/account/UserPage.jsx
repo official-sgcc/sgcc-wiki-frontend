@@ -9,6 +9,18 @@ import ShowPanel from './ShowPanel.jsx'
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
 
+function getEditList(data) {
+  if (Array.isArray(data?.edit_versions)) {
+    return data.edit_versions;
+  }
+
+  if (Array.isArray(data?.editList)) {
+    return data.editList;
+  }
+
+  return [];
+}
+
 function UserPage() {
   const token = sessionStorage.getItem(TOKEN_KEY);
   const myusername = sessionStorage.getItem(USERNAME_KEY);
@@ -23,14 +35,18 @@ function UserPage() {
       return;
     }
 
+    const controller = new AbortController();
+
     async function fetchUser() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const response = await api.get(`/users/${userID}`);
+        const response = await api.get(`/users/${encodeURIComponent(userID)}`, {signal: controller.signal});
+
         setUser(response.data);
-        setEditList(response.data?.editList || response.data?.edit_versions || []);
+        setEditList(getEditList(response.data));
       } catch (error) {
+        if (controller.signal.aborted) { return; }
         const status = error.response?.status;
         if (status === 404) {
           setErrorMessage('사용자 정보를 찾을 수 없습니다.');
@@ -40,11 +56,15 @@ function UserPage() {
           setErrorMessage('사용자 정보를 불러오지 못했습니다.');
         }
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }
 
     fetchUser();
+
+    return () => controller.abort();
   }, [token, myusername, userID]);
 
   if (!token || !myusername) {
