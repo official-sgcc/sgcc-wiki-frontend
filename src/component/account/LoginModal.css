@@ -192,3 +192,16 @@
   cursor: not-allowed;
   background-color: #eeeeF2;
 }
+
+/* 비밀번호 재설정 링크 스타일 */
+.reset-password-link-btn {
+  color: #666;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.reset-password-link-btn:hover {
+  color: #000;
+  text-decoration: underline;
+}

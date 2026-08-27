@@ -40,7 +40,7 @@ function Header() {
 
 const navItems = [
   { label: '홈', path: '/' },
-  { label: '게시글', path: '/wiki/string' },
+  { label: '게시글', path: '/wiki/' },
 ];
 
   useEffect(() => {

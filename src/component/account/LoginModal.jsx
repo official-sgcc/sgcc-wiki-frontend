@@ -135,6 +135,9 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
         <Link className="signup-link-btn" to="/signup" onClick={onClose}>
           회원가입
         </Link>
+          <Link className="reset-password-link-btn" to="/forgot-password" onClick={onClose}>
+            비밀번호를 잊으셨나요?
+          </Link>
       </form>
       {isMfaChallengeNow && <form onSubmit={handleMfaChallenge}>
         <div className='mfa-notice'>
