@@ -174,7 +174,7 @@ export default function CategoryTreeEditor() {
   const [newName, setNewName] = useState("");
   const [parent, setParent] = useState("");
 
-  const [rename, setRename] = useState("");
+  const [, setRename] = useState("");
   const [moveParent, setMoveParent] = useState("");
 
   const [docsCount, setDocsCount] = useState(0);
@@ -199,6 +199,7 @@ export default function CategoryTreeEditor() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadTree();
   }, []);
 
@@ -221,28 +222,28 @@ export default function CategoryTreeEditor() {
     }
   }
 
-  //기능 미지원
-  async function handleRename() {
-    // if (!selected) return;
-    // try {
-    //     await UpdateCategory(
-    //         selected.name,
-    //         rename,
-    //         ""
-    //     );
-    //     await loadTree();
-    //     setSelected({
-    //         ...selected,
-    //         name: rename,
-    //     });
-    // } catch (e) {
-    //     console.error(e);
-    //     alert("이름 변경 실패");
-    // }
-  }
+  // // 기능 미지원
+  // async function handleRename() {
+  //   if (!selected) return;
+  //   try {
+  //       await UpdateCategory(
+  //           selected.name,
+  //           rename,
+  //           ""
+  //       );
+  //       await loadTree();
+  //       setSelected({
+  //           ...selected,
+  //           name: rename,
+  //       });
+  //   } catch (e) {
+  //       console.error(e);
+  //       alert("이름 변경 실패");
+  //   }
+  // }
 
   const allCategories = flattenCategories(tree);
-  const selectedInfo = allCategories.find((c) => c.name === selected?.name);
+  // const selectedInfo = allCategories.find((c) => c.name === selected?.name);
 
   async function handleCreate() {
     if (!newName.trim()) return;
