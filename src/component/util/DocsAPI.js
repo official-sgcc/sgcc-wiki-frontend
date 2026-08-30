@@ -79,7 +79,21 @@ export async function GetDocsDetail(title) {
       status: e.response.status, 
     }; 
   } 
-} 
+}
+
+export async function SearchDocs(keyword, searchType = "title_content", limit, offset) {
+  const params = {
+    keyword: keyword.trim(),
+    search_type: searchType,
+  };
+
+  if (limit !== undefined && limit !== null) params.limit = limit;
+  if (offset !== undefined && offset !== null) params.offset = offset;
+
+  const response = await api.get("/search", { params });
+  return response.data;
+}
+
 export async function DeleteDocs(title){ 
   try { 
     const response = await api.delete( 
