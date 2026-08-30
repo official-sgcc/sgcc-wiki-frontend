@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiChevronRight,
@@ -70,6 +70,7 @@ export default function DocsList({
   editFunc = null,
   category = null,
   heading = "전체 게시글",
+  breadcrumbItems = [],
   showSearch = true,
   showWriteButton = false,
 }) {
@@ -175,8 +176,14 @@ export default function DocsList({
     <section className="docs-list">
       <div className="docs-list__breadcrumb" aria-label="현재 위치">
         <span>홈</span>
-        <FiChevronRight aria-hidden="true" />
-        <strong>{heading}</strong>
+        {(breadcrumbItems.length ? breadcrumbItems : [heading]).map((item, index) => (
+          <Fragment key={`${item}-${index}`}>
+            <FiChevronRight aria-hidden="true" />
+            <span className={index === (breadcrumbItems.length || 1) - 1 ? "is-current" : ""}>
+              {item}
+            </span>
+          </Fragment>
+        ))}
       </div>
 
       <header className="docs-list__header">

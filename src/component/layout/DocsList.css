@@ -1,5 +1,5 @@
 .docs-list {
-  width: min(100%, 62rem);
+  width: min(100%, var(--content-width));
   margin: 0 auto;
   padding: clamp(1.5rem, 4vw, 2.5rem) var(--content-gutter) 4rem;
   box-sizing: border-box;
@@ -20,7 +20,7 @@
   height: 0.9rem;
 }
 
-.docs-list__breadcrumb strong {
+.docs-list__breadcrumb .is-current {
   color: #1a1a2e;
   font-weight: 600;
 }

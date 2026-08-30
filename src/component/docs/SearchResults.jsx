@@ -31,6 +31,7 @@ export default function SearchResults() {
     <DocsList
       getDocsList={getSearchResults}
       heading={`검색 결과: ${keyword}`}
+      breadcrumbItems={["검색", `검색 결과: ${keyword}`]}
       showSearch={false}
       showWriteButton={false}
     />

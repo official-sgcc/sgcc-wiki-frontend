@@ -19,6 +19,7 @@
   --header-height: clamp(3.75rem, 7vw, 4.75rem);
   --welcome-banner-height: clamp(2.5rem, 7vw, 3rem);
   --content-gutter: clamp(1rem, 4vw, 3rem);
+  --content-width: 62rem;
   --panel-radius: clamp(0.75rem, 1.5vw, 1.25rem);
 
   --sans: 'Pretendard', system-ui, 'Segoe UI', Roboto, sans-serif;

@@ -5,7 +5,9 @@ import NotFound from "../ui/NotFound";
 import {
   GetDocsFromCategory,
   GetCategory,
+  GetListOfCategories,
 } from "../util/TagCategoryAPI";
+import { flattenCategories } from "../util/CategoryTree";
 
 /*
  * SubCategory
@@ -19,13 +21,22 @@ import {
 function SubCategory() {
   const { subcategory } = useParams();
   const [categoryExists, setCategoryExists] = useState(null);
+  const [categoryPath, setCategoryPath] = useState([]);
 
   // 카테고리 존재 여부 확인
   useEffect(() => {
     const checkCategory = async () => {
-      const category = await GetCategory(subcategory);
+      const [category, categories] = await Promise.all([
+        GetCategory(subcategory),
+        GetListOfCategories(),
+      ]);
 
       setCategoryExists(category !== null);
+
+      const matchedCategory = flattenCategories(categories ?? []).find(
+        (item) => item.name === subcategory,
+      );
+      setCategoryPath(matchedCategory?.path ?? [subcategory]);
     };
 
     checkCategory();
@@ -48,28 +59,12 @@ function SubCategory() {
   }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <h2
-        style={{
-          textAlign: "left",
-          fontSize: "1.5rem",
-          marginBottom: "30px",
-          color: "#333",
-          fontWeight: "bold",
-        }}
-      >
-        {subcategory?.toUpperCase()}
-      </h2>
-
+    <div style={{ width: "100%", boxSizing: "border-box" }}>
       <DocsList
         getDocsList={getDocsList}
         category={subcategory}
+        heading={subcategory}
+        breadcrumbItems={categoryPath}
         showWriteButton={true}
       />
     </div>
