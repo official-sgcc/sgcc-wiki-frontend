@@ -98,8 +98,7 @@ function DiagramNode({ item, selected, onSelect, onPortPointerDown }) {
           onPointerDown={(event) => onPortPointerDown(event, item.node.name)}
         />
       )}
-      <div className="diagram-node__depth">level {item.depth}</div>
-      <strong>{item.node.name}</strong>
+      <strong className="diagram-node__name">{item.node.name}</strong>
       <span>{item.node.children?.length ?? 0} children</span>
       <span className="diagram-port diagram-port--output" aria-hidden="true" />
     </div>

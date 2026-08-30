@@ -86,9 +86,9 @@ export async function CreateCategory(name, parent = null) {
 export async function UpdateCategory( 
   originalName, 
   newName = "", 
-  newParent = "" 
+  newParent = undefined
 ) { 
-  if (!newName && !newParent) { 
+  if (!newName && newParent === undefined) {
     throw new Error("변경할 내용이 없습니다."); 
   } 
  
@@ -100,7 +100,7 @@ export async function UpdateCategory(
   } 
  
   // 부모 변경 
-  if (newParent !== "") { 
+  if (newParent !== undefined) {
     body.parent = newParent; 
   } 
  
