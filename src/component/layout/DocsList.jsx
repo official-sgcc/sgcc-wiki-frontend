@@ -195,7 +195,13 @@ export default function DocsList({
           </p>
         </div>
 
-        <div className="docs-list__actions">
+        <div
+          className={`docs-list__actions ${
+            showSearch && !showWriteButton
+              ? "docs-list__actions--search-only"
+              : ""
+          }`}
+        >
           {showSearch && (
             <label className="docs-list__search-wrap">
               <FiSearch aria-hidden="true" />

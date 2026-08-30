@@ -6,7 +6,9 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
-import { DeleteDocs, GetDocsDetail,formatDate } from "../../util/DocsAPI";// 문서 관련 api
+import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
+import { GetListOfCategories } from "../../util/TagCategoryAPI";
+import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
 
 function normalizeMarkdown(content) {
@@ -41,6 +43,7 @@ function GetDocs() {
   const { title } = useParams();
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
+  const [categoryPath, setCategoryPath] = useState([]);
   const [authState, setAuthState] = useState(() => ({
     token: sessionStorage.getItem("token"),
     username: sessionStorage.getItem("username"),
@@ -65,6 +68,18 @@ function GetDocs() {
       setLoding(true);
       const data = await GetDocsDetail(title);
       setDoc(data);
+
+      const categoryName = data.data?.category?.name;
+      if (data.ok && categoryName) {
+        const categories = await GetListOfCategories();
+        const matchedCategory = flattenCategories(categories ?? []).find(
+          (category) => category.name === categoryName,
+        );
+        setCategoryPath(matchedCategory?.path ?? [categoryName]);
+      } else {
+        setCategoryPath([]);
+      }
+
       setLoding(false);
     }
     fetchDoc();
@@ -120,6 +135,48 @@ function GetDocs() {
   return (
     <article className="docs-container">
       <header className="docs-header">
+        {categoryPath.length > 0 && (
+          <nav className="docs-category-breadcrumb" aria-label="문서 카테고리 경로">
+            <button
+              type="button"
+              className="docs-category-breadcrumb__link"
+              onClick={() => navigate("/")}
+            >
+              홈
+            </button>
+
+            {categoryPath.map((categoryName, index) => {
+              const isCurrent = index === categoryPath.length - 1;
+
+              return (
+                <span
+                  className={`docs-category-breadcrumb__item ${
+                    isCurrent ? "is-current" : "is-intermediate"
+                  }`}
+                  key={`${categoryName}-${index}`}
+                >
+                  <span className="docs-category-breadcrumb__separator" aria-hidden="true">
+                    &gt;
+                  </span>
+                  {isCurrent ? (
+                    <button
+                      type="button"
+                      className="docs-category-breadcrumb__link"
+                      onClick={() =>
+                        navigate(`/wiki/${encodeURIComponent(categoryName)}`)
+                      }
+                    >
+                      {categoryName}
+                    </button>
+                  ) : (
+                    <span className="docs-category-breadcrumb__text">{categoryName}</span>
+                  )}
+                </span>
+              );
+            })}
+          </nav>
+        )}
+
         <div className="docs-header-top">
           <h1 className="docs-title">{doc.data.title}</h1>
 
