@@ -2,10 +2,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";//MD viewer
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
 import { DeleteDocs, GetDocsDetail,formatDate } from "../../util/DocsAPI";// 문서 관련 api
 import "./GetDocs.css";
+
+function normalizeMarkdown(content) {
+  if (typeof content !== "string") return "";
+
+  const fencedDocument = content.match(
+    /^\s*```(?:markdown|md)?\s*\n([\s\S]*?)\n```\s*$/i,
+  );
+
+  return fencedDocument ? fencedDocument[1] : content;
+}
 
 /*
 
@@ -136,7 +148,12 @@ function GetDocs() {
       </header>
 
       <section className="docs-content">
-        <ReactMarkdown>{doc.data.content}</ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+        >
+          {normalizeMarkdown(doc.data.content)}
+        </ReactMarkdown>
       </section>
 
     </article>

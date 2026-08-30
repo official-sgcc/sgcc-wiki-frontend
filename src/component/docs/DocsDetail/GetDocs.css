@@ -157,6 +157,18 @@
   text-underline-offset: 0.15rem;
 }
 
+.docs-content [align="left"] {
+  text-align: left;
+}
+
+.docs-content [align="center"] {
+  text-align: center;
+}
+
+.docs-content [align="right"] {
+  text-align: right;
+}
+
 .docs-content img {
   display: block;
   max-width: 100%;

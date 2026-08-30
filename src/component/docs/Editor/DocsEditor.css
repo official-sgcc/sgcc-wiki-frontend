@@ -185,7 +185,22 @@
 /* ===== markdown preview ===== */
 
 .markdown-body {
-  font-family: sans-serif;
+  font-family: var(--sans);
+}
+
+.editor-preview [align="left"],
+.editor-preview-side [align="left"] {
+  text-align: left;
+}
+
+.editor-preview [align="center"],
+.editor-preview-side [align="center"] {
+  text-align: center;
+}
+
+.editor-preview [align="right"],
+.editor-preview-side [align="right"] {
+  text-align: right;
 }
 
 /* ===== 모바일 대응 ===== */
