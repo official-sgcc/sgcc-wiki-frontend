@@ -1,137 +1,77 @@
 .tag-manager {
-    display: flex;
-    flex-direction: column;
-
-    width: 100%;
-    height: 100%;
-
-    padding: 15px;
-
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  box-sizing: border-box;
 }
 
 .tag-panel {
-    display: flex;
-    flex-direction: column;
-
-    flex: 1;
-
-    padding: 20px;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-
-    background: #ffffff;
-
-    overflow-y: auto;
-
-    box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 0.0625rem solid #e5e7eb;
+  border-radius: var(--panel-radius);
+  background: #ffffff;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .tag-panel h2 {
-    margin: 0 0 20px;
-
-    font-size: 20px;
+  margin: 0 0 1.25rem;
+  color: #202336;
+  font-size: clamp(1.1rem, 2vw, 1.25rem);
+  text-align: left;
 }
 
-/* =========================
-   Tag List
-========================= */
-
-.tag-list {
-    display: flex;
-    flex-direction: column;
-
-    gap: 10px;
-}
+.tag-list { display: flex; flex-direction: column; gap: 0.625rem; }
 
 .tag-item {
-    display: flex;
-
-    justify-content: space-between;
-    align-items: center;
-
-    min-height: 48px;
-
-    padding: 0 16px;
-    gap: 20px;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-
-    background: #fff;
-
-    transition: background .15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border: 0.0625rem solid #e5e7eb;
+  border-radius: 0.6rem;
+  background: #ffffff;
+  transition: background 0.15s ease;
 }
 
-.tag-item:hover {
-    background: #f9fafb;
-}
+.tag-item:hover { background: #f9fafb; }
 
 .tag-name {
-    font-size: 15px;
-    font-weight: 500;
-
-    color: #111827;
+  min-width: 0;
+  overflow: hidden;
+  color: #111827;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
-/* =========================
-   Buttons
-========================= */
 
 .delete-button {
-    height: 36px;
-
-    padding: 0 16px;
-
-    border: 1px solid #ef4444;
-    border-radius: 6px;
-
-    background: #fff;
-
-    color: #ef4444;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        background .15s,
-        color .15s;
+  min-height: 2.25rem;
+  flex: 0 0 auto;
+  padding: 0.4rem 1rem;
+  border: 0.0625rem solid #ef4444;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.delete-button:hover {
-    background: #ef4444;
-    color: #fff;
-}
+.delete-button:hover { background: #ef4444; color: #ffffff; }
 
-/* =========================
-   Empty
-========================= */
+.tag-empty { padding: 2.5rem 0; color: #6b7280; font-size: 0.9rem; text-align: center; }
 
-.tag-empty {
-    padding: 40px 0;
-
-    text-align: center;
-
-    color: #6b7280;
-
-    font-size: 15px;
-}
-
-/* =========================
-   Responsive
-========================= */
-
-@media (max-width: 900px) {
-
-    .tag-manager {
-        padding: 16px;
-    }
-
-    .tag-panel {
-        padding: 16px;
-    }
-
+@media (max-width: 30rem) {
+  .tag-manager { padding: 0.75rem 0; }
+  .tag-item { align-items: stretch; flex-direction: column; }
+  .delete-button { width: 100%; }
 }

@@ -1,201 +1,134 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  GetListOfCategories,
   CreateCategory,
   DeleteCategory,
-  UpdateCategory,
   GetDocsFromCategory,
+  GetListOfCategories,
+  UpdateCategory,
 } from "../../util/TagCategoryAPI";
-import "./CategoryTreeEditor.css";
-import { flattenCategories } from "../../util/CategoryTree";
 import { useNavigate } from "react-router-dom";
+import "./CategoryTreeEditor.css";
+
+const NODE_STEP_X = 13;
+const NODE_STEP_Y = 9;
+const NODE_WIDTH = 11;
+const NODE_HEIGHT = 4.5;
+const ROOT_KEY = "__root__";
 
 /*
-  목적: 관리자용 카테고리 트리 편집 컴포넌트
+  목적: 관리자용 카테고리 트리 도식도
 
   사용법:
   <CategoryTreeEditor />
 
-  사용 위치:
-  - AdminPage 내부의 카테고리 관리 탭
-  - 관리자 권한 검증이 완료된 이후에만 렌더링할 것
-
-  제공 기능:
-  - 전체 카테고리를 트리 구조로 조회
-  - 카테고리의 하위 항목 펼치기/접기
-  - 특정 카테고리 선택 및 상세 정보 확인
-  - 새 카테고리 생성
-  - 선택한 카테고리의 부모 카테고리 변경
-  - 선택한 카테고리 삭제
-  - 선택한 카테고리에 속한 문서 개수 조회
-  - 문서 개수 클릭 시 해당 카테고리의 문서 목록 페이지로 이동
-
-  트리 구조:
-  - Root는 실제 API의 카테고리가 아닌 최상위 가상 노드
-  - 부모 카테고리가 없는 카테고리는 Root 하위에 표시
-  - 자식 카테고리가 존재하면 폴더 아이콘(📂) 표시
-  - 자식 카테고리가 없으면 문서 아이콘(📄) 표시
-  - 화살표 버튼을 눌러 하위 카테고리를 펼치거나 접을 수 있음
-
-  상태 관리:
-  - tree:
-    API에서 조회한 카테고리 트리 데이터
-
-  - selected:
-    현재 선택한 카테고리 노드
-    Root를 선택하면 null
-
-  - newName:
-    새로 생성할 카테고리 이름 입력값
-
-  - parent:
-    새 카테고리를 생성할 때 선택한 부모 카테고리 이름
-    빈 문자열이면 Root(null) 아래에 생성
-
-  - rename:
-    이름 변경 기능을 위한 상태
-    현재 백엔드/API 기능 미지원으로 사용하지 않음
-
-  - moveParent:
-    선택한 카테고리를 이동할 새 부모 카테고리 이름
-    빈 문자열이면 Root(null)로 이동
-
-  - docsCount:
-    현재 선택한 카테고리에 등록된 문서 개수
-
-  주요 함수:
-  - loadTree():
-    전체 카테고리 트리를 API에서 다시 조회하고 tree 상태를 갱신
-
-  - loadDocsCount(selectedName):
-    선택된 카테고리의 문서 목록을 조회한 뒤
-    응답 배열의 length를 이용하여 문서 개수를 계산
-
-  - handleCreate():
-    입력한 이름과 부모 카테고리를 기준으로 새 카테고리 생성
-    생성 성공 후 트리를 다시 조회하여 화면 갱신
-
-  - handleMoveParent():
-    선택한 카테고리의 부모를 moveParent로 변경
-    moveParent가 빈 문자열이면 부모를 null로 설정하여 Root로 이동
-    변경 성공 후 트리를 다시 조회하여 화면 갱신
-
-  - handleDelete():
-    선택한 카테고리를 삭제
-    삭제 전 브라우저 confirm으로 사용자 확인 수행
-    삭제 성공 후 선택 상태를 초기화하고 트리를 다시 조회
-
-  - handleRename():
-    카테고리 이름 변경을 위한 함수
-    현재 API 또는 정책상 기능 미지원 상태로 실제 동작하지 않음
-
-  주의사항:
-  - 카테고리 이름을 식별자로 사용하고 있으므로 이름 중복이 없어야 함
-  - TreeNode의 key도 node.name을 사용하므로 카테고리 이름은 고유해야 함
-  - 현재 문서 개수는 GetDocsFromCategory로 전체 문서를 요청한 뒤 length를 계산함
-  - 특정 카테고리의 문서가 많아지면 문서 개수 조회 비용이 커질 수 있음
-  - 장기적으로는 API가 문서 개수(count)를 직접 반환하도록 개선하는 것을 권장
-  - 부모 변경 시 자신의 하위 카테고리를 부모로 선택하면 순환 구조가 생길 수 있음
-  - 현재는 자기 자신만 부모 선택 목록에서 제외하므로,
-    추후 자식/하위 자손 카테고리도 부모 후보에서 제외하는 검증이 필요함
-  - 삭제 시 하위 카테고리 및 연결된 문서가 어떻게 처리되는지는
-    백엔드 DeleteCategory 정책을 반드시 확인해야 함
-
-  개발 현황:
-  MUST: 완료 - 전체 카테고리 트리 조회
-  MUST: 완료 - 카테고리 트리 펼치기/접기
-  MUST: 완료 - 카테고리 선택 및 상세 정보 표시
-  MUST: 완료 - 새 카테고리 생성
-  MUST: 완료 - 카테고리 부모 변경
-  MUST: 완료 - 카테고리 삭제 확인 모달(confirm)
-  MUST: 완료 - 선택 카테고리의 문서 개수 조회
-  MUST: 완료 - 선택 카테고리 문서 목록 페이지 이동
-  SHOULD: 완료 - Root 가상 노드 표시
-  SHOULD: 완료 - 선택된 카테고리 스타일 표시
-  SHOULD: 완료 - API 처리 후 트리 재조회로 화면 동기화
-  COULD: 미지원 - 카테고리 이름 변경(카테고리 이름이 식별자(PK)이므로 정책상 미지원)
-  COULD: 진행 예정 - 부모 변경 시 자식/자손 카테고리 선택 방지
-  COULD: 진행 예정 - 삭제 전 하위 카테고리/문서 영향 안내
-  COULD: 진행 예정 - 생성/수정/삭제 중 로딩 상태 및 버튼 비활성화 처리
-  COULD: 진행 예정 - alert 대신 공통 모달 또는 토스트 알림 적용
+  설명:
+  - 카테고리를 자료구조 교안처럼 정점과 연결선으로 표시한다.
+  - 정점 상단 포트에서 다른 정점으로 드래그하면 부모 카테고리를 변경한다.
+  - 우측 상단 + 버튼으로 루트 카테고리를 생성한다.
 */
 
+function layoutTree(tree) {
+  let leafIndex = 0;
+  const nodes = [];
 
-function TreeNode({ node, level = 0, selected, onSelect }) {
-  const [open, setOpen] = useState(true);
+  function visit(node, depth, parentKey) {
+    const children = Array.isArray(node.children) ? node.children : [];
+    const childLayouts = children.map((child) => visit(child, depth + 1, node.name));
+    const x = childLayouts.length
+      ? childLayouts.reduce((sum, child) => sum + child.x, 0) / childLayouts.length
+      : leafIndex++;
+
+    const current = { key: node.name, node, depth, parentKey, x };
+    nodes.push(current);
+    return current;
+  }
+
+  const roots = tree.map((node) => visit(node, 1, ROOT_KEY));
+  const rootX = roots.length
+    ? roots.reduce((sum, node) => sum + node.x, 0) / roots.length
+    : 0;
+
+  return [
+    { key: ROOT_KEY, node: { name: "Root" }, depth: 0, parentKey: null, x: rootX },
+    ...nodes,
+  ];
+}
+
+function isDescendant(tree, sourceName, targetName) {
+  function find(nodes) {
+    for (const node of nodes) {
+      if (node.name === sourceName) return node;
+      const found = find(Array.isArray(node.children) ? node.children : []);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  function contains(node, name) {
+    return (node.children ?? []).some(
+      (child) => child.name === name || contains(child, name),
+    );
+  }
+
+  const source = find(tree);
+  return Boolean(source && contains(source, targetName));
+}
+
+function DiagramNode({ item, selected, onSelect, onPortPointerDown }) {
+  const isRoot = item.key === ROOT_KEY;
 
   return (
-    <>
-      <div
-        className={`tree-row ${selected === node.name ? "selected" : ""}`}
-        style={{ paddingLeft: `${level * 20}px` }}
-        onClick={() => onSelect(node)}
-      >
-        {node.children?.length > 0 ? (
-          <span
-            className="tree-arrow"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(!open);
-            }}
-          >
-            {open ? "▼" : "▶"}
-          </span>
-        ) : (
-          <span className="tree-arrow"></span>
-        )}
-
-        <span className="tree-icon">
-          {node.children?.length > 0 ? "📂" : "📄"}
-        </span>
-
-        <span className="tree-name">{node.name}</span>
-      </div>
-
-      {open &&
-        node.children?.map((child) => (
-          <TreeNode
-            key={child.name}
-            node={child}
-            level={level + 1}
-            selected={selected}
-            onSelect={onSelect}
-          />
-        ))}
-    </>
+    <div
+      className={`diagram-node ${isRoot ? "diagram-node--root" : ""} ${
+        selected ? "is-selected" : ""
+      }`}
+      data-category-node={item.key}
+      style={{
+        left: `${item.x * NODE_STEP_X}rem`,
+        top: `${item.depth * NODE_STEP_Y}rem`,
+      }}
+      onClick={() => !isRoot && onSelect(item.node)}
+    >
+      {!isRoot && (
+        <button
+          type="button"
+          className="diagram-port diagram-port--input"
+          aria-label={`${item.node.name} 부모 연결점`}
+          title="드래그해서 부모 정점에 연결"
+          onPointerDown={(event) => onPortPointerDown(event, item.node.name)}
+        />
+      )}
+      <div className="diagram-node__depth">level {item.depth}</div>
+      <strong>{item.node.name}</strong>
+      <span>{item.node.children?.length ?? 0} children</span>
+      <span className="diagram-port diagram-port--output" aria-hidden="true" />
+    </div>
   );
 }
 
 export default function CategoryTreeEditor() {
   const navigate = useNavigate();
+  const diagramRef = useRef(null);
   const [tree, setTree] = useState([]);
   const [selected, setSelected] = useState(null);
-
-  const [newName, setNewName] = useState("");
-  const [parent, setParent] = useState("");
-
-  const [, setRename] = useState("");
-  const [moveParent, setMoveParent] = useState("");
-
   const [docsCount, setDocsCount] = useState(0);
+  const [newName, setNewName] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [connectionDrag, setConnectionDrag] = useState(null);
+  const [savingConnection, setSavingConnection] = useState(false);
 
-  async function loadDocsCount(selectedName) {
-    if (!selectedName) {
-      setDocsCount(0);
-      return;
-    }
-    const data = await GetDocsFromCategory(selectedName);
-    const dataArr = Array.isArray(data) ? data : [];
-    console.log("docsCount", dataArr.length);
-    setDocsCount(dataArr.length);
-  }
+  const diagramNodes = useMemo(() => layoutTree(tree), [tree]);
+  const maxDepth = diagramNodes.reduce((max, item) => Math.max(max, item.depth), 0);
+  const maxX = diagramNodes.reduce((max, item) => Math.max(max, item.x), 0);
+  const diagramWidth = Math.max(32, maxX * NODE_STEP_X + NODE_WIDTH + 4);
+  const diagramHeight = Math.max(15, (maxDepth + 1) * NODE_STEP_Y + NODE_HEIGHT);
+  const remSize = Number.parseFloat(
+    getComputedStyle(document.documentElement).fontSize,
+  ) || 16;
 
   async function loadTree() {
     const data = await GetListOfCategories();
-
-    if (data) {
-      setTree(data);
-    }
+    setTree(Array.isArray(data) ? data : []);
   }
 
   useEffect(() => {
@@ -203,238 +136,224 @@ export default function CategoryTreeEditor() {
     loadTree();
   }, []);
 
-  //트리의 부모 변경
-  async function handleMoveParent() {
-    if (!selected) return;
-
-    try {
-      console.log(moveParent);
-      await UpdateCategory(
-        selected.name,
-        "",
-        moveParent == "" ? null : moveParent,
-      );
-
-      await loadTree();
-    } catch (e) {
-      console.error(e);
-      alert("부모 변경 실패");
+  async function loadDocsCount(name) {
+    if (!name) {
+      setDocsCount(0);
+      return;
     }
+    const data = await GetDocsFromCategory(name);
+    setDocsCount(Array.isArray(data) ? data.length : 0);
   }
 
-  // // 기능 미지원
-  // async function handleRename() {
-  //   if (!selected) return;
-  //   try {
-  //       await UpdateCategory(
-  //           selected.name,
-  //           rename,
-  //           ""
-  //       );
-  //       await loadTree();
-  //       setSelected({
-  //           ...selected,
-  //           name: rename,
-  //       });
-  //   } catch (e) {
-  //       console.error(e);
-  //       alert("이름 변경 실패");
-  //   }
-  // }
+  function handleSelect(node) {
+    setSelected(node);
+    loadDocsCount(node.name);
+  }
 
-  const allCategories = flattenCategories(tree);
-  // const selectedInfo = allCategories.find((c) => c.name === selected?.name);
+  function updateDragPosition(clientX, clientY) {
+    const rect = diagramRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setConnectionDrag((current) =>
+      current
+        ? { ...current, x: clientX - rect.left, y: clientY - rect.top }
+        : current,
+    );
+  }
 
-  async function handleCreate() {
-    if (!newName.trim()) return;
+  useEffect(() => {
+    if (!connectionDrag) return undefined;
+
+    const handlePointerMove = (event) => updateDragPosition(event.clientX, event.clientY);
+    const handlePointerUp = async (event) => {
+      const target = document
+        .elementFromPoint(event.clientX, event.clientY)
+        ?.closest("[data-category-node]");
+      const targetName = target?.dataset.categoryNode;
+      const sourceName = connectionDrag.source;
+      setConnectionDrag(null);
+
+      if (
+        !targetName ||
+        targetName === sourceName ||
+        (targetName !== ROOT_KEY && isDescendant(tree, sourceName, targetName))
+      ) {
+        return;
+      }
+
+      setSavingConnection(true);
+      try {
+        await UpdateCategory(sourceName, "", targetName === ROOT_KEY ? null : targetName);
+        await loadTree();
+        if (selected?.name === sourceName) {
+          setSelected((current) => (current ? { ...current, parent: targetName === ROOT_KEY ? null : targetName } : current));
+        }
+      } catch (error) {
+        console.error(error);
+        alert("카테고리 연결 변경에 실패했습니다.");
+      } finally {
+        setSavingConnection(false);
+      }
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp, { once: true });
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [connectionDrag, selected, tree]);
+
+  function handlePortPointerDown(event, source) {
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = diagramRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setConnectionDrag({
+      source,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    });
+  }
+
+  async function handleCreate(event) {
+    event.preventDefault();
+    const name = newName.trim();
+    if (!name) return;
 
     try {
-      await CreateCategory(newName, parent === "" ? null : parent);
-
+      await CreateCategory(name, null);
       setNewName("");
+      setShowCreateForm(false);
       await loadTree();
-    } catch (e) {
-      console.error(e);
-      alert("카테고리 생성 실패");
+    } catch (error) {
+      console.error(error);
+      alert("카테고리 생성에 실패했습니다.");
     }
   }
 
   async function handleDelete() {
-    if (!selected) return;
-
-    const confirmDelete = window.confirm(
-      `${selected.name} 카테고리를 삭제하시겠습니까?`,
-    );
-
-    if (!confirmDelete) return;
+    if (!selected || !window.confirm(`${selected.name} 카테고리를 삭제하시겠습니까?`)) return;
 
     try {
       await DeleteCategory(selected.name);
-
       setSelected(null);
-
-      setParent("");
-
       await loadTree();
-    } catch (e) {
-      console.error(e);
-
-      alert("카테고리 삭제 실패");
+    } catch (error) {
+      console.error(error);
+      alert("카테고리 삭제에 실패했습니다.");
     }
   }
 
+  const edgePaths = diagramNodes
+    .filter((item) => item.parentKey)
+    .map((item) => {
+      const parent = diagramNodes.find((candidate) => candidate.key === item.parentKey);
+      const startX = parent.x * NODE_STEP_X + NODE_WIDTH / 2;
+      const startY = parent.depth * NODE_STEP_Y + NODE_HEIGHT;
+      const endX = item.x * NODE_STEP_X + NODE_WIDTH / 2;
+      const endY = item.depth * NODE_STEP_Y;
+      const middleY = (startY + endY) / 2;
+      return `M ${startX} ${startY} C ${startX} ${middleY}, ${endX} ${middleY}, ${endX} ${endY}`;
+    });
+
   return (
-    <div className="category-editor">
-      {/* ===== 왼쪽 트리 ===== */}
-      <div className="tree-panel">
-        <h2>카테고리</h2>
-
-        <div
-          className={`tree-row ${selected === null ? "selected" : ""}`}
-          onClick={() => {
-            setSelected(null);
-            setParent("");
-
-            setRename("");
-            setMoveParent("");
-          }}
-        >
-          <span className="tree-arrow"></span>
-          <span className="tree-icon">📁</span>
-          <span>Root</span>
+    <section className="category-editor">
+      <div className="diagram-panel">
+        <div className="diagram-panel__header">
+          <div>
+            <p className="diagram-eyebrow">CATEGORY STRUCTURE</p>
+            <h2>카테고리 트리</h2>
+            <p className="diagram-help">상단 연결점을 드래그해 부모 정점에 놓으세요.</p>
+          </div>
+          <button
+            type="button"
+            className="diagram-add-button"
+            onClick={() => setShowCreateForm((current) => !current)}
+            aria-label="루트 카테고리 추가"
+            title="루트에 새 정점 추가"
+          >
+            +
+          </button>
         </div>
 
-        <div className="tree">
-          {tree.map((node) => (
-            <TreeNode
-              key={node.name}
-              node={node}
-              level={0}
-              selected={selected?.name}
-              onSelect={(node) => {
-                setSelected(node);
-                setParent(node.name);
-
-                const info = allCategories.find((c) => c.name === node.name);
-
-                setRename(node.name);
-                loadDocsCount(node.name);
-
-                setMoveParent(
-                  info && info.path.length > 1
-                    ? info.path[info.path.length - 2]
-                    : "",
-                );
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ===== 오른쪽 편집 ===== */}
-      <div className="editor-panel">
-        <h2>선택된 카테고리</h2>
-
-        {selected ? (
-          <>
-            <p>
-              <b>이름</b> : {selected.name}
-            </p>
-
-            <p>
-              <b>부모</b> : {selected.parent ?? "Root"}
-            </p>
-
-            <p>
-              <b>자식</b> : {selected.children?.length ?? 0}개
-            </p>
-            <div
-              onClick={() => {
-                navigate(`/wiki/${encodeURIComponent(selected.name)}`);
-              }}
-              style={{ cursor: "pointer", color: "#007bff" }}
-            >
-              <p>
-                <b>문서 개수</b> : {docsCount}개
-              </p>
-            </div>
-            {/* 이름 변경 기능 미지원
-                        <div className="form-group">
-                            <label>새 이름</label>
-
-                            <input
-                                value={rename}
-                                onChange={(e) => setRename(e.target.value)}
-                                disabled={true}
-                            />
-
-                            <button onClick={handleRename} disabled={true}>
-                                이름 변경
-                            </button>
-                        </div>
-                        */}
-
-            <div className="form-group">
-              <label>새 부모</label>
-
-              <select
-                value={moveParent}
-                onChange={(e) => setMoveParent(e.target.value)}
-              >
-                <option value="">Root (null)</option>
-
-                {allCategories
-                  .filter((c) => c.name !== selected.name)
-                  .map((c) => (
-                    <option key={c.name} value={c.name}>
-                      {c.path.join(" - ")}
-                    </option>
-                  ))}
-              </select>
-
-              <button onClick={handleMoveParent}>부모 변경</button>
-            </div>
-
-            <button onClick={handleDelete}>삭제</button>
-          </>
-        ) : (
-          <p>Root 선택됨</p>
-        )}
-
-        <hr />
-
-        <h3>새 카테고리 생성</h3>
-
-        <div className="category-create-form">
-          <div className="form-group">
-            <label>이름</label>
-
+        {showCreateForm && (
+          <form className="diagram-create-form" onSubmit={handleCreate}>
+            <label htmlFor="new-category-name">새 루트 정점</label>
             <input
+              id="new-category-name"
               value={newName}
               placeholder="카테고리 이름"
-              onChange={(e) => setNewName(e.target.value)}
+              onChange={(event) => setNewName(event.target.value)}
+              autoFocus
             />
-          </div>
+            <button type="submit">생성</button>
+          </form>
+        )}
 
-          <div className="form-group">
-            <label>부모</label>
-
-            <select value={parent} onChange={(e) => setParent(e.target.value)}>
-              <option value="">Root (null)</option>
-
-              {allCategories.map((c) => (
-                <option key={c.name} value={c.name}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+        <div className="diagram-scroll-area">
+          <div
+            className="diagram-stage"
+            ref={diagramRef}
+            style={{ width: `${diagramWidth}rem`, height: `${diagramHeight}rem` }}
+          >
+            <svg className="diagram-edges" viewBox={`0 0 ${diagramWidth} ${diagramHeight}`} aria-hidden="true">
+              {edgePaths.map((path, index) => <path key={`${path}-${index}`} d={path} />)}
+              {connectionDrag && (
+                (() => {
+                  const source = diagramNodes.find((item) => item.key === connectionDrag.source);
+                  if (!source) return null;
+                  return (
+                    <line
+                      className="diagram-edge--draft"
+                      x1={source.x * NODE_STEP_X + NODE_WIDTH / 2}
+                      y1={source.depth * NODE_STEP_Y}
+                      x2={connectionDrag.x / remSize}
+                      y2={connectionDrag.y / remSize}
+                    />
+                  );
+                })()
+              )}
+            </svg>
+            {diagramNodes.map((item) => (
+              <DiagramNode
+                key={item.key}
+                item={item}
+                selected={selected?.name === item.key}
+                onSelect={handleSelect}
+                onPortPointerDown={handlePortPointerDown}
+              />
+            ))}
           </div>
         </div>
-
-        <button className="create-button" onClick={handleCreate}>
-          생성
-        </button>
+        {savingConnection && <p className="diagram-status">연결을 저장하는 중...</p>}
       </div>
-    </div>
+
+      <aside className="category-inspector">
+        <p className="diagram-eyebrow">INSPECTOR</p>
+        <h2>정점 정보</h2>
+        {selected ? (
+          <>
+            <div className="inspector-name">{selected.name}</div>
+            <dl className="inspector-list">
+              <div><dt>부모</dt><dd>{selected.parent ?? "Root"}</dd></div>
+              <div><dt>자식</dt><dd>{selected.children?.length ?? 0}개</dd></div>
+              <div><dt>문서</dt><dd>{docsCount}개</dd></div>
+            </dl>
+            <button
+              type="button"
+              className="inspector-link"
+              onClick={() => navigate(`/wiki/${encodeURIComponent(selected.name)}`)}
+            >
+              이 카테고리 문서 보기
+            </button>
+            <button type="button" className="inspector-delete" onClick={handleDelete}>
+              정점 삭제
+            </button>
+          </>
+        ) : (
+          <p className="inspector-empty">도식도의 정점을 선택하면 상세 정보가 표시됩니다.</p>
+        )}
+      </aside>
+    </section>
   );
 }

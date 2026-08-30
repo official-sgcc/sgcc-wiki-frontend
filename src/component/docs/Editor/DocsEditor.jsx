@@ -25,6 +25,23 @@ navigate("/wiki/edit", {
 });
 */
 
+function insertAlignedBlock(editor, alignment) {
+  const selectedText = editor.codemirror.getSelection() || "내용을 입력하세요";
+  const block = `<div align="${alignment}">\n${selectedText}\n</div>`;
+
+  editor.codemirror.replaceSelection(block);
+}
+
+function normalizeMarkdown(content) {
+  if (typeof content !== "string") return "";
+
+  const fencedDocument = content.match(
+    /^\s*```(?:markdown|md)?\s*\n([\s\S]*?)\n```\s*$/i,
+  );
+
+  return fencedDocument ? fencedDocument[1] : content;
+}
+
 function DocsEditor() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,6 +68,36 @@ function DocsEditor() {
   const mdeOptions = useMemo(
     () => ({
       spellChecker: false,
+      forceSync: true,
+      toolbar: [
+        "bold",
+        "italic",
+        "heading",
+        "|",
+        "quote",
+        "unordered-list",
+        "ordered-list",
+        "link",
+        "|",
+        {
+          name: "align-left",
+          action: (editor) => insertAlignedBlock(editor, "left"),
+          text: "좌",
+          title: "왼쪽 정렬",
+        },
+        {
+          name: "align-center",
+          action: (editor) => insertAlignedBlock(editor, "center"),
+          text: "중",
+          title: "가운데 정렬",
+        },
+        {
+          name: "align-right",
+          action: (editor) => insertAlignedBlock(editor, "right"),
+          text: "우",
+          title: "오른쪽 정렬",
+        },
+      ],
     }),
     [],
   );
@@ -104,7 +151,7 @@ function DocsEditor() {
         }
 
         setTitle(rtn.data.title ?? "");
-        setValue(rtn.data.content ?? "");
+        setValue(normalizeMarkdown(rtn.data.content ?? ""));
         setTags(rtn.data.tags?.map((tag) => tag.name) ?? []);
         setCategory(rtn.data.category?.name ?? "");
       } catch (e) {

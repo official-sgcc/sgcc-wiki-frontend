@@ -28,10 +28,34 @@ function Body() {
   const mainCategories = Array.isArray(categories)
     ? categories.filter((category) => category.parent === null)
     : [];
+  const categoryColumns = Math.max(1, Math.min(mainCategories.length, 3));
 
   return (
     <div className="body-container">
-      <div className="category-grid">
+      <section className="home-hero">
+        <p className="home-hero__eyebrow">SGCC OFFICIAL WIKI</p>
+        <h1>무엇을 찾고 있나요?</h1>
+        <p className="home-hero__description">
+          카테고리에 마우스를 올려 세부 항목을 확인하세요
+        </p>
+      </section>
+      <div className="home-hero-wave" aria-hidden="true">
+        <svg
+          className="home-hero-wave__shape"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0 48C210 108 420 8 680 50C930 92 1160 8 1440 24V0H0Z"
+            fill="#1a1a2e"
+          />
+        </svg>
+      </div>
+
+      <div
+        className="category-grid"
+        style={{ "--category-columns": categoryColumns }}
+      >
         {mainCategories.map((category) => {
           const subCategories = flattenCategories(
             Array.isArray(category.children) ? category.children : [],

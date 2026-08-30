@@ -1,5 +1,13 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FiChevronRight,
+  FiClock,
+  FiEdit3,
+  FiEye,
+  FiSearch,
+  FiUser,
+} from "react-icons/fi";
 import { formatDate } from "../util/DocsAPI";
 import "./DocsList.css";
 
@@ -56,13 +64,23 @@ import "./DocsList.css";
   COULD: 진행 예정 - 페이지 내 검색 기능은 프론트 엔드 단에서 url 파라미터 이용해서 구현 예정
 */
 
-export default function DocsList({ getDocsList, initialLimit = 20, editFunc = null, category = null }) {
+export default function DocsList({
+  getDocsList,
+  initialLimit = 20,
+  editFunc = null,
+  category = null,
+  heading = "전체 게시글",
+  breadcrumbItems = [],
+  showSearch = true,
+  showWriteButton = false,
+}) {
   const navigate = useNavigate();
 
   const [docsdata, setDocsData] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(initialLimit);
   const [totalCount, setTotalCount] = useState(0);
+  const [listSearch, setListSearch] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [countLoading, setCountLoading] = useState(false);
@@ -141,16 +159,36 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc = nu
     });
   };
 
+  const handleSearchKeyDown = (e) => {
+    if (e.key !== "Enter") return;
+
+    const keyword = listSearch.trim();
+    if (keyword) {
+      navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+    }
+  };
+
 
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
   return (
     <section className="docs-list">
-      {/* ===== 상단 제목 / 검색 / 글쓰기 영역 ===== */}
+      <div className="docs-list__breadcrumb" aria-label="현재 위치">
+        <span>홈</span>
+        {(breadcrumbItems.length ? breadcrumbItems : [heading]).map((item, index) => (
+          <Fragment key={`${item}-${index}`}>
+            <FiChevronRight aria-hidden="true" />
+            <span className={index === (breadcrumbItems.length || 1) - 1 ? "is-current" : ""}>
+              {item}
+            </span>
+          </Fragment>
+        ))}
+      </div>
+
       <header className="docs-list__header">
         <div className="docs-list__heading">
-          <h1 className="docs-list__heading-title">전체 게시글</h1>
+          <h1 className="docs-list__heading-title">{heading}</h1>
 
           <p className="docs-list__heading-count">
             {countLoading ? "게시글 수를 불러오는 중..." : `${totalCount}개의 게시글`}
@@ -158,22 +196,31 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc = nu
         </div>
 
         <div className="docs-list__actions">
-          {/* 검색 API 연결 전까지는 UI만 제공 */}
-          <input
-            className="docs-list__search"
-            type="search"
-            placeholder="검색..."
-            aria-label="게시글 검색"
-          />
+          {showSearch && (
+            <label className="docs-list__search-wrap">
+              <FiSearch aria-hidden="true" />
+              <input
+                className="docs-list__search"
+                type="search"
+                value={listSearch}
+                onChange={(e) => setListSearch(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="검색"
+                aria-label="게시글 검색"
+              />
+            </label>
+          )}
 
-          <button
-            type="button"
-            className="docs-list__write-button"
-            onClick={handleEditButton}
-          >
-            <span className="docs-list__write-icon">✎</span>
-            글쓰기
-          </button>
+          {showWriteButton && (
+            <button
+              type="button"
+              className="docs-list__write-button"
+              onClick={handleEditButton}
+            >
+              <FiEdit3 aria-hidden="true" />
+              글쓰기
+            </button>
+          )}
 
         </div>
       </header>
@@ -216,7 +263,10 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc = nu
               {docsdata.map((post) => (
                 <li
                   key={post.id ?? `${post.title}-${post.updated_at}`}
-                  className="docs-list__item"
+                  className={`docs-list__item ${post.is_pinned || post.pinned
+                    ? "docs-list__item--pinned"
+                    : ""
+                    }`}
                   onClick={() =>
                     navigate(`/wiki/detail/${encodeURIComponent(post.title)}`)
                   }
@@ -246,21 +296,21 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc = nu
                   {/* 작성자 */}
                   <div className="docs-list__writer">
                     <span className="docs-list__mobile-label">작성자</span>
-                    <span className="docs-list__meta-icon">♙</span>
+                    <FiUser className="docs-list__meta-icon" aria-hidden="true" />
                     {post.created_by ?? "-"}
                   </div>
 
                   {/* 날짜 */}
                   <div className="docs-list__date">
                     <span className="docs-list__mobile-label">날짜</span>
-                    <span className="docs-list__meta-icon">◷</span>
+                    <FiClock className="docs-list__meta-icon" aria-hidden="true" />
                     {formatDate(post.updated_at)}
                   </div>
 
                   {/* 조회수: API 필드명에 맞춰 view_count / views 중 하나 사용 */}
                   <div className="docs-list__views">
                     <span className="docs-list__mobile-label">조회</span>
-                    <span className="docs-list__meta-icon">◉</span>
+                    <FiEye className="docs-list__meta-icon" aria-hidden="true" />
                     {post.view_count ?? post.views ?? 0}
                   </div>
                 </li>

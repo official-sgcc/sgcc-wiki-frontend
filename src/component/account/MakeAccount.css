@@ -6,7 +6,7 @@
 }
 
 .signup-form {
-  width: 500px;
+  width: min(31.25rem, calc(100% - 2rem));
   margin: 0 auto 40px;
   padding: 40px 50px;
   border-radius: 30px;
@@ -53,6 +53,7 @@
   background: none;
   box-sizing: border-box;
   font-size: 1.1rem;
+  color: #20202b;
 }
 
 .signup-submit-btn {

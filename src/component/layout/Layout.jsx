@@ -2,6 +2,7 @@ import Footer from "./Footer";
 import Body from "./Body";
 import './Layout.css';
 import Header from "./Header";
+import { isWelcomePeriod } from "../page/welcome/WelcomeTimeSet";
 
 /*
 
@@ -14,9 +15,11 @@ import Header from "./Header";
 */
 
 function Layout({content}){
+    const showWelcomeButton = isWelcomePeriod();
+
     return (
         <>
-            <div id='entire'>
+            <div id='entire' className={showWelcomeButton ? 'has-welcome-banner' : ''}>
                 <Header/>
                 <div id='main'>
                     {content}

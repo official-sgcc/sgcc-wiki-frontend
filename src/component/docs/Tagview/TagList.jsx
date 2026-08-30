@@ -14,11 +14,11 @@ export default function TagList() {
   );
 
   return (
-    <div>
-      <h2>#{tag}</h2>
-
+    <div style={{ width: "100%" }}>
       <DocsList
         getDocsList={getDocsList}
+        heading={`#${tag}`}
+        breadcrumbItems={["태그", `#${tag}`]}
       />
     </div>
   );

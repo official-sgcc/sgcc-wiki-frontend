@@ -4,7 +4,7 @@
   min-height: 100vh;
   padding: 40px 20px;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+  font-family: var(--sans);
   color: #1e293b;
 }
 
@@ -188,11 +188,6 @@
   font-size: 15px;
   font-weight: 600;
   color: #1e293b;
-}
-
-/* 정보 없음 회색 처리 */
-.panelList .panel-content:contains('정보 없음') {
-  color: #cbd5e1;
 }
 
 /* 액션 카드 */

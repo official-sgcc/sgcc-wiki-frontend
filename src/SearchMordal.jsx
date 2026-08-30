@@ -5,17 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { FiSearch } from 'react-icons/fi';
 
-const wikiData = {
-  "subcategory1-1": [
-    { id: 1, title: "제목1", date: "2026-01-01", user: "작성자" },
-    { id: 2, title: "제목2", date: "2026-01-01", user: "작성자" }
-  ],
-  "subcategory1-2": [
-    { id: 3, title: "제목3", date: "2026-01-01", user: "작성자" },
-    { id: 4, title: "제목4", date: "2026-01-01", user: "작성자" }
-  ]
-};
-
 function SearchModal({ onClose }) {
     const [keyword,setKeyword]=useState("");
     const navigate=useNavigate();
@@ -55,28 +44,8 @@ function SearchModal({ onClose }) {
             return;
         }
 
-        let targetSubcategory = null;
-
-        // 3. wikiData를 돌면서 입력한 제목이 포함된 서브카테고리 찾기
-        for (const subcategoryKey in wikiData) {
-            const posts = wikiData[subcategoryKey];
-            const hasMatch = posts.some(post => 
-                post.title.toLowerCase().includes(txt.toLowerCase())
-            );
-
-            if (hasMatch) {
-                targetSubcategory = subcategoryKey;
-                break; // 매칭되는 카테고리를 찾으면 반복문 종료
-            }
-        }
-
-        // 4. 매칭되는 카테고리가 있다면 해당 주소로 쿼리스트링과 함께 이동
-        if (targetSubcategory) {
-            navigate(`/wiki/${targetSubcategory}?search=${encodeURIComponent(txt)}`); 
-            onClose(); // 검색 완료 후 모달 닫기
-        } else {
-            alert("일치하는 제목의 게시글을 찾을 수 없습니다.");
-        }
+        navigate(`/search?keyword=${encodeURIComponent(txt)}`);
+        onClose();
     };
 
     return createPortal(

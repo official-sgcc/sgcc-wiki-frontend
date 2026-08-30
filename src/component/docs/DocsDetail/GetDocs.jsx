@@ -2,10 +2,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";//MD viewer
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
 import { DeleteDocs, GetDocsDetail,formatDate } from "../../util/DocsAPI";// 문서 관련 api
 import "./GetDocs.css";
+
+function normalizeMarkdown(content) {
+  if (typeof content !== "string") return "";
+
+  const fencedDocument = content.match(
+    /^\s*```(?:markdown|md)?\s*\n([\s\S]*?)\n```\s*$/i,
+  );
+
+  return fencedDocument ? fencedDocument[1] : content;
+}
 
 /*
 
@@ -66,11 +78,8 @@ function GetDocs() {
     }
   }
 
-  function handleTagButton(e) {
-    //tag 누르면 tag 리스트로 연결
-    let selectedTag = e.target.textContent.substr(1);
-    console.log(selectedTag);
-    navigate(`/tag/${selectedTag}`);
+  function handleTagButton(tagName) {
+    navigate(`/tag/${encodeURIComponent(tagName)}`);
   }
 
   if (loding) {
@@ -121,21 +130,32 @@ function GetDocs() {
               : "날짜미상"}
           </span>
         </div>
+
+        {doc.data.tags?.length > 0 && (
+          <div className="docs-tags" aria-label="문서 태그">
+            {doc.data.tags.map((tag) => (
+              <button
+                key={tag.name}
+                type="button"
+                className="docs-tag"
+                onClick={() => handleTagButton(tag.name)}
+              >
+                #{tag.name}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       <section className="docs-content">
-        <ReactMarkdown>{doc.data.content}</ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+        >
+          {normalizeMarkdown(doc.data.content)}
+        </ReactMarkdown>
       </section>
 
-      <section>
-        <div className="tag-list">
-          {doc.data.tags?.map((tag) => (
-            <div key={tag} className="tag-chip" onClick={handleTagButton}>
-              <span>#{tag.name}</span>
-            </div>
-          ))}
-        </div>
-      </section>
     </article>
   );
 }
