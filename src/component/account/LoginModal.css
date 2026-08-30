@@ -8,6 +8,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: var(--content-gutter);
+  box-sizing: border-box;
+  overflow-y: auto;
   z-index: 2000;
 }
 
@@ -27,7 +30,7 @@
 
 .login-modal-content {
   background-color: rgb(248, 248, 248);
-  padding: 50px;
+  padding: clamp(1.5rem, 6vw, 3.125rem);
   border-radius: 30px;
   width: min(350px, calc(100vw - 40px));
   position: relative;
@@ -77,6 +80,7 @@
   height: 100%;
   padding: 0 0 0 10px; /* 아이콘과 텍스트 사이 간격 */
   font-size: 0.9rem;
+  color: #20202b;
   margin-bottom: 0; /* 기존 input의 margin 무효화 */
 }
 
@@ -205,3 +209,5 @@
   color: #000;
   text-decoration: underline;
 }
+
+.input-with-icon input::placeholder { color: #8a8a9a; }

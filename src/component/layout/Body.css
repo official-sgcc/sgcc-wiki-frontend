@@ -8,7 +8,7 @@
   justify-content: center; /* 세로 중앙 정렬 */
   align-items: center;    /* 가로 중앙 정렬 */
   min-height: 70vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
-  overflow: hidden;
+  overflow: visible;
 }
 
 .body-container h1 {
@@ -125,7 +125,8 @@
 
 .sub-list {
   position: absolute;
-  bottom: 100%;
+  top: calc(100% + 1rem);
+  bottom: auto;
   left: 50%;
   transform: translateX(-50%);
   margin-bottom: 16px;
@@ -233,7 +234,7 @@
   }
 
   .body-container {
-    padding-top: 15vh;
+    padding-top: 1rem;
     min-height: auto; 
   }
 }

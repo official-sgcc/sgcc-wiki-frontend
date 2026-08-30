@@ -1,13 +1,13 @@
 :root{
-    --mordal_content_height: 10vh;
+    --modal-content-height: clamp(6rem, 15vw, 10rem);
 }
 
 .modal_overlay {
   position: fixed;
-  top: 10vh;
+  top: var(--header-height);
   left: 0;
   width: 100%;
-  height: 90vh;
+  height: calc(100dvh - var(--header-height));
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -18,7 +18,7 @@
 
 .modal_content {
   background: white;
-  height: var(--mordal_content_height);
+  min-height: var(--modal-content-height);
 }
 
 .srch-title {
@@ -34,8 +34,8 @@
   text-align: left;
   margin-bottom: 100px;
   margin-left: 40px;
-  width:800px;
-  height: 60px;
+  width: min(50rem, calc(100vw - 8rem));
+  height: clamp(2.75rem, 5vw, 3.75rem);
   border: 2px solid var(--border);
   border-radius: 20px;
   padding-left: 16px;
@@ -46,7 +46,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 600px;
+  width: min(37.5rem, calc(100vw - 2rem));
   gap: 10px;
 }
 
@@ -87,7 +87,7 @@
 @media (max-width: 768px) {
   .modal_overlay {
     align-items: flex-start;
-    padding-top: 10vh;
+    padding-top: 1rem;
   }
 
   .srch-title {
