@@ -56,7 +56,14 @@ import "./DocsList.css";
   COULD: 진행 예정 - 페이지 내 검색 기능은 프론트 엔드 단에서 url 파라미터 이용해서 구현 예정
 */
 
-export default function DocsList({ getDocsList, initialLimit = 20, editFunc = null, category = null }) {
+export default function DocsList({
+  getDocsList,
+  initialLimit = 20,
+  editFunc = null,
+  category = null,
+  heading = "전체 게시글",
+  showSearch = true,
+}) {
   const navigate = useNavigate();
 
   const [docsdata, setDocsData] = useState([]);
@@ -150,7 +157,7 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc = nu
       {/* ===== 상단 제목 / 검색 / 글쓰기 영역 ===== */}
       <header className="docs-list__header">
         <div className="docs-list__heading">
-          <h1 className="docs-list__heading-title">전체 게시글</h1>
+          <h1 className="docs-list__heading-title">{heading}</h1>
 
           <p className="docs-list__heading-count">
             {countLoading ? "게시글 수를 불러오는 중..." : `${totalCount}개의 게시글`}
@@ -158,13 +165,14 @@ export default function DocsList({ getDocsList, initialLimit = 20, editFunc = nu
         </div>
 
         <div className="docs-list__actions">
-          {/* 검색 API 연결 전까지는 UI만 제공 */}
-          <input
-            className="docs-list__search"
-            type="search"
-            placeholder="검색..."
-            aria-label="게시글 검색"
-          />
+          {showSearch && (
+            <input
+              className="docs-list__search"
+              type="search"
+              placeholder="검색..."
+              aria-label="게시글 검색"
+            />
+          )}
 
           <button
             type="button"
