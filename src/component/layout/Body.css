@@ -278,6 +278,7 @@
     grid-template-columns: minmax(0, 1fr);
     width: 100%;
     gap: 1rem;
+    padding-bottom: clamp(2rem, 8vw, 3.5rem);
   }
 
   .category-card {
