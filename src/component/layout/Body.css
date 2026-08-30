@@ -1,27 +1,86 @@
 .body-container {
-  padding: 40px;
-  max-width: 1200px;
+  width: 100%;
+  padding: 0 !important;
+  max-width: none;
   margin: 0 auto;
 
   display: flex;
   flex-direction: column; 
-  justify-content: center; /* 세로 중앙 정렬 */
+  justify-content: flex-start;
   align-items: center;    /* 가로 중앙 정렬 */
   min-height: 70vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
   overflow: visible;
 }
 
+.home-hero {
+  width: 100vw;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: calc(50% - 50vw);
+  padding: clamp(2rem, 4vw, 2.5rem) var(--content-gutter) clamp(3rem, 5vw, 4rem);
+  box-sizing: border-box;
+  background: #1a1a2e;
+  color: var(--text);
+  text-align: center;
+}
+
+.home-hero-wave {
+  position: relative;
+  width: 100vw;
+  height: clamp(2.5rem, 5vw, 3.5rem);
+  margin-left: calc(50% - 50vw);
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.home-hero-wave__shape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.home-hero__eyebrow {
+  margin: 0;
+  color: var(--accent-red);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1.35;
+}
+
+.home-hero h1 {
+  margin: 0.75rem 0 0;
+  color: var(--text);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.home-hero__description {
+  margin: 0.75rem 0 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+}
+
 .body-container h1 {
   text-align: center;
-  margin-bottom: 40px;
+  margin: 0 0 clamp(1.25rem, 3vw, 2rem);
   /*color: #333;*/
 }
 
 /* 카테고리들을 가로로 나열 (3열 기준) */
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 100px;
+  grid-template-columns: repeat(var(--category-columns, 3), 13rem);
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  gap: 2.5rem;
+  justify-content: center;
   justify-items: center;
   align-items: start;
 }
@@ -50,10 +109,12 @@
 
 .category-card {
   background-color: var(--card-bg);
-  border-radius: 50px;
-  padding: 40px 40px;
-  width: 280px;
-  height: 340px;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  width: 13rem;
+  aspect-ratio: 1;
+  height: auto;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,19 +132,20 @@
 }
 
 .character-wrapper {
-  width: 250px;
-  height: 250px;
+  width: 8rem;
+  aspect-ratio: 1;
+  height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
   position: relative;
 }
 
 .category-img {
   position: absolute;
-  width: 200px;
-  height: 200px;
+  width: 7rem;
+  height: 7rem;
   object-fit: contain; /* 이미지 비율 유지 */
   z-index: 1;
 }
@@ -96,9 +158,9 @@
 
 .category-card h3 {
   margin: 0;
-  padding-bottom: 12px;
+  padding-bottom: 0;
   border-bottom: none;    
-  font-size: 1.6rem;
+  font-size: 0.875rem;
   transition: color 0.3s ease;
 }
 
@@ -125,8 +187,8 @@
 
 .sub-list {
   position: absolute;
-  top: calc(100% + 1rem);
-  bottom: auto;
+  top: auto;
+  bottom: calc(100% + 1rem);
   left: 50%;
   transform: translateX(-50%);
   margin-bottom: 16px;
@@ -154,7 +216,8 @@
 .sub-list::after {
   content: '';
   position: absolute;
-  top: 100%;
+  top: auto;
+  bottom: -1rem;
   left: 50%;
   transform: translateX(-50%);
   border: 8px solid transparent;
@@ -212,29 +275,32 @@
 /* 모바일 */
 @media (max-width: 768px) {
   .category-grid {
-    grid-template-columns: 1fr; 
-    gap: 40px;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    gap: 1rem;
   }
 
   .category-card {
-    width: 90%;
-    max-width: 300px;
-    height: auto; 
-    padding: 30px;
+    width: min(100%, 13rem);
+    padding: 2rem;
+    justify-self: center;
   }
 
   .character-wrapper {
-    width: 150px;
-    height: 150px;
-  }
-
-  .category-img {
-    width: 110px;
-    height: 110px;
+    width: 60%;
   }
 
   .body-container {
-    padding-top: 1rem;
+    padding-top: 0;
     min-height: auto; 
+  }
+
+  .home-hero {
+    padding-top: 2rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .home-hero-wave__shape {
+    height: 100%;
   }
 }

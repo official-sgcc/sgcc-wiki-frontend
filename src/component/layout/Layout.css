@@ -13,7 +13,7 @@
     flex-direction:column;
 
     width:100%;
-    padding-top:var(--header-height);
+    padding-top:var(--header-total-height, var(--header-height));
     box-sizing:border-box;
 
     overflow-y:auto;

@@ -1,11 +1,11 @@
 import './Header.css'
 import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
 import WelcomeHeaderButton from '../page/welcome/WelcomeHeaderButton';
 import { isWelcomePeriod } from '../page/welcome/WelcomeTimeSet';
-import { FiUser, FiLock, FiSearch } from 'react-icons/fi';
+import { FiUser, FiSearch, FiChevronDown } from 'react-icons/fi';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -13,7 +13,8 @@ const USERNAME_KEY = 'username';
 function Header() {
   const [isSrchOpen, setIsSrchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState(() => sessionStorage.getItem(USERNAME_KEY) || '');
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
   const isLoggedIn = Boolean(token);
   const navigate = useNavigate();
@@ -36,13 +37,6 @@ function Header() {
     navigate('/');
   };
 
-  const location = useLocation();
-
-const navItems = [
-  { label: '홈', path: '/' },
-  { label: '게시글', path: '/wiki/' },
-];
-
   useEffect(() => {
       // 스크롤 막기
       if(isLoginOpen||isSrchOpen){
@@ -62,17 +56,6 @@ const navItems = [
       <div className="header-logo">
         <Link to={`/`}>SGCC Wiki</Link>
       </div>
-      <nav className="header-nav">
-        {navItems.map((item) => (
-        <Link
-          key={item.path}
-          to={item.path}
-          className={`header-nav-item ${location.pathname === item.path ? 'active' : ''}`}
-        >
-          {item.label}
-        </Link>
-        ))}
-      </nav>
       <div className='header-rightside'>
         { showWelcomeButton && <WelcomeHeaderButton /> }
         <button className='srchbtn' onClick={()=>{setIsSrchOpen(true);}} >
@@ -80,15 +63,41 @@ const navItems = [
         </button>
         <div className="loginbtn">
           {isLoggedIn ? (
-            <>
-              <Link className="footer-item-login" to="/mypage">
-                <FiUser className="input-icon"/>
-                {'Mypage'}
-              </Link>
-              <p className="footer-item-login" onClick={handleLogout}>
-                Logout
-              </p>
-            </>
+            <div className="user-menu">
+              <button
+                type="button"
+                className="footer-item-login user-menu-trigger"
+                aria-expanded={isUserMenuOpen}
+                aria-haspopup="menu"
+                onClick={() => setIsUserMenuOpen((open) => !open)}
+              >
+                <FiUser className="input-icon" aria-hidden="true" />
+                <span className="user-menu-label">{currentUsername || '사용자'}</span>
+                <FiChevronDown className="user-menu-chevron" aria-hidden="true" />
+              </button>
+
+              {isUserMenuOpen && (
+                <div className="user-menu-dropdown" role="menu">
+                  <Link
+                    to="/mypage"
+                    role="menuitem"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    마이페이지
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      handleLogout();
+                    }}
+                    role="menuitem"
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <p 
               className="footer-item-login" 

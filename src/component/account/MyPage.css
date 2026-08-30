@@ -4,7 +4,7 @@
   min-height: 100vh;
   padding: 40px 20px;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+  font-family: var(--sans);
   color: #1e293b;
 }
 

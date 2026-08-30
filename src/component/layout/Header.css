@@ -46,6 +46,57 @@
     gap: 8px;
 }
 
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  margin: 0;
+  font: inherit;
+}
+
+.user-menu-chevron {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 8.5rem;
+  padding: 0.35rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--main-bg);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.14);
+}
+
+.user-menu-dropdown a,
+.user-menu-dropdown button {
+  padding: 0.65rem 0.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.user-menu-dropdown a:hover,
+.user-menu-dropdown button:hover,
+.user-menu-dropdown a:focus-visible,
+.user-menu-dropdown button:focus-visible {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text);
+}
+
 .footer-item-login {
   cursor: pointer;
   font-weight: 650;
@@ -159,66 +210,25 @@
   color: #333;
 }
 
-/* 네비게이션 메뉴 */
-.header-nav {
-  display: flex;
-  gap: 8px;
-  flex: 0 1 auto;
-  justify-content: center;
-  min-width: 0;
-  white-space: nowrap;
-}
-
-.header-nav-item {
-  padding: 0.45rem clamp(0.5rem, 1.4vw, 1.1rem);
-  border-radius: 20px;
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 700;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.header-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-.header-nav-item.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: var(--text);
-}
-
 /* 모바일 */
 @media (max-width: 768px) {
-  .header-nav {
-    gap: 0.15rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .header-nav::-webkit-scrollbar { display: none; }
-
-  .header-nav-item {
-    padding: 0.35rem 0.55rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    transition: background-color 0.2s ease, color 0.2s ease;
-  }
-
-  .header-nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-  }
-
-  .header-nav-item.active {
-    background-color: rgba(255, 255, 255, 0.15);
-    color: var(--text-h);
+  .has-welcome-banner {
+    --header-total-height: calc(var(--header-height) + var(--welcome-banner-height));
   }
 
   .footer-item-login {
     padding: 0.35rem 0.55rem;
     font-size: 0.75rem;
     gap: 0.25rem;
+  }
+
+  .user-menu-label,
+  .user-menu-chevron {
+    display: none;
+  }
+
+  .user-menu-dropdown {
+    top: calc(100% + 0.65rem);
   }
 
   .loginbtn {
@@ -237,7 +247,6 @@
 @media (max-width: 30rem) {
   .main-header { padding-inline: 0.65rem; }
   .header-logo a { font-size: 0.9rem; }
-  .header-nav-item { font-size: 0.7rem; padding-inline: 0.4rem; }
   .footer-item-login { font-size: 0; }
   .footer-item-login .input-icon { font-size: 1rem; }
 }
