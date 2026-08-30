@@ -313,10 +313,9 @@
   cursor: default;
 }
 
-.diagram-node strong { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.diagram-node__name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .diagram-node span { color: #858a9a; font-size: 0.72rem; }
 .diagram-node--root span { color: #c6c9d9; }
-.diagram-node__depth { color: var(--accent-red) !important; font-size: 0.65rem !important; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 
 .diagram-port {
   position: absolute;

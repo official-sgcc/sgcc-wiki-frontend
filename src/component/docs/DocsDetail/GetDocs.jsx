@@ -6,7 +6,9 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
-import { DeleteDocs, GetDocsDetail,formatDate } from "../../util/DocsAPI";// 문서 관련 api
+import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
+import { GetListOfCategories } from "../../util/TagCategoryAPI";
+import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
 
 function normalizeMarkdown(content) {
@@ -41,7 +43,24 @@ function GetDocs() {
   const { title } = useParams();
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
+  const [categoryPath, setCategoryPath] = useState([]);
+  const [authState, setAuthState] = useState(() => ({
+    token: sessionStorage.getItem("token"),
+    username: sessionStorage.getItem("username"),
+  }));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const syncAuthState = () => {
+      setAuthState({
+        token: sessionStorage.getItem("token"),
+        username: sessionStorage.getItem("username"),
+      });
+    };
+
+    window.addEventListener("auth-state-change", syncAuthState);
+    return () => window.removeEventListener("auth-state-change", syncAuthState);
+  }, []);
 
   //when page loaded -> getdocs with loding
   useEffect(() => {
@@ -49,6 +68,18 @@ function GetDocs() {
       setLoding(true);
       const data = await GetDocsDetail(title);
       setDoc(data);
+
+      const categoryName = data.data?.category?.name;
+      if (data.ok && categoryName) {
+        const categories = await GetListOfCategories();
+        const matchedCategory = flattenCategories(categories ?? []).find(
+          (category) => category.name === categoryName,
+        );
+        setCategoryPath(matchedCategory?.path ?? [categoryName]);
+      } else {
+        setCategoryPath([]);
+      }
+
       setLoding(false);
     }
     fetchDoc();
@@ -92,34 +123,85 @@ function GetDocs() {
   if (!doc.ok) {
     return <NotFound status={doc.status} message="문서를 찾을 수 없습니다" />;
   }
+
+  const canManageDocument = Boolean(
+    authState.token &&
+      authState.username &&
+      authState.username === doc.data.created_by,
+  );
+
   // console.log(doc.data);
   //doc.data에 title, content, 날짜 등이 있음
   return (
     <article className="docs-container">
       <header className="docs-header">
+        {categoryPath.length > 0 && (
+          <nav className="docs-category-breadcrumb" aria-label="문서 카테고리 경로">
+            <button
+              type="button"
+              className="docs-category-breadcrumb__link"
+              onClick={() => navigate("/")}
+            >
+              홈
+            </button>
+
+            {categoryPath.map((categoryName, index) => {
+              const isCurrent = index === categoryPath.length - 1;
+
+              return (
+                <span
+                  className={`docs-category-breadcrumb__item ${
+                    isCurrent ? "is-current" : "is-intermediate"
+                  }`}
+                  key={`${categoryName}-${index}`}
+                >
+                  <span className="docs-category-breadcrumb__separator" aria-hidden="true">
+                    &gt;
+                  </span>
+                  {isCurrent ? (
+                    <button
+                      type="button"
+                      className="docs-category-breadcrumb__link"
+                      onClick={() =>
+                        navigate(`/wiki/${encodeURIComponent(categoryName)}`)
+                      }
+                    >
+                      {categoryName}
+                    </button>
+                  ) : (
+                    <span className="docs-category-breadcrumb__text">{categoryName}</span>
+                  )}
+                </span>
+              );
+            })}
+          </nav>
+        )}
+
         <div className="docs-header-top">
           <h1 className="docs-title">{doc.data.title}</h1>
 
-          <div className="docs-actions">
-            <button
-              className="docs-edit-btn"
-              onClick={handleEdit}
-            >
-              <HiOutlinePencilSquare />
-            </button>
+          {canManageDocument && (
+            <div className="docs-actions">
+              <button
+                className="docs-edit-btn"
+                onClick={handleEdit}
+              >
+                <HiOutlinePencilSquare />
+              </button>
 
-            <button
-              className="docs-delete-btn"
-              onClick={handleDelete}
-            >
-              <IoTrashOutline />
-            </button>
-          </div>
+              <button
+                className="docs-delete-btn"
+                onClick={handleDelete}
+              >
+                <IoTrashOutline />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="docs-meta">
           <span className="docs-author">
-            작성자 : {doc.data.date ?? "익명"}
+            작성자 : {doc.data.created_by ?? "익명"}
           </span>
 
           <span className="docs-date">
