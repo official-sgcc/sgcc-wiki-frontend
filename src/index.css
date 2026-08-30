@@ -91,11 +91,12 @@ select {
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  height: 100svh;
+  min-height: 100svh;
+  height: auto;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
   font-family: var(--sans);
 }
 
@@ -146,5 +147,6 @@ code {
 html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
