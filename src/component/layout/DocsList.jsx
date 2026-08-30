@@ -63,7 +63,7 @@ export default function DocsList({
   category = null,
   heading = "전체 게시글",
   showSearch = true,
-  showWriteButton = true,
+  showWriteButton = false,
 }) {
   const navigate = useNavigate();
 

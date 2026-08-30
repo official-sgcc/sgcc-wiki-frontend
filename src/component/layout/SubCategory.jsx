@@ -70,6 +70,7 @@ function SubCategory() {
       <DocsList
         getDocsList={getDocsList}
         category={subcategory}
+        showWriteButton={true}
       />
     </div>
   );
