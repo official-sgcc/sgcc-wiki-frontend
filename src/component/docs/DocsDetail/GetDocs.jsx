@@ -66,11 +66,8 @@ function GetDocs() {
     }
   }
 
-  function handleTagButton(e) {
-    //tag 누르면 tag 리스트로 연결
-    let selectedTag = e.target.textContent.substr(1);
-    console.log(selectedTag);
-    navigate(`/tag/${selectedTag}`);
+  function handleTagButton(tagName) {
+    navigate(`/tag/${encodeURIComponent(tagName)}`);
   }
 
   if (loding) {
@@ -121,21 +118,27 @@ function GetDocs() {
               : "날짜미상"}
           </span>
         </div>
+
+        {doc.data.tags?.length > 0 && (
+          <div className="docs-tags" aria-label="문서 태그">
+            {doc.data.tags.map((tag) => (
+              <button
+                key={tag.name}
+                type="button"
+                className="docs-tag"
+                onClick={() => handleTagButton(tag.name)}
+              >
+                #{tag.name}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       <section className="docs-content">
         <ReactMarkdown>{doc.data.content}</ReactMarkdown>
       </section>
 
-      <section>
-        <div className="tag-list">
-          {doc.data.tags?.map((tag) => (
-            <div key={tag} className="tag-chip" onClick={handleTagButton}>
-              <span>#{tag.name}</span>
-            </div>
-          ))}
-        </div>
-      </section>
     </article>
   );
 }

@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FiChevronRight,
+  FiClock,
+  FiEdit3,
+  FiEye,
+  FiSearch,
+  FiUser,
+} from "react-icons/fi";
 import { formatDate } from "../util/DocsAPI";
 import "./DocsList.css";
 
@@ -71,6 +79,7 @@ export default function DocsList({
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(initialLimit);
   const [totalCount, setTotalCount] = useState(0);
+  const [listSearch, setListSearch] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [countLoading, setCountLoading] = useState(false);
@@ -149,13 +158,27 @@ export default function DocsList({
     });
   };
 
+  const handleSearchKeyDown = (e) => {
+    if (e.key !== "Enter") return;
+
+    const keyword = listSearch.trim();
+    if (keyword) {
+      navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+    }
+  };
+
 
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
   return (
     <section className="docs-list">
-      {/* ===== 상단 제목 / 검색 / 글쓰기 영역 ===== */}
+      <div className="docs-list__breadcrumb" aria-label="현재 위치">
+        <span>홈</span>
+        <FiChevronRight aria-hidden="true" />
+        <strong>{heading}</strong>
+      </div>
+
       <header className="docs-list__header">
         <div className="docs-list__heading">
           <h1 className="docs-list__heading-title">{heading}</h1>
@@ -167,12 +190,18 @@ export default function DocsList({
 
         <div className="docs-list__actions">
           {showSearch && (
-            <input
-              className="docs-list__search"
-              type="search"
-              placeholder="검색..."
-              aria-label="게시글 검색"
-            />
+            <label className="docs-list__search-wrap">
+              <FiSearch aria-hidden="true" />
+              <input
+                className="docs-list__search"
+                type="search"
+                value={listSearch}
+                onChange={(e) => setListSearch(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="검색"
+                aria-label="게시글 검색"
+              />
+            </label>
           )}
 
           {showWriteButton && (
@@ -181,7 +210,7 @@ export default function DocsList({
               className="docs-list__write-button"
               onClick={handleEditButton}
             >
-              <span className="docs-list__write-icon">✎</span>
+              <FiEdit3 aria-hidden="true" />
               글쓰기
             </button>
           )}
@@ -227,7 +256,10 @@ export default function DocsList({
               {docsdata.map((post) => (
                 <li
                   key={post.id ?? `${post.title}-${post.updated_at}`}
-                  className="docs-list__item"
+                  className={`docs-list__item ${post.is_pinned || post.pinned
+                    ? "docs-list__item--pinned"
+                    : ""
+                    }`}
                   onClick={() =>
                     navigate(`/wiki/detail/${encodeURIComponent(post.title)}`)
                   }
@@ -257,21 +289,21 @@ export default function DocsList({
                   {/* 작성자 */}
                   <div className="docs-list__writer">
                     <span className="docs-list__mobile-label">작성자</span>
-                    <span className="docs-list__meta-icon">♙</span>
+                    <FiUser className="docs-list__meta-icon" aria-hidden="true" />
                     {post.created_by ?? "-"}
                   </div>
 
                   {/* 날짜 */}
                   <div className="docs-list__date">
                     <span className="docs-list__mobile-label">날짜</span>
-                    <span className="docs-list__meta-icon">◷</span>
+                    <FiClock className="docs-list__meta-icon" aria-hidden="true" />
                     {formatDate(post.updated_at)}
                   </div>
 
                   {/* 조회수: API 필드명에 맞춰 view_count / views 중 하나 사용 */}
                   <div className="docs-list__views">
                     <span className="docs-list__mobile-label">조회</span>
-                    <span className="docs-list__meta-icon">◉</span>
+                    <FiEye className="docs-list__meta-icon" aria-hidden="true" />
                     {post.view_count ?? post.views ?? 0}
                   </div>
                 </li>
