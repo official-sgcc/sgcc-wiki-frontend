@@ -190,11 +190,6 @@
   color: #1e293b;
 }
 
-/* 정보 없음 회색 처리 */
-.panelList .panel-content:contains('정보 없음') {
-  color: #cbd5e1;
-}
-
 /* 액션 카드 */
 .profileActions {
   display: flex;
