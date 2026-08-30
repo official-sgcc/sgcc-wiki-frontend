@@ -27,6 +27,7 @@ function Header() {
   const handleLoginSuccess = ({ username, token }) => {
     setCurrentUsername(username);
     setToken(token);
+    window.dispatchEvent(new Event('auth-state-change'));
   };
 
   const handleLogout = () => {
@@ -34,6 +35,7 @@ function Header() {
     sessionStorage.removeItem(USERNAME_KEY);
     setCurrentUsername('');
     setToken('');
+    window.dispatchEvent(new Event('auth-state-change'));
     navigate('/');
   };
 

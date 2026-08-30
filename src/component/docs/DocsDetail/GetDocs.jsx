@@ -41,7 +41,23 @@ function GetDocs() {
   const { title } = useParams();
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
+  const [authState, setAuthState] = useState(() => ({
+    token: sessionStorage.getItem("token"),
+    username: sessionStorage.getItem("username"),
+  }));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const syncAuthState = () => {
+      setAuthState({
+        token: sessionStorage.getItem("token"),
+        username: sessionStorage.getItem("username"),
+      });
+    };
+
+    window.addEventListener("auth-state-change", syncAuthState);
+    return () => window.removeEventListener("auth-state-change", syncAuthState);
+  }, []);
 
   //when page loaded -> getdocs with loding
   useEffect(() => {
@@ -92,6 +108,13 @@ function GetDocs() {
   if (!doc.ok) {
     return <NotFound status={doc.status} message="문서를 찾을 수 없습니다" />;
   }
+
+  const canManageDocument = Boolean(
+    authState.token &&
+      authState.username &&
+      authState.username === doc.data.created_by,
+  );
+
   // console.log(doc.data);
   //doc.data에 title, content, 날짜 등이 있음
   return (
@@ -100,26 +123,28 @@ function GetDocs() {
         <div className="docs-header-top">
           <h1 className="docs-title">{doc.data.title}</h1>
 
-          <div className="docs-actions">
-            <button
-              className="docs-edit-btn"
-              onClick={handleEdit}
-            >
-              <HiOutlinePencilSquare />
-            </button>
+          {canManageDocument && (
+            <div className="docs-actions">
+              <button
+                className="docs-edit-btn"
+                onClick={handleEdit}
+              >
+                <HiOutlinePencilSquare />
+              </button>
 
-            <button
-              className="docs-delete-btn"
-              onClick={handleDelete}
-            >
-              <IoTrashOutline />
-            </button>
-          </div>
+              <button
+                className="docs-delete-btn"
+                onClick={handleDelete}
+              >
+                <IoTrashOutline />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="docs-meta">
           <span className="docs-author">
-            작성자 : {doc.data.date ?? "익명"}
+            작성자 : {doc.data.created_by ?? "익명"}
           </span>
 
           <span className="docs-date">
