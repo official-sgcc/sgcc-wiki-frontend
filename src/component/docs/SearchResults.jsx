@@ -32,6 +32,7 @@ export default function SearchResults() {
       getDocsList={getSearchResults}
       heading={`검색 결과: ${keyword}`}
       showSearch={false}
+      showWriteButton={false}
     />
   );
 }

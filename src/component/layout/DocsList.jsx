@@ -63,6 +63,7 @@ export default function DocsList({
   category = null,
   heading = "전체 게시글",
   showSearch = true,
+  showWriteButton = true,
 }) {
   const navigate = useNavigate();
 
@@ -174,14 +175,16 @@ export default function DocsList({
             />
           )}
 
-          <button
-            type="button"
-            className="docs-list__write-button"
-            onClick={handleEditButton}
-          >
-            <span className="docs-list__write-icon">✎</span>
-            글쓰기
-          </button>
+          {showWriteButton && (
+            <button
+              type="button"
+              className="docs-list__write-button"
+              onClick={handleEditButton}
+            >
+              <span className="docs-list__write-icon">✎</span>
+              글쓰기
+            </button>
+          )}
 
         </div>
       </header>
