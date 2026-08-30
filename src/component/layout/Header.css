@@ -36,14 +36,13 @@
 
 .loginbtn{
     font-size: 0.8rem;
-    margin-right: 2vw;
-    margin-left: 10px;
+    margin-right: 0.5rem;
+    margin-left: 0.75rem;
     position: relative;
-    top: 1px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .user-menu {
@@ -62,26 +61,26 @@
 
 .user-menu-dropdown {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.65rem);
   right: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
   min-width: 8.5rem;
-  padding: 0.35rem;
-  border: 0.0625rem solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--main-bg);
-  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.14);
+  padding: 0.4rem;
+  border: 0.0625rem solid rgba(27, 27, 46, 0.12);
+  border-radius: var(--panel-radius);
+  background: var(--card-bg);
+  box-shadow: 0 0.75rem 1.75rem rgba(8, 6, 13, 0.18);
 }
 
 .user-menu-dropdown a,
 .user-menu-dropdown button {
   padding: 0.65rem 0.75rem;
   border: 0;
-  border-radius: 0.5rem;
+  border-radius: 0.55rem;
   background: transparent;
-  color: var(--text);
+  color: var(--main-bg);
   font: inherit;
   font-size: 0.85rem;
   text-align: left;
@@ -93,31 +92,43 @@
 .user-menu-dropdown button:hover,
 .user-menu-dropdown a:focus-visible,
 .user-menu-dropdown button:focus-visible {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text);
+  background: #f0f1f4;
+  color: var(--text-h);
 }
 
 .footer-item-login {
-  cursor: pointer;
-  font-weight: 650;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 16px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  color: var(--btn);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.9rem;
+  border: 0.0625rem solid rgba(8, 6, 13, 0.14);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--text-h);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 0.35rem 0.8rem rgba(8, 6, 13, 0.16);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .footer-item-login .input-icon {
-  font-size: 1.1rem; 
-  color: inherit; 
+  width: 1.05rem;
+  height: 1.05rem;
+  color: inherit;
 }
 
 .footer-item-login:hover {
-  text-decoration: none;
-  color: #5d5d5d;
+  border-color: rgba(8, 6, 13, 0.2);
+  background: #f0f1f4;
+  color: var(--text-h);
+  transform: translateY(-0.08rem);
+}
+
+.footer-item-login:focus-visible {
+  outline: 0.15rem solid rgba(8, 6, 13, 0.24);
+  outline-offset: 0.15rem;
 }
 
 /* 로그인 모달 배경 */
@@ -217,7 +228,8 @@
   }
 
   .footer-item-login {
-    padding: 0.35rem 0.55rem;
+    min-height: 2.25rem;
+    padding: 0.4rem 0.65rem;
     font-size: 0.75rem;
     gap: 0.25rem;
   }
@@ -232,8 +244,8 @@
   }
 
   .loginbtn {
-    margin-right: 4vw;
-    margin-left: 4px;
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
   }
 
   .header-rightside {
@@ -248,5 +260,5 @@
   .main-header { padding-inline: 0.65rem; }
   .header-logo a { font-size: 0.9rem; }
   .footer-item-login { font-size: 0; }
-  .footer-item-login .input-icon { font-size: 1rem; }
+  .footer-item-login .input-icon { width: 1rem; height: 1rem; }
 }
