@@ -112,6 +112,7 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
           <FiUser className="input-icon" />
           <input
             type="text"
+            autoComplete="username"
             placeholder=" 학번 또는 아이디"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
@@ -122,6 +123,7 @@ export function LoginForm({ onClose, onSuccess, showCloseButton = false }) {
           <FiLock className="input-icon" />
           <input
             type="password"
+            autoComplete="current-password"
             placeholder=" 비밀번호 입력"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
