@@ -275,6 +275,7 @@ function MakeAccount() {
           <input
             className="signup-id-input"
             type="text"
+            autoComplete="username"
             placeholder="아이디"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
@@ -288,6 +289,7 @@ function MakeAccount() {
           <input
             className="signup-email-input"
             type="email"
+            autoComplete="email"
             placeholder="이메일"
             value={email}
             onChange={handleEmailChange}
@@ -301,6 +303,7 @@ function MakeAccount() {
           <input
             className="signup-pw-input"
             type="password"
+            autoComplete="new-password"
             placeholder="비밀번호"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
