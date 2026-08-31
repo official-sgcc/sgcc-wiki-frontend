@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from '../account/LoginModal';
 import WelcomeHeaderButton from '../page/welcome/WelcomeHeaderButton';
 import { isWelcomePeriod } from '../page/welcome/WelcomeTimeSet';
-import { FiUser, FiSearch, FiChevronDown } from 'react-icons/fi';
+import { FiUser, FiSearch, FiChevronDown, FiLogIn } from 'react-icons/fi';
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -73,7 +73,7 @@ function Header() {
                 aria-haspopup="menu"
                 onClick={() => setIsUserMenuOpen((open) => !open)}
               >
-                <FiUser className="input-icon" aria-hidden="true" />
+                <FiLogIn className="input-icon" aria-hidden="true" />
                 <span className="user-menu-label">{currentUsername || '사용자'}</span>
                 <FiChevronDown className="user-menu-chevron" aria-hidden="true" />
               </button>
