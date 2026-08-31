@@ -8,6 +8,7 @@ import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
 import { FiClock } from "react-icons/fi";
 import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
+import { GetUserInfo } from "../../util/AuthAPI";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
@@ -49,19 +50,33 @@ function GetDocs() {
   const [authState, setAuthState] = useState(() => ({
     token: sessionStorage.getItem("token"),
     username: sessionStorage.getItem("username"),
+    permission: null,
   }));
   const navigate = useNavigate();
 
   useEffect(() => {
-    const syncAuthState = () => {
-      setAuthState({
-        token: sessionStorage.getItem("token"),
-        username: sessionStorage.getItem("username"),
-      });
+    let isMounted = true;
+
+    const syncAuthState = async () => {
+      const token = sessionStorage.getItem("token");
+      const username = sessionStorage.getItem("username");
+      const userInfo = token && username ? await GetUserInfo() : null;
+
+      if (isMounted) {
+        setAuthState({
+          token,
+          username,
+          permission: userInfo?.permission ?? null,
+        });
+      }
     };
 
+    syncAuthState();
     window.addEventListener("auth-state-change", syncAuthState);
-    return () => window.removeEventListener("auth-state-change", syncAuthState);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("auth-state-change", syncAuthState);
+    };
   }, []);
 
   //when page loaded -> getdocs with loding
@@ -126,11 +141,13 @@ function GetDocs() {
     return <NotFound status={doc.status} message="문서를 찾을 수 없습니다" />;
   }
 
-  const canManageDocument = Boolean(
+  const isLoggedIn = Boolean(
     authState.token &&
-      authState.username &&
-      authState.username === doc.data.created_by,
+      authState.username,
   );
+  const isAdmin = authState.permission === "admin";
+  const canEditDocument = isLoggedIn;
+  const canDeleteDocument = isAdmin;
 
   // console.log(doc.data);
   //doc.data에 title, content, 날짜 등이 있음
@@ -195,21 +212,25 @@ function GetDocs() {
         <div className="docs-header-top">
           <h1 className="docs-title">{doc.data.title}</h1>
 
-          {canManageDocument && (
+          {(canEditDocument || canDeleteDocument) && (
             <div className="docs-actions">
-              <button
-                className="docs-edit-btn"
-                onClick={handleEdit}
-              >
-                <HiOutlinePencilSquare />
-              </button>
+              {canEditDocument && (
+                <button
+                  className="docs-edit-btn"
+                  onClick={handleEdit}
+                >
+                  <HiOutlinePencilSquare />
+                </button>
+              )}
 
-              <button
-                className="docs-delete-btn"
-                onClick={handleDelete}
-              >
-                <IoTrashOutline />
-              </button>
+              {canDeleteDocument && (
+                <button
+                  className="docs-delete-btn"
+                  onClick={handleDelete}
+                >
+                  <IoTrashOutline />
+                </button>
+              )}
             </div>
           )}
         </div>
