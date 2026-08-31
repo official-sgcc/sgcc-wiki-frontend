@@ -6,10 +6,12 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
+import { FiClock } from "react-icons/fi";
 import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
+import "./DocumentHistory.css";
 
 function normalizeMarkdown(content) {
   if (typeof content !== "string") return "";
@@ -135,8 +137,9 @@ function GetDocs() {
   return (
     <article className="docs-container">
       <header className="docs-header">
-        {categoryPath.length > 0 && (
-          <nav className="docs-category-breadcrumb" aria-label="문서 카테고리 경로">
+        <div className="docs-context-row">
+          {categoryPath.length > 0 && (
+            <nav className="docs-category-breadcrumb" aria-label="문서 카테고리 경로">
             <button
               type="button"
               className="docs-category-breadcrumb__link"
@@ -174,8 +177,20 @@ function GetDocs() {
                 </span>
               );
             })}
-          </nav>
-        )}
+            </nav>
+          )}
+
+          <button
+            type="button"
+            className="docs-history-btn"
+            onClick={() =>
+              navigate(`/wiki/detail/${encodeURIComponent(title)}/history`)
+            }
+          >
+            <FiClock aria-hidden="true" />
+            히스토리
+          </button>
+        </div>
 
         <div className="docs-header-top">
           <h1 className="docs-title">{doc.data.title}</h1>
