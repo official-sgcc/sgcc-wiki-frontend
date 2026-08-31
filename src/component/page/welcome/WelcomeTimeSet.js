@@ -3,7 +3,7 @@
 // 신기하게 '월'만 index를 0부터 시작해서 7월을 6으로 써야 됨
 // 순서는 년, 월, 일
 const WELCOME_START = new Date(2026, 6, 13); // 2026-07-13 00:00 local
-const WELCOME_END = new Date(2026, 8, 11);   // 2026-09-11 00:00 local, exclusive
+const WELCOME_END = new Date(2026, 8, 4, 23, 59, 59, 999); // 2026-09-04 23:59:59.999 local
 
 export function isWelcomePeriod(now = new Date()) {
   return WELCOME_START <= now && now < WELCOME_END;
