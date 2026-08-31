@@ -127,6 +127,18 @@
   font-size: 0.875rem;
 }
 
+.docs-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.docs-views svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: #9298a8;
+}
+
 .docs-tags {
   display: flex;
   flex-wrap: wrap;
