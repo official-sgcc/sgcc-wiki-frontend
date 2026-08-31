@@ -27,6 +27,7 @@ async function requestUserData() {
 }
 
 export default function UserManager() {
+  const currentUsername = sessionStorage.getItem("username");
   const [users, setUsers] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +53,8 @@ export default function UserManager() {
   }
 
   async function handlePermissionChange(username, permission) {
+    if (username === currentUsername) return;
+
     const previousUser = users.find((user) => user.username === username);
     if (!previousUser || previousUser.permission === permission) return;
 
@@ -168,8 +171,17 @@ export default function UserManager() {
                       onChange={(event) =>
                         handlePermissionChange(user.username, event.target.value)
                       }
-                      disabled={updatingUsername === user.username || permissions.length === 0}
+                      disabled={
+                        user.username === currentUsername ||
+                        updatingUsername === user.username ||
+                        permissions.length === 0
+                      }
                       aria-label={`${user.username} 권한`}
+                      title={
+                        user.username === currentUsername
+                          ? "현재 로그인한 계정의 권한은 변경할 수 없습니다."
+                          : undefined
+                      }
                     >
                       {permissions.map((permission) => (
                         <option key={permission} value={permission}>
