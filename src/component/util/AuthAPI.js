@@ -99,6 +99,33 @@ export async function GetAdminUsers() {
   return response.data;
 }
 
+// 관리자 전용 사용자 권한 종류 목록
+export async function GetAdminPermissions() {
+  const response = await api.get("/admin/permissions", {
+    headers: {
+      auth: sessionStorage.getItem("token"),
+    },
+  });
+
+  return response.data?.permissions ?? [];
+}
+
+// 관리자 전용 사용자 권한 변경
+export async function UpdateUserPermission(username, permission) {
+  const response = await api.put(
+    `/admin/users/${encodeURIComponent(username)}/permission`,
+    { permission },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        auth: sessionStorage.getItem("token"),
+      },
+    },
+  );
+
+  return response.data;
+}
+
 //비밀번호 재설정 관련
 // Password Reset Request
 export async function RequestPasswordReset(username) {

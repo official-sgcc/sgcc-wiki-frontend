@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { FiRefreshCw, FiUsers } from "react-icons/fi";
-import { GetAdminUsers } from "../../util/AuthAPI";
+import {
+  GetAdminPermissions,
+  GetAdminUsers,
+  UpdateUserPermission,
+} from "../../util/AuthAPI";
 import "./UserManager.css";
 
 function getPermissionLabel(permission) {
@@ -12,22 +16,53 @@ function getPermissionLabel(permission) {
 
 export default function UserManager() {
   const [users, setUsers] = useState([]);
+  const [permissions, setPermissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [updatingUsername, setUpdatingUsername] = useState("");
+  const [updateError, setUpdateError] = useState("");
 
   async function loadUsers() {
     setIsLoading(true);
     setError("");
 
     try {
-      const data = await GetAdminUsers();
-      setUsers(Array.isArray(data) ? data : []);
+      const [userData, permissionData] = await Promise.all([
+        GetAdminUsers(),
+        GetAdminPermissions(),
+      ]);
+      setUsers(Array.isArray(userData) ? userData : []);
+      setPermissions(Array.isArray(permissionData) ? permissionData : []);
     } catch (requestError) {
       console.error(requestError);
       setUsers([]);
       setError("사용자 목록을 불러오지 못했습니다.");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handlePermissionChange(username, permission) {
+    const previousUser = users.find((user) => user.username === username);
+    if (!previousUser || previousUser.permission === permission) return;
+
+    setUpdatingUsername(username);
+    setUpdateError("");
+
+    try {
+      const updatedUser = await UpdateUserPermission(username, permission);
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user.username === username
+            ? { ...user, permission: updatedUser.permission }
+            : user,
+        ),
+      );
+    } catch (requestError) {
+      console.error(requestError);
+      setUpdateError(`${username} 사용자의 권한을 변경하지 못했습니다.`);
+    } finally {
+      setUpdatingUsername("");
     }
   }
 
@@ -59,6 +94,12 @@ export default function UserManager() {
         </button>
       </header>
 
+      {updateError && (
+        <p className="user-manager__update-error" role="alert">
+          {updateError}
+        </p>
+      )}
+
       {isLoading ? (
         <p className="user-manager__status">사용자 목록을 불러오는 중입니다...</p>
       ) : error ? (
@@ -88,9 +129,21 @@ export default function UserManager() {
                     {user.username || "-"}
                   </th>
                   <td data-label="권한">
-                    <span className={`user-manager__permission user-manager__permission--${user.permission}`}>
-                      {getPermissionLabel(user.permission)}
-                    </span>
+                    <select
+                      className="user-manager__permission-select"
+                      value={user.permission || ""}
+                      onChange={(event) =>
+                        handlePermissionChange(user.username, event.target.value)
+                      }
+                      disabled={updatingUsername === user.username || permissions.length === 0}
+                      aria-label={`${user.username} 권한`}
+                    >
+                      {permissions.map((permission) => (
+                        <option key={permission} value={permission}>
+                          {getPermissionLabel(permission)}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td data-label="이메일">{user.email || "-"}</td>
                   <td data-label="이메일 인증">

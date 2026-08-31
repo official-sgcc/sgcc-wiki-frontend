@@ -114,7 +114,6 @@
   border-bottom: 0;
 }
 
-.user-manager__permission,
 .is-verified,
 .is-unverified {
   display: inline-flex;
@@ -127,13 +126,42 @@
   white-space: nowrap;
 }
 
-.user-manager__permission--admin {
+.user-manager__permission-select {
+  min-width: 6.5rem;
+  padding: 0.35rem 1.6rem 0.35rem 0.5rem;
+  border: 0.0625rem solid #dedfe5;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #555b6c;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.user-manager__permission-select:focus-visible {
+  outline: 0.15rem solid rgba(49, 90, 168, 0.2);
+  outline-offset: 0.1rem;
+}
+
+.user-manager__permission-select:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.user-manager__update-error {
+  margin: -0.5rem 0 1rem;
+  color: #c0392b;
+  font-size: 0.8rem;
+}
+
+.user-manager__permission-select option[value="admin"] {
   background: #fff0ee;
   color: #c0392b;
 }
 
-.user-manager__permission--club_member,
-.user-manager__permission--login_user {
+.user-manager__permission-select option[value="club_member"],
+.user-manager__permission-select option[value="login_user"] {
   background: #eef3ff;
   color: #315aa8;
 }
