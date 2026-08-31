@@ -195,6 +195,12 @@
         order: 2;
     }
 
+    .welcome-content-area,
+    .welcome-poster-area {
+        width: min(100%, 27.5rem);
+        margin-inline: auto;
+    }
+
     .text {
         margin: 0 0 20px;
         padding: 38px 22px 24px;
@@ -208,7 +214,7 @@
 
     .poster {
         width: 100%;
-        max-width: 440px;
+        max-width: none;
         max-height: none;
         border-radius: 12px;
     }
