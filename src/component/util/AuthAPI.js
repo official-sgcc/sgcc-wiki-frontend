@@ -88,6 +88,17 @@ export async function GetUserInfo(username = null) {
   }
 }
 
+// 관리자 전용 사용자 목록
+export async function GetAdminUsers() {
+  const response = await api.get("/admin/users", {
+    headers: {
+      auth: sessionStorage.getItem("token"),
+    },
+  });
+
+  return response.data;
+}
+
 //비밀번호 재설정 관련
 // Password Reset Request
 export async function RequestPasswordReset(username) {

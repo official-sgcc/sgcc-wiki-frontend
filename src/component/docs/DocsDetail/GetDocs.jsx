@@ -6,7 +6,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
-import { FiClock } from "react-icons/fi";
+import { FiClock, FiEye } from "react-icons/fi";
 import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
 import { GetUserInfo } from "../../util/AuthAPI";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
@@ -246,6 +246,11 @@ function GetDocs() {
             {doc.data.updated_at
               ? formatDate(doc.data.updated_at)
               : "날짜미상"}
+          </span>
+
+          <span className="docs-views">
+            <FiEye aria-hidden="true" />
+            조회수 : {doc.data.view_count ?? 0}
           </span>
         </div>
 
