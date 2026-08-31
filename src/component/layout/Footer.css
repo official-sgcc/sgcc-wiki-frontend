@@ -100,6 +100,12 @@ a{
 }
 
 @media (max-width: 480px) {
+    .FooterContainer {
+        height: auto;
+        min-height: 5rem;
+        padding: 1rem var(--content-gutter) calc(1rem + env(safe-area-inset-bottom));
+    }
+
     .footer-github-dropdown {
         left: -6px;
         min-width: 172px;
