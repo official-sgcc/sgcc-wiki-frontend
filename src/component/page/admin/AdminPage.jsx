@@ -5,6 +5,7 @@ import { GetUserInfo } from "../../util/AuthAPI";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../../ui/Alert";
 import TagManager from "./TagManager";
+import UserManager from "./UserManager";
 
 /*
 
@@ -157,10 +158,7 @@ export default function AdminPage() {
             )}
 
             {selectedTab === "user" && (
-              <>
-                <h2>사용자 관리</h2>
-                <p>추후 구현 예정</p>
-              </>
+              <UserManager />
             )}
           </div>
         </div>

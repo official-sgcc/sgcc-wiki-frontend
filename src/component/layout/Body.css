@@ -108,6 +108,7 @@
 */
 
 .category-card {
+  position: relative;
   background-color: var(--card-bg);
   border-radius: 1.5rem;
   padding: 2rem;
@@ -125,6 +126,7 @@
 }
 
 .category-card:hover {
+  z-index: 1100;
   transform: translateY(-6px);
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.08),
@@ -198,7 +200,7 @@
   min-width: 250px;
   padding: 0;
   list-style: none;
-  z-index: 20;
+  z-index: 1101;
   animation: fadeSlideUp 0.2s ease;
 }
 

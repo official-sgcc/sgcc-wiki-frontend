@@ -1,0 +1,217 @@
+.user-manager {
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 0.0625rem solid #dedfe8;
+  border-radius: var(--panel-radius);
+  background: #fff;
+  box-shadow: 0 0.4rem 1.2rem rgba(26, 26, 46, 0.04);
+}
+
+.user-manager__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.user-manager__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.4rem;
+  color: #c0392b;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.user-manager__eyebrow svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.user-manager h2 {
+  margin: 0;
+  color: #1a1a2e;
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 800;
+}
+
+.user-manager__description {
+  margin-top: 0.35rem;
+  color: #858a9a;
+  font-size: 0.875rem;
+}
+
+.user-manager__refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 0.0625rem solid #dedfe5;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #555b6c;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.user-manager__refresh:hover:not(:disabled),
+.user-manager__refresh:focus-visible {
+  background: #f2f3f7;
+  color: #1a1a2e;
+}
+
+.user-manager__refresh:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.user-manager__refresh svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.user-manager__table-wrap {
+  overflow-x: auto;
+  border: 0.0625rem solid #e4e4e9;
+  border-radius: 0.85rem;
+}
+
+.user-manager__table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  color: #555b6c;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.user-manager__table th,
+.user-manager__table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 0.0625rem solid #ebecf0;
+  vertical-align: middle;
+}
+
+.user-manager__table thead th {
+  background: #f5f5f7;
+  color: #777d8d;
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.user-manager__table tbody th {
+  color: #282c3c;
+  font-weight: 800;
+}
+
+.user-manager__table tbody tr:last-child th,
+.user-manager__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.is-verified,
+.is-unverified {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.user-manager__permission-select {
+  min-width: 6.5rem;
+  padding: 0.35rem 1.6rem 0.35rem 0.5rem;
+  border: 0.0625rem solid #dedfe5;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #555b6c;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.user-manager__permission-select:focus-visible {
+  outline: 0.15rem solid rgba(49, 90, 168, 0.2);
+  outline-offset: 0.1rem;
+}
+
+.user-manager__permission-select:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.user-manager__update-error {
+  margin: -0.5rem 0 1rem;
+  color: #c0392b;
+  font-size: 0.8rem;
+}
+
+.user-manager__permission-select option[value="admin"] {
+  background: #fff0ee;
+  color: #c0392b;
+}
+
+.user-manager__permission-select option[value="club_member"],
+.user-manager__permission-select option[value="login_user"] {
+  background: #eef3ff;
+  color: #315aa8;
+}
+
+.is-verified {
+  background: #edf8f1;
+  color: #247a49;
+}
+
+.is-unverified {
+  background: #f2f2f5;
+  color: #777d8d;
+}
+
+.user-manager__bio {
+  max-width: 18rem;
+  overflow: hidden;
+  color: #858a9a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-manager__status {
+  padding: clamp(2rem, 8vw, 4rem) 1rem;
+  color: #858a9a;
+  text-align: center;
+}
+
+.user-manager__status--error {
+  color: #c0392b;
+}
+
+.user-manager__status--error button {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-radius: 0.6rem;
+  background: #f2f3f7;
+  color: #555b6c;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 48rem) {
+  .user-manager__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .user-manager__refresh {
+    align-self: flex-start;
+  }
+}
