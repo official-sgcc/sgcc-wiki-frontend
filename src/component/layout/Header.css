@@ -243,6 +243,15 @@
     gap: 0;
   }
 
+  .loginbtn > .footer-item-login {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
   .user-menu-label,
   .user-menu-chevron {
     display: none;

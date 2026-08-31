@@ -73,7 +73,7 @@ function Header() {
                 aria-haspopup="menu"
                 onClick={() => setIsUserMenuOpen((open) => !open)}
               >
-                <FiLogIn className="input-icon" aria-hidden="true" />
+                <FiUser className="input-icon" aria-hidden="true" />
                 <span className="user-menu-label">{currentUsername || '사용자'}</span>
                 <FiChevronDown className="user-menu-chevron" aria-hidden="true" />
               </button>
@@ -101,15 +101,16 @@ function Header() {
               )}
             </div>
           ) : (
-            <p 
+            <button
+              type="button"
               className="footer-item-login" 
               onClick={() => {
                 setIsLoginOpen(true)
             }}
             >
-              <FiUser className="input-icon" />
+              <FiLogIn className="input-icon" aria-hidden="true" />
               Login
-            </p>
+            </button>
           )}
         </div>
       </div>
