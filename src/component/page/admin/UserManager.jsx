@@ -14,6 +14,18 @@ function getPermissionLabel(permission) {
   return permission || "알 수 없음";
 }
 
+async function requestUserData() {
+  const [userData, permissionData] = await Promise.all([
+    GetAdminUsers(),
+    GetAdminPermissions(),
+  ]);
+
+  return {
+    users: Array.isArray(userData) ? userData : [],
+    permissions: Array.isArray(permissionData) ? permissionData : [],
+  };
+}
+
 export default function UserManager() {
   const [users, setUsers] = useState([]);
   const [permissions, setPermissions] = useState([]);
@@ -27,12 +39,9 @@ export default function UserManager() {
     setError("");
 
     try {
-      const [userData, permissionData] = await Promise.all([
-        GetAdminUsers(),
-        GetAdminPermissions(),
-      ]);
-      setUsers(Array.isArray(userData) ? userData : []);
-      setPermissions(Array.isArray(permissionData) ? permissionData : []);
+      const data = await requestUserData();
+      setUsers(data.users);
+      setPermissions(data.permissions);
     } catch (requestError) {
       console.error(requestError);
       setUsers([]);
@@ -67,7 +76,31 @@ export default function UserManager() {
   }
 
   useEffect(() => {
-    loadUsers();
+    let isMounted = true;
+
+    async function loadInitialUsers() {
+      try {
+        const data = await requestUserData();
+        if (!isMounted) return;
+
+        setUsers(data.users);
+        setPermissions(data.permissions);
+      } catch (requestError) {
+        if (!isMounted) return;
+
+        console.error(requestError);
+        setUsers([]);
+        setError("사용자 목록을 불러오지 못했습니다.");
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    }
+
+    loadInitialUsers();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
