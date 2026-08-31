@@ -78,7 +78,19 @@ export async function GetDocsDetail(title) {
       ok: false, 
       status: e.response.status, 
     }; 
-  } 
+  }
+}
+
+export async function GetDocsVersions(title) {
+  const response = await api.get(`/documents/${title}/versions`);
+  return response.data;
+}
+
+export async function GetDocsVersion(title, versionNumber) {
+  const response = await api.get(
+    `/documents/${title}/versions/${versionNumber}`,
+  );
+  return response.data;
 }
 
 export async function SearchDocs(keyword, searchType = "title_content", limit, offset) {

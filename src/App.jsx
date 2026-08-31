@@ -3,6 +3,7 @@ import Layout from './component/layout/Layout'
 import Body from './component/layout/Body'
 import SubCategory from './component/layout/SubCategory'
 import GetDocs from './component/docs/DocsDetail/GetDocs'
+import DocumentHistory from './component/docs/DocsDetail/DocumentHistory'
 import SearchResults from './component/docs/SearchResults'
 import NotFound from './component/ui/NotFound'
 import DocsEditor from './component/docs/Editor/DocsEditor'
@@ -102,6 +103,8 @@ function App() {
         <Route path="/" element={<Layout content={<Body />} />} />
         <Route path="/wiki/:subcategory" element={<Layout content={<SubCategory />} />} />
         <Route path="/wiki/detail/:title" element={<Layout content={<GetDocs />} />} />
+        <Route path="/wiki/detail/:title/history" element={<Layout content={<DocumentHistory />} />} />
+        <Route path="/wiki/detail/:title/history/:versionNumber" element={<Layout content={<DocumentHistory />} />} />
         <Route path="/search" element={<Layout content={<SearchResults />} />} />
         <Route path="/wiki/edit" element={<Layout content={<DocsEditor />} />} />
         <Route path="/wiki/detail/:prevtitle/edit" element={<Layout content={<DocsEditor />} />} />
