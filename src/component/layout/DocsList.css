@@ -20,6 +20,18 @@
   height: 0.9rem;
 }
 
+.docs-list__breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.docs-list__breadcrumb a:hover,
+.docs-list__breadcrumb a:focus-visible {
+  color: #c0392b;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
 .docs-list__breadcrumb .is-current {
   color: #1a1a2e;
   font-weight: 600;

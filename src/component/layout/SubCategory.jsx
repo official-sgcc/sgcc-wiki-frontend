@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DocsList from "./DocsList";
+import CategoryList from "./CategoryList";
 import NotFound from "../ui/NotFound";
 import {
   GetDocsFromCategory,
@@ -22,16 +23,23 @@ function SubCategory() {
   const { subcategory } = useParams();
   const [categoryExists, setCategoryExists] = useState(null);
   const [categoryPath, setCategoryPath] = useState([]);
+  const [childCategories, setChildCategories] = useState([]);
 
   // 카테고리 존재 여부 확인
   useEffect(() => {
     const checkCategory = async () => {
+      setCategoryExists(null);
+      setChildCategories([]);
+
       const [category, categories] = await Promise.all([
         GetCategory(subcategory),
         GetListOfCategories(),
       ]);
 
       setCategoryExists(category !== null);
+      setChildCategories(
+        Array.isArray(category?.children) ? category.children : [],
+      );
 
       const matchedCategory = flattenCategories(categories ?? []).find(
         (item) => item.name === subcategory,
@@ -58,6 +66,16 @@ function SubCategory() {
     return <NotFound />;
   }
 
+  if (childCategories.length > 0) {
+    return (
+      <CategoryList
+        heading={subcategory}
+        categories={childCategories}
+        breadcrumbItems={categoryPath}
+      />
+    );
+  }
+
   return (
     <div style={{ width: "100%", boxSizing: "border-box" }}>
       <DocsList
@@ -65,6 +83,7 @@ function SubCategory() {
         category={subcategory}
         heading={subcategory}
         breadcrumbItems={categoryPath}
+        linkCategoryBreadcrumbs={true}
         showWriteButton={true}
       />
     </div>
