@@ -209,10 +209,10 @@
 .sub-list {
   position: absolute;
   top: auto;
-  bottom: calc(100% + 1rem);
+  bottom: calc(100% - 0.25rem);
   left: 50%;
   transform: translateX(-50%);
-  margin-bottom: 16px;
+  margin-bottom: 0;
   background: #fff;
   border-radius: 25px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -278,8 +278,15 @@
   gap: 0.45rem;
   padding: 14px 20px;
   padding-left: calc(20px + var(--sub-category-indent, 0rem));
-  transition: color 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   color: #000000;
+}
+
+.sub-link:hover,
+.sub-link:focus-visible {
+  outline: none;
+  background-color: #ededf2;
+  color: #292934;
 }
 
 .sub-link__branch {
