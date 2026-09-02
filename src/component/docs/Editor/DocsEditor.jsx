@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation, useSearchParams } from "react-router-dom";
 import SimpleMDE from "react-simplemde-editor";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
-import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI";
+import { SubmitDocs, ModifyDocs, GetDocsDetail, getDocumentPath } from "../../util/DocsAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./DocsEditor.css";
 import "easymde/dist/easymde.min.css";
@@ -18,7 +18,7 @@ import "easymde/dist/easymde.min.css";
 - /wiki/edit
 
 수정 모드
-- /wiki/detail/:prevtitle/edit
+- /wiki/edit?title=문서제목
 
 SubCategory에서 전달하는 기존 state 구조:
 navigate("/wiki/edit", {
@@ -48,9 +48,11 @@ function normalizeMarkdown(content) {
 function DocsEditor() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { prevtitle } = useParams();
+  const { prevtitle: pathTitle } = useParams();
+  const [searchParams] = useSearchParams();
+  const previousTitle = searchParams.get("title") ?? pathTitle;
 
-  const isEditMode = prevtitle !== undefined;
+  const isEditMode = Boolean(previousTitle);
 
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
@@ -137,7 +139,7 @@ function DocsEditor() {
       if (!isEditMode) return;
 
       try {
-        const rtn = await GetDocsDetail(prevtitle);
+        const rtn = await GetDocsDetail(previousTitle);
 
         if (!rtn.ok) {
           if (
@@ -234,7 +236,7 @@ function DocsEditor() {
         await SubmitDocs(title.trim(), value, finalTags, categoryData);
       }
 
-      navigate(`/wiki/detail/${title.trim()}`);
+      navigate(getDocumentPath(title.trim()));
     } catch (e) {
       if (e.response?.status === 401) {
         alert("문서 작성 권한이 없습니다.");

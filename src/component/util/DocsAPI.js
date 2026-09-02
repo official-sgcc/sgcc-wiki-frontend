@@ -1,4 +1,8 @@
 import api from "../../backend/axios"
+
+export function getDocumentPath(title) {
+  return `/wiki/detail?title=${encodeURIComponent(title)}`;
+}
  
 export function formatDate(dateString) { 
   if (!dateString) return "-";
@@ -58,7 +62,7 @@ export async function ModifyDocs(
   Tags, 
   Category 
 ) { 
-  await api.put(`/documents/${Title}`, { 
+  await api.put("/documents/by-title", {
     content: Content, 
  
     tags: Tags.map(tag => ({ 
@@ -70,7 +74,8 @@ export async function ModifyDocs(
       parent: Category.parent, 
     } 
  
-  }, { 
+  }, {
+    params: { title: Title },
     headers: { 
       "Content-Type": "application/json", 
       auth: sessionStorage.getItem("token"), 
@@ -80,7 +85,9 @@ export async function ModifyDocs(
  
 export async function GetDocsDetail(title) { 
   try { 
-    const response = await api.get(`/documents/${title}`); 
+    const response = await api.get("/documents/by-title", {
+      params: { title },
+    });
     return { 
       ok: true, 
       data: response.data, 
@@ -94,14 +101,16 @@ export async function GetDocsDetail(title) {
 }
 
 export async function GetDocsVersions(title) {
-  const response = await api.get(`/documents/${title}/versions`);
+  const response = await api.get("/documents/by-title/versions", {
+    params: { title },
+  });
   return response.data;
 }
 
 export async function GetDocsVersion(title, versionNumber) {
-  const response = await api.get(
-    `/documents/${title}/versions/${versionNumber}`,
-  );
+  const response = await api.get("/documents/by-title/version", {
+    params: { title, version_number: versionNumber },
+  });
   return response.data;
 }
 
@@ -120,9 +129,10 @@ export async function SearchDocs(keyword, searchType = "title_content", limit, o
 
 export async function DeleteDocs(title){ 
   try { 
-    const response = await api.delete( 
-      `/documents/${title}`, 
-      { 
+    const response = await api.delete(
+      "/documents/by-title",
+      {
+        params: { title },
         headers:{ 
           "Content-Type":"application/json", 
           auth: sessionStorage.getItem("token"), 

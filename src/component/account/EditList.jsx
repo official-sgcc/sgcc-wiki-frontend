@@ -2,6 +2,7 @@ import React from 'react'
 import { FiChevronRight } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import './EditList.css'
+import { getDocumentPath } from '../util/DocsAPI'
 
 function formatEditDate(value) {
   if (!value) {
@@ -36,7 +37,7 @@ function EditList({ edits = [] }) {
           item.updated_at ?? item.date ?? item.createdAt ?? item.updatedAt,
         );
         const linkPath = documentTitle
-          ? `/wiki/detail/${encodeURIComponent(documentTitle)}`
+          ? getDocumentPath(documentTitle)
           : '#';
         const itemKey = item.id ?? (
           documentTitle

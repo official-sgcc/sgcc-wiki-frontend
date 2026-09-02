@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";//MD viewer
@@ -29,7 +29,7 @@ function normalizeMarkdown(content) {
 목적: 단일 문서 페이지
 
 사용법: navigate with params.
-URL: /wiki/detail/:title
+URL: /wiki/detail?title=문서제목
 파라미터: 문서 제목 string
 
 설명: title 파라미터로 넘어온 제목의 문서를 서버에서 받아와서 보여주는 페이지
@@ -43,7 +43,9 @@ COULD: 하단에 해당하는 카테고리 문서 목록 띄우기
 
 
 function GetDocs() {
-  const { title } = useParams();
+  const { title: pathTitle } = useParams();
+  const [searchParams] = useSearchParams();
+  const title = searchParams.get("title") ?? pathTitle;
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
   const [categoryPath, setCategoryPath] = useState([]);
@@ -106,7 +108,7 @@ function GetDocs() {
     // 문서 수정 페이지로 이동
     // 필요 시 현재 카테고리도 state로 함께 전달
 
-    navigate(`/wiki/detail/${title}/edit`);
+    navigate(`/wiki/edit?title=${encodeURIComponent(title)}`);
   }
 
   async function handleDelete() {
@@ -193,7 +195,7 @@ function GetDocs() {
             type="button"
             className="docs-history-btn"
             onClick={() =>
-              navigate(`/wiki/detail/${encodeURIComponent(title)}/history`)
+              navigate(`/wiki/history?title=${encodeURIComponent(title)}`)
             }
           >
             <FiClock aria-hidden="true" />
