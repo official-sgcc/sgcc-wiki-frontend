@@ -1,15 +1,27 @@
 import api from "../../backend/axios"
  
 export function formatDate(dateString) { 
-  const date = new Date(dateString); 
+  if (!dateString) return "-";
+
+  const value = String(dateString).trim();
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+  const normalizedValue = hasTimezone
+    ? value
+    : `${value.replace(" ", "T")}Z`;
+  const date = new Date(normalizedValue);
+
+  if (Number.isNaN(date.getTime())) return "-";
+
+  // 백엔드의 시간대 없는 문서 시간은 UTC로 간주하고 한국 시간으로 표시한다.
+  const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
  
-  const year = date.getFullYear(); 
-  const month = String(date.getMonth() + 1).padStart(2, "0"); 
-  const day = String(date.getDate()).padStart(2, "0"); 
+  const year = koreaTime.getUTCFullYear();
+  const month = String(koreaTime.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(koreaTime.getUTCDate()).padStart(2, "0");
  
-  const hours = String(date.getHours()).padStart(2, "0"); 
-  const minutes = String(date.getMinutes()).padStart(2, "0"); 
-  const seconds = String(date.getSeconds()).padStart(2, "0"); 
+  const hours = String(koreaTime.getUTCHours()).padStart(2, "0");
+  const minutes = String(koreaTime.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(koreaTime.getUTCSeconds()).padStart(2, "0");
  
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; 
 } 
