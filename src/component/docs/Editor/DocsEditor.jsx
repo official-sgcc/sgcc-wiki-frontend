@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import SimpleMDE from "react-simplemde-editor";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { SubmitDocs, ModifyDocs, GetDocsDetail } from "../../util/DocsAPI";
@@ -296,8 +299,32 @@ function DocsEditor() {
         </button>
       </div>
 
-      <div data-color-mode="light">
-        <SimpleMDE value={value} onChange={setValue} options={mdeOptions} />
+      <div className="editor-workspace" data-color-mode="light">
+        <section className="editor-workspace__pane" aria-label="Markdown 편집기">
+          <h2 className="editor-workspace__heading">편집</h2>
+          <SimpleMDE value={value} onChange={setValue} options={mdeOptions} />
+        </section>
+
+        <section
+          className="editor-workspace__pane editor-markdown-preview"
+          aria-label="Markdown 미리보기"
+        >
+          <h2 className="editor-workspace__heading">미리보기</h2>
+          <div className="editor-markdown-preview__content">
+            {value.trim() ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+              >
+                {normalizeMarkdown(value)}
+              </ReactMarkdown>
+            ) : (
+              <p className="editor-markdown-preview__empty">
+                왼쪽에 내용을 입력하면 여기에 미리보기가 표시됩니다.
+              </p>
+            )}
+          </div>
+        </section>
       </div>
 
       <div className="editor-footer">
