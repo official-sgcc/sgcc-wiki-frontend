@@ -12,16 +12,21 @@ export async function GetTagList() {
 } 
  
 // Get List of Docs associated with specific Tag 
-export async function GetDocsFromTag(tag, limit = 20, offset = 0) { 
+export async function GetDocsFromTag(tag, limit, offset) {
   try { 
+    const params = {};
+
+    if (limit !== undefined && limit !== null) {
+      params.limit = limit;
+    }
+
+    if (offset !== undefined && offset !== null) {
+      params.offset = offset;
+    }
+
     const response = await api.get( 
       `/tags/${tag}/documents`, 
-      { 
-        params: { 
-          limit, 
-          offset, 
-        }, 
-      } 
+      { params },
     ); 
      
     return response.data; 
