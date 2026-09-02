@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiClock, FiUser } from "react-icons/fi";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
@@ -27,7 +27,10 @@ function getVersionNumber(version) {
 }
 
 export default function DocumentHistory() {
-  const { title, versionNumber } = useParams();
+  const { title: pathTitle, versionNumber: pathVersionNumber } = useParams();
+  const [searchParams] = useSearchParams();
+  const title = searchParams.get("title") ?? pathTitle;
+  const versionNumber = searchParams.get("version") ?? pathVersionNumber;
   const [versions, setVersions] = useState([]);
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,7 +81,7 @@ export default function DocumentHistory() {
 
     return (
       <article className="document-history document-history--detail">
-        <Link className="document-history__back" to={`/wiki/detail/${encodedTitle}/history`}>
+        <Link className="document-history__back" to={`/wiki/history?title=${encodedTitle}`}>
           <FiArrowLeft aria-hidden="true" />
           버전 목록으로
         </Link>
@@ -107,7 +110,7 @@ export default function DocumentHistory() {
 
   return (
     <article className="document-history">
-      <Link className="document-history__back" to={`/wiki/detail/${encodedTitle}`}>
+      <Link className="document-history__back" to={`/wiki/detail?title=${encodedTitle}`}>
         <FiArrowLeft aria-hidden="true" />
         문서로 돌아가기
       </Link>
@@ -129,7 +132,7 @@ export default function DocumentHistory() {
               <li key={number}>
                 <Link
                   className="document-history__item"
-                  to={`/wiki/detail/${encodedTitle}/history/${number}`}
+                  to={`/wiki/history?title=${encodedTitle}&version=${number}`}
                 >
                   <span className="document-history__badge">v{number}</span>
                   <span className="document-history__item-info">
