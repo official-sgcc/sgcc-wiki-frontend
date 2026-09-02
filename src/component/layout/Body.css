@@ -265,10 +265,19 @@
 .sub-link {
   text-decoration: none;   
   font-size: 0.95rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   padding: 14px 20px;
+  padding-left: calc(20px + var(--sub-category-indent, 0rem));
   transition: color 0.2s ease;
   color: #000000;
+}
+
+.sub-link__branch {
+  flex-shrink: 0;
+  color: #a0a5b2;
+  font-weight: 700;
 }
 
 .sub-item-header {

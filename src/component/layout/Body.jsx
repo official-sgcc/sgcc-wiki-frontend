@@ -100,8 +100,14 @@ function Body() {
                           <Link
                             to={`/wiki/${encodeURIComponent(subCategory.name)}`}
                             className="sub-link"
+                            style={{
+                              "--sub-category-indent": `${Math.max(0, subCategory.depth - 1) * 0.8}rem`,
+                            }}
                           >
-                            {subCategory.name}
+                            <span className="sub-link__branch" aria-hidden="true">
+                              └
+                            </span>
+                            <span>{subCategory.name}</span>
                           </Link>
                         </li>
                       ))
