@@ -70,6 +70,12 @@ function Body() {
               onMouseEnter={() => setHoveredCategory(category.name)}
               onMouseLeave={() => setHoveredCategory(null)}
             >
+              <Link
+                to={`/wiki/${encodeURIComponent(category.name)}`}
+                className="category-card__link"
+                aria-label={`${category.name} 카테고리 보기`}
+              />
+
               <div className="character-wrapper">
                 <img
                   src={
@@ -121,14 +127,7 @@ function Body() {
               </div>
 
               <div className="category-title">
-                <h3>
-                  <Link
-                    to={`/wiki/${encodeURIComponent(category.name)}`}
-                    className="category-title__link"
-                  >
-                    {category.name}
-                  </Link>
-                </h3>
+                <h3>{category.name}</h3>
               </div>
             </div>
           );
