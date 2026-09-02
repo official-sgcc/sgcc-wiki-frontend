@@ -84,7 +84,12 @@ function Body() {
                 {hoveredCategory === category.name && (
                   <ul className="sub-list">
                     <li className="sub-item-header">
-                      <span>{category.name}</span>
+                      <Link
+                        to={`/wiki/${encodeURIComponent(category.name)}`}
+                        className="sub-item-header__link"
+                      >
+                        {category.name}
+                      </Link>
                     </li>
                     {subCategories.length > 0 ? (
                       subCategories.map((subCategory) => (
@@ -95,8 +100,14 @@ function Body() {
                           <Link
                             to={`/wiki/${encodeURIComponent(subCategory.name)}`}
                             className="sub-link"
+                            style={{
+                              "--sub-category-indent": `${Math.max(0, subCategory.depth - 1) * 0.8}rem`,
+                            }}
                           >
-                            {subCategory.name}
+                            <span className="sub-link__branch" aria-hidden="true">
+                              └
+                            </span>
+                            <span>{subCategory.name}</span>
                           </Link>
                         </li>
                       ))
@@ -110,7 +121,14 @@ function Body() {
               </div>
 
               <div className="category-title">
-                <h3>{category.name}</h3>
+                <h3>
+                  <Link
+                    to={`/wiki/${encodeURIComponent(category.name)}`}
+                    className="category-title__link"
+                  >
+                    {category.name}
+                  </Link>
+                </h3>
               </div>
             </div>
           );

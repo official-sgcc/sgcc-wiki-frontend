@@ -6,7 +6,7 @@
 
 .editor-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1440px;
 
   margin: 0 auto;
   padding: 24px;
@@ -90,6 +90,135 @@
 .EasyMDEContainer {
   border-radius: 12px;
   overflow: hidden;
+}
+
+.editor-workspace {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+}
+
+.editor-workspace__pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.editor-workspace__heading {
+  margin: 0 0 8px;
+  color: #555b6c;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.editor-workspace .EasyMDEContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.editor-workspace .EasyMDEContainer .CodeMirror {
+  flex: 1;
+  min-height: 32rem;
+  box-sizing: border-box;
+}
+
+.editor-markdown-preview {
+  overflow: hidden;
+}
+
+.editor-markdown-preview__content {
+  flex: 1;
+  min-height: 32rem;
+  max-height: 42rem;
+  padding: 1rem 1.25rem;
+  box-sizing: border-box;
+  overflow: auto;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  background: #fff;
+  color: #282c3c;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.editor-markdown-preview__content > *:first-child {
+  margin-top: 0;
+}
+
+.editor-markdown-preview__content h1,
+.editor-markdown-preview__content h2,
+.editor-markdown-preview__content h3,
+.editor-markdown-preview__content h4 {
+  margin: 1.5em 0 0.65em;
+  color: #1a1a2e;
+  line-height: 1.3;
+}
+
+.editor-markdown-preview__content p,
+.editor-markdown-preview__content ul,
+.editor-markdown-preview__content ol,
+.editor-markdown-preview__content blockquote {
+  line-height: 1.75;
+}
+
+.editor-markdown-preview__content a {
+  color: #315aa8;
+}
+
+.editor-markdown-preview__content blockquote {
+  margin-inline: 0;
+  padding: 0.2rem 1rem;
+  border-left: 0.25rem solid #c0392b;
+  color: #666d7e;
+}
+
+.editor-markdown-preview__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.editor-markdown-preview__content pre {
+  overflow: auto;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #f5f5f7;
+}
+
+.editor-markdown-preview__content code {
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.editor-markdown-preview__content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.editor-markdown-preview__content th,
+.editor-markdown-preview__content td {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #dedfe5;
+}
+
+.editor-markdown-preview__content [align="left"] {
+  text-align: left;
+}
+
+.editor-markdown-preview__content [align="center"] {
+  text-align: center;
+}
+
+.editor-markdown-preview__content [align="right"] {
+  text-align: right;
+}
+
+.editor-markdown-preview__empty {
+  margin: 0;
+  color: #a0a5b2;
+  font-size: 0.9rem;
 }
 
 /* ===== footer ===== */
@@ -213,6 +342,19 @@
 
   .save-btn {
     width: 100%;
+  }
+
+  .editor-container {
+    padding: 16px;
+  }
+
+  .editor-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editor-workspace .EasyMDEContainer .CodeMirror,
+  .editor-markdown-preview__content {
+    min-height: 22rem;
   }
 }
 
