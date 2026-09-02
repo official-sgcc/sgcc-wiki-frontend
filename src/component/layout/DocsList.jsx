@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiChevronRight,
@@ -76,9 +76,10 @@ export default function DocsList({
 }) {
   const navigate = useNavigate();
 
-  const [docsdata, setDocsData] = useState([]);
+  const [allDocs, setAllDocs] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(initialLimit);
+  const [sortOrder, setSortOrder] = useState("newest");
   const [totalCount, setTotalCount] = useState(0);
   const [listSearch, setListSearch] = useState("");
 
@@ -90,51 +91,59 @@ export default function DocsList({
   const currentPage = Math.min(page, totalPages);
   const offset = (currentPage - 1) * limit;
 
-  useEffect(() => {
-    async function fetchTotalCount() {
-      if (!getDocsList) return;
+  const sortedDocs = useMemo(() => {
+    const direction = sortOrder === "newest" ? -1 : 1;
 
-      setCountLoading(true);
+    return [...allDocs].sort((first, second) => {
+      const firstUpdatedAt = Date.parse(first.updated_at);
+      const secondUpdatedAt = Date.parse(second.updated_at);
+      const firstTime = Number.isNaN(firstUpdatedAt) ? 0 : firstUpdatedAt;
+      const secondTime = Number.isNaN(secondUpdatedAt) ? 0 : secondUpdatedAt;
 
-      try {
-        // limit, offset 없이 요청하면 전체 목록을 받는 API라는 전제
-        const allDocs = await getDocsList({});
-        setTotalCount(Array.isArray(allDocs) ? allDocs.length : 0);
-      } catch (e) {
-        console.error(e);
-        setTotalCount(0);
-      } finally {
-        setCountLoading(false);
-      }
-    }
+      return (firstTime - secondTime) * direction;
+    });
+  }, [allDocs, sortOrder]);
 
-    fetchTotalCount();
-  }, [getDocsList]);
+  const docsdata = useMemo(
+    () => sortedDocs.slice(offset, offset + limit),
+    [limit, offset, sortedDocs],
+  );
 
   useEffect(() => {
     async function fetchDocs() {
       if (!getDocsList) return;
 
       setLoading(true);
+      setCountLoading(true);
       setError(null);
 
       try {
-        const data = await getDocsList({ limit, offset });
-        setDocsData(Array.isArray(data) ? data : []);
+        // 전체 목록을 받은 뒤 정렬하고 현재 페이지에 해당하는 항목만 표시한다.
+        const data = await getDocsList({});
+        const docs = Array.isArray(data) ? data : [];
+        setAllDocs(docs);
+        setTotalCount(docs.length);
       } catch (e) {
         console.error(e);
         setError("문서 목록을 불러오지 못했습니다.");
-        setDocsData([]);
+        setAllDocs([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
+        setCountLoading(false);
       }
     }
 
     fetchDocs();
-  }, [getDocsList, limit, offset]);
+  }, [getDocsList]);
 
   const handleChangeLimit = (e) => {
     setLimit(Number(e.target.value));
+    setPage(1);
+  };
+
+  const handleChangeSortOrder = (e) => {
+    setSortOrder(e.target.value);
     setPage(1);
   };
 
@@ -231,22 +240,40 @@ export default function DocsList({
         </div>
       </header>
 
-      {/* ===== 페이지당 게시글 수 선택 ===== */}
+      {/* ===== 페이지당 게시글 수 / 정렬 선택 ===== */}
       <div className="docs-list__controls">
-        <label htmlFor="docs-limit-select" className="docs-list__label">
-          보기
-        </label>
+        <div className="docs-list__control-group">
+          <label htmlFor="docs-limit-select" className="docs-list__label">
+            보기
+          </label>
 
-        <select
-          id="docs-limit-select"
-          value={limit}
-          onChange={handleChangeLimit}
-          className="docs-list__select"
-        >
-          <option value={20}>20개</option>
-          <option value={50}>50개</option>
-          <option value={100}>100개</option>
-        </select>
+          <select
+            id="docs-limit-select"
+            value={limit}
+            onChange={handleChangeLimit}
+            className="docs-list__select"
+          >
+            <option value={20}>20개</option>
+            <option value={50}>50개</option>
+            <option value={100}>100개</option>
+          </select>
+        </div>
+
+        <div className="docs-list__control-group">
+          <label htmlFor="docs-sort-select" className="docs-list__label">
+            정렬
+          </label>
+
+          <select
+            id="docs-sort-select"
+            value={sortOrder}
+            onChange={handleChangeSortOrder}
+            className="docs-list__select"
+          >
+            <option value="newest">최신순</option>
+            <option value="oldest">오래된순</option>
+          </select>
+        </div>
       </div>
 
       {/* ===== 로딩 / 에러 상태 ===== */}
