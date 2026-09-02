@@ -166,31 +166,23 @@ function GetDocs() {
             </button>
 
             {categoryPath.map((categoryName, index) => {
-              const isCurrent = index === categoryPath.length - 1;
-
               return (
                 <span
-                  className={`docs-category-breadcrumb__item ${
-                    isCurrent ? "is-current" : "is-intermediate"
-                  }`}
+                  className="docs-category-breadcrumb__item"
                   key={`${categoryName}-${index}`}
                 >
                   <span className="docs-category-breadcrumb__separator" aria-hidden="true">
                     &gt;
                   </span>
-                  {isCurrent ? (
-                    <button
-                      type="button"
-                      className="docs-category-breadcrumb__link"
-                      onClick={() =>
-                        navigate(`/wiki/${encodeURIComponent(categoryName)}`)
-                      }
-                    >
-                      {categoryName}
-                    </button>
-                  ) : (
-                    <span className="docs-category-breadcrumb__text">{categoryName}</span>
-                  )}
+                  <button
+                    type="button"
+                    className="docs-category-breadcrumb__link"
+                    onClick={() =>
+                      navigate(`/wiki/${encodeURIComponent(categoryName)}`)
+                    }
+                  >
+                    {categoryName}
+                  </button>
                 </span>
               );
             })}

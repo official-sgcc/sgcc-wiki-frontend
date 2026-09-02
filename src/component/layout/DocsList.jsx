@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FiChevronRight,
   FiClock,
@@ -71,6 +71,7 @@ export default function DocsList({
   category = null,
   heading = "전체 게시글",
   breadcrumbItems = [],
+  linkCategoryBreadcrumbs = false,
   showSearch = true,
   showWriteButton = false,
 }) {
@@ -183,17 +184,28 @@ export default function DocsList({
 
   return (
     <section className="docs-list">
-      <div className="docs-list__breadcrumb" aria-label="현재 위치">
-        <span>홈</span>
-        {(breadcrumbItems.length ? breadcrumbItems : [heading]).map((item, index) => (
-          <Fragment key={`${item}-${index}`}>
-            <FiChevronRight aria-hidden="true" />
-            <span className={index === (breadcrumbItems.length || 1) - 1 ? "is-current" : ""}>
-              {item}
-            </span>
-          </Fragment>
-        ))}
-      </div>
+      <nav className="docs-list__breadcrumb" aria-label="현재 위치">
+        <Link to="/">홈</Link>
+        {(breadcrumbItems.length ? breadcrumbItems : [heading]).map((item, index) => {
+          const isCurrent = index === (breadcrumbItems.length || 1) - 1;
+
+          return (
+            <Fragment key={`${item}-${index}`}>
+              <FiChevronRight aria-hidden="true" />
+              {linkCategoryBreadcrumbs ? (
+                <Link
+                  className={isCurrent ? "is-current" : ""}
+                  to={`/wiki/${encodeURIComponent(item)}`}
+                >
+                  {item}
+                </Link>
+              ) : (
+                <span className={isCurrent ? "is-current" : ""}>{item}</span>
+              )}
+            </Fragment>
+          );
+        })}
+      </nav>
 
       <header className="docs-list__header">
         <div className="docs-list__heading">
