@@ -1,23 +1,26 @@
 .body-container {
+  --home-card-size: clamp(9rem, min(20vw, 24dvh), 13rem);
   width: 100%;
   padding: 0 !important;
   max-width: none;
   margin: 0 auto;
 
   display: flex;
+  flex: 1;
   flex-direction: column; 
   justify-content: flex-start;
   align-items: center;    /* 가로 중앙 정렬 */
-  min-height: 70vh;       /* 푸터 높이를 고려해 80~100vh 사이로 조절 */
+  min-width: 0;
+  min-height: 0;
   overflow: visible;
 }
 
 .home-hero {
-  width: 100vw;
+  width: 100%;
   margin-top: 0;
   margin-bottom: 0;
-  margin-left: calc(50% - 50vw);
-  padding: clamp(2rem, 4vw, 2.5rem) var(--content-gutter) clamp(3rem, 5vw, 4rem);
+  padding: clamp(1.25rem, 3.5dvh, 2.5rem) var(--content-gutter)
+    clamp(2rem, 5dvh, 4rem);
   box-sizing: border-box;
   background: #1a1a2e;
   color: var(--text);
@@ -26,10 +29,10 @@
 
 .home-hero-wave {
   position: relative;
-  width: 100vw;
-  height: clamp(2.5rem, 5vw, 3.5rem);
-  margin-left: calc(50% - 50vw);
-  margin-bottom: clamp(2rem, 5vw, 4rem);
+  flex-shrink: 1;
+  width: 100%;
+  height: clamp(1.75rem, 4.5dvh, 3.5rem);
+  margin-bottom: clamp(1rem, 3.5dvh, 3rem);
   overflow: hidden;
   background: var(--bg);
 }
@@ -75,11 +78,16 @@
 /* 카테고리들을 가로로 나열 (3열 기준) */
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(var(--category-columns, 3), 13rem);
-  width: fit-content;
-  max-width: 100%;
+  grid-template-columns: repeat(
+    var(--category-columns, 3),
+    minmax(0, var(--home-card-size))
+  );
+  width: 100%;
+  max-width: var(--content-width);
   margin-inline: auto;
-  gap: 2.5rem;
+  padding: 0 var(--content-gutter) clamp(1rem, 3dvh, 2.5rem);
+  box-sizing: border-box;
+  gap: clamp(0.75rem, 3vw, 2.5rem);
   justify-content: center;
   justify-items: center;
   align-items: start;
@@ -110,9 +118,9 @@
 .category-card {
   position: relative;
   background-color: var(--card-bg);
-  border-radius: 1.5rem;
-  padding: 2rem;
-  width: 13rem;
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  padding: clamp(1rem, 3dvh, 2rem);
+  width: min(100%, var(--home-card-size));
   aspect-ratio: 1;
   height: auto;
   box-sizing: border-box;
@@ -134,20 +142,20 @@
 }
 
 .character-wrapper {
-  width: 8rem;
+  width: min(62%, 8rem);
   aspect-ratio: 1;
   height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.35rem, 1.5dvh, 1rem);
   position: relative;
 }
 
 .category-img {
   position: absolute;
-  width: 7rem;
-  height: 7rem;
+  width: 88%;
+  height: 88%;
   object-fit: contain; /* 이미지 비율 유지 */
   z-index: 1;
 }
@@ -319,8 +327,8 @@
   }
 
   .category-card {
-    width: min(100%, 13rem);
-    padding: 2rem;
+    width: min(100%, 12rem);
+    padding: 1.5rem;
     justify-self: center;
   }
 
@@ -334,11 +342,39 @@
   }
 
   .home-hero {
-    padding-top: 2rem;
-    padding-bottom: 3.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
   }
 
   .home-hero-wave__shape {
     height: 100%;
+  }
+}
+
+@media (min-width: 48.01rem) and (max-height: 50rem) {
+  .body-container {
+    --home-card-size: clamp(7.5rem, 21dvh, 10rem);
+  }
+
+  .home-hero {
+    padding-top: clamp(0.75rem, 2dvh, 1.25rem);
+    padding-bottom: clamp(1.25rem, 3dvh, 2rem);
+  }
+
+  .home-hero__description {
+    margin-top: 0.4rem;
+  }
+
+  .home-hero-wave {
+    height: clamp(1.25rem, 3dvh, 2rem);
+    margin-bottom: clamp(0.65rem, 2dvh, 1.25rem);
+  }
+
+  .category-card {
+    padding: clamp(0.75rem, 2dvh, 1.15rem);
+  }
+
+  .category-title {
+    top: 0.25rem;
   }
 }
