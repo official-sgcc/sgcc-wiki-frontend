@@ -103,8 +103,10 @@ function App() {
         <Route path="/" element={<Layout content={<Body />} />} />
         <Route path="/wiki/:subcategory" element={<Layout content={<SubCategory />} />} />
         <Route path="/wiki/detail/:title" element={<Layout content={<GetDocs />} />} />
+        <Route path="/wiki/detail" element={<Layout content={<GetDocs />} />} />
         <Route path="/wiki/detail/:title/history" element={<Layout content={<DocumentHistory />} />} />
         <Route path="/wiki/detail/:title/history/:versionNumber" element={<Layout content={<DocumentHistory />} />} />
+        <Route path="/wiki/history" element={<Layout content={<DocumentHistory />} />} />
         <Route path="/search" element={<Layout content={<SearchResults />} />} />
         <Route path="/wiki/edit" element={<Layout content={<DocsEditor />} />} />
         <Route path="/wiki/detail/:prevtitle/edit" element={<Layout content={<DocsEditor />} />} />

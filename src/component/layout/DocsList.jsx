@@ -8,7 +8,7 @@ import {
   FiSearch,
   FiUser,
 } from "react-icons/fi";
-import { formatDate } from "../util/DocsAPI";
+import { formatDate, getDocumentPath } from "../util/DocsAPI";
 import "./DocsList.css";
 
 /*
@@ -313,7 +313,7 @@ export default function DocsList({
                     : ""
                     }`}
                   onClick={() =>
-                    navigate(`/wiki/detail/${encodeURIComponent(post.title)}`)
+                    navigate(getDocumentPath(post.title))
                   }
                 >
                   {/* 제목 / 태그 영역 */}
