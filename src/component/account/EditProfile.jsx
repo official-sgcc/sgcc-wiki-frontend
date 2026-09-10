@@ -42,6 +42,10 @@ function EditProfile() {
     email: '',
     bio: '',
   });
+  const [savedFormData, setSavedFormData] = useState({
+    email: '',
+    bio: '',
+  });
   const [isLoading, setIsLoading] = useState(Boolean(token && username));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -59,10 +63,12 @@ function EditProfile() {
         const response = await api.get(`/users/${encodeURIComponent(username)}`);
 
         if (isCurrent && response.data) {
-          setFormData({
+          const userData = {
             email: response.data.email || '',
             bio: response.data.bio || '',
-          });
+          };
+          setFormData(userData);
+          setSavedFormData(userData);
         }
       } catch (error) {
         if (isCurrent) {
@@ -99,7 +105,27 @@ function EditProfile() {
     setIsSubmitting(true);
 
     try {
-      await api.patch(`/users/${encodeURIComponent(username)}`, formData);
+      const requests = [];
+
+      if (formData.bio !== savedFormData.bio) {
+        requests.push(
+          api.put(`/users/${encodeURIComponent(username)}/bio`, {
+            bio: formData.bio,
+          }),
+        );
+      }
+
+      if (formData.email !== savedFormData.email) {
+        requests.push(api.put('/email', { email: formData.email }));
+      }
+
+      if (requests.length === 0) {
+        setMessage('변경된 정보가 없습니다.');
+        return;
+      }
+
+      await Promise.all(requests);
+      setSavedFormData(formData);
       setMessage('프로필 정보가 성공적으로 수정되었습니다.');
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
