@@ -1,14 +1,48 @@
-.padding {
-    margin: 3%;
-    color: var(--text-h);
+.userpage-profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: stretch;
+  gap: 20px;
 }
 
-.accountName {
-    font-size: 36pt;
+.userpage-profile-hero {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  padding: 24px;
 }
 
-.accountNotice {
-    margin-top: 16px;
-    font-size: 14pt;
-    color: #555555;
+.userpage-profile-card {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.userpage-profile-card .infoValue {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .userpage-profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .userpage-profile-hero {
+    width: min(100%, 20rem);
+    justify-self: center;
+  }
+
+  .userpage-wrapper .profileInfoCard {
+    padding: 24px;
+  }
+
+  .userpage-wrapper .infoItem {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .userpage-wrapper .infoLabel {
+    width: 100px;
+    flex-shrink: 0;
+  }
 }

@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";//MD viewer
@@ -150,6 +150,7 @@ function GetDocs() {
   const isAdmin = authState.permission === "admin";
   const canEditDocument = isLoggedIn;
   const canDeleteDocument = isAdmin;
+  const author = doc.data.created_by;
 
   // console.log(doc.data);
   //doc.data에 title, content, 날짜 등이 있음
@@ -231,7 +232,17 @@ function GetDocs() {
 
         <div className="docs-meta">
           <span className="docs-author">
-            작성자 : {doc.data.created_by ?? "익명"}
+            작성자 :{" "}
+            {author ? (
+              <Link
+                className="docs-author-link"
+                to={`/users/${encodeURIComponent(author)}`}
+              >
+                {author}
+              </Link>
+            ) : (
+              "익명"
+            )}
           </span>
 
           <span className="docs-date">
