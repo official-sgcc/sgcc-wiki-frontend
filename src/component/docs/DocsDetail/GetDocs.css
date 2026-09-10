@@ -127,6 +127,27 @@
   font-size: 0.875rem;
 }
 
+.docs-author {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.docs-author-link {
+  display: inline-flex;
+  color: inherit;
+  font-weight: 600;
+  gap: 0;
+  text-decoration: none;
+}
+
+.docs-author-link:hover,
+.docs-author-link:focus-visible {
+  color: #c0392b;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
 .docs-views {
   display: inline-flex;
   align-items: center;
