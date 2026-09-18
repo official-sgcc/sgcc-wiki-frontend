@@ -10,6 +10,7 @@ import { SubmitDocs, ModifyDocs, GetDocsDetail, getDocumentPath } from "../../ut
 import { flattenCategories } from "../../util/CategoryTree";
 import "./DocsEditor.css";
 import "easymde/dist/easymde.min.css";
+import { canWriteCategory, useWritePermission } from "../../util/WritePermission";
 
 /*
 목적: 문서 편집기
@@ -53,6 +54,8 @@ function DocsEditor() {
   const previousTitle = searchParams.get("title") ?? pathTitle;
 
   const isEditMode = Boolean(previousTitle);
+  const { permission, loading: checkingPermission } = useWritePermission();
+  const [originalCategory, setOriginalCategory] = useState(null);
 
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
@@ -62,6 +65,7 @@ function DocsEditor() {
   const [tagInput, setTagInput] = useState("");
 
   const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const initialCategory = location.state?.category ?? "";
   const [category, setCategory] = useState(initialCategory);
@@ -69,6 +73,15 @@ function DocsEditor() {
   const categoryOptions = useMemo(() => {
     return flattenCategories(categories);
   }, [categories]);
+
+  useEffect(() => {
+    if (isEditMode || checkingPermission || categoriesLoading) return;
+    if (!canWriteCategory(permission, categoryOptions.find((item) => item.name === category))) {
+      const firstAllowed = categoryOptions.find((item) => item.isLeaf && canWriteCategory(permission, item));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCategory(firstAllowed?.name ?? "");
+    }
+  }, [isEditMode, checkingPermission, categoriesLoading, permission, categoryOptions, category]);
 
   const mdeOptions = useMemo(
     () => ({
@@ -113,9 +126,10 @@ function DocsEditor() {
         const response = await GetListOfCategories();
 
         // 기존 카테고리 목록 로딩 방식 유지
-        setCategories(response);
+        setCategories(response ?? []);
 
-        const options = flattenCategories(response);
+        const options = flattenCategories(response ?? []);
+        if (isEditMode) return;
 
         // SubCategory에서 전달받은 하위 카테고리가 실제 목록에 존재하면 선택
         if (
@@ -132,6 +146,8 @@ function DocsEditor() {
         console.error("카테고리 목록 조회 실패:", e);
         setCategories([]);
         setCategory("");
+      } finally {
+        setCategoriesLoading(false);
       }
     }
 
@@ -159,6 +175,7 @@ function DocsEditor() {
         setValue(normalizeMarkdown(rtn.data.content ?? ""));
         setTags(rtn.data.tags?.map((tag) => tag.name) ?? []);
         setCategory(rtn.data.category?.name ?? "");
+        setOriginalCategory(rtn.data.category?.name ?? "");
       } catch (e) {
         console.error("기존 문서 조회 실패:", e);
         alert("이전 문서를 불러오는 중 오류가 발생했습니다.");
@@ -192,6 +209,10 @@ function DocsEditor() {
   }
 
   async function handleSubmit() {
+    if (!canWriteCategory(permission, categoryOptions.find((item) => item.name === category))) {
+      alert("이 카테고리에 문서를 작성할 권한이 없습니다.");
+      return;
+    }
     try {
       setSaving(true);
 
@@ -238,7 +259,7 @@ function DocsEditor() {
 
       navigate(getDocumentPath(title.trim()));
     } catch (e) {
-      if (e.response?.status === 401) {
+      if (e.response?.status === 401 || e.response?.status === 403) {
         alert("문서 작성 권한이 없습니다.");
       } else {
         alert("문서 저장 중 오류가 발생했습니다.");
@@ -251,6 +272,16 @@ function DocsEditor() {
 
   if (sessionStorage.getItem("token") == null) {
     return <NotFound status={0} message="먼저 로그인을 해주세요" />;
+  }
+
+  if (checkingPermission || categoriesLoading || (isEditMode && originalCategory === null)) {
+    return <NotFound status={0} message="권한 확인 중 . . ." />;
+  }
+  if (isEditMode && !canWriteCategory(permission, categoryOptions.find((item) => item.name === originalCategory))) {
+    return <NotFound status={403} message="문서 수정 권한이 없습니다" />;
+  }
+  if (!isEditMode && !categoryOptions.some((item) => item.isLeaf && canWriteCategory(permission, item))) {
+    return <NotFound status={403} message="문서 작성 권한이 없습니다" />;
   }
 
   if (saving) {
@@ -271,7 +302,7 @@ function DocsEditor() {
             <option value="">카테고리 없음</option>
           ) : (
             categoryOptions
-              .filter((item) => item.isLeaf)
+              .filter((item) => item.isLeaf && canWriteCategory(permission, item))
               .map((item) => (
                 <option key={item.name} value={item.name}>
                   {item.path.join(" - ")}
@@ -295,7 +326,7 @@ function DocsEditor() {
           type="button"
           className="save-btn"
           onClick={handleSubmit}
-          disabled={saving}
+          disabled={saving || !canWriteCategory(permission, categoryOptions.find((item) => item.name === category))}
         >
           저장
         </button>

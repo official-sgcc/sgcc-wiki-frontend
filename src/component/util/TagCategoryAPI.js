@@ -91,13 +91,15 @@ export async function CreateCategory(name, parent = null) {
 export async function UpdateCategory( 
   originalName, 
   newName = "", 
-  newParent = undefined
+  newParent = undefined,
+  writePermission = undefined
 ) { 
-  if (!newName && newParent === undefined) {
+  if (!newName && newParent === undefined && writePermission === undefined) {
     throw new Error("변경할 내용이 없습니다."); 
   } 
  
-  const body = {}; 
+  const body = {};
+  if (writePermission !== undefined) body.write_permission = writePermission;
  
   // 이름 변경 
   if (newName) { 
