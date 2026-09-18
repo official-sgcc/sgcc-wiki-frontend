@@ -1,5 +1,35 @@
 import api from "../../backend/axios"
 
+export async function Logout() {
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    try {
+      await api.post("/logout", {}, { headers: { auth: token } });
+    } catch (error) {
+      if (error.response?.status !== 401) throw error;
+    }
+  }
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("username");
+  window.dispatchEvent(new Event("auth-state-change"));
+}
+
+export async function GetPermissionContext() {
+  const token = sessionStorage.getItem("token");
+  const response = await api.get("/permissions", {
+    headers: token ? { auth: token } : {},
+  });
+  return response.data;
+}
+
+export async function GetDocumentPermissions(title) {
+  const token = sessionStorage.getItem("token");
+  const response = await api.get("/documents/by-title/permissions", {
+    params: { title }, headers: token ? { auth: token } : {},
+  });
+  return response.data;
+}
+
 // Health Check
 const HEALTH_CHECK_KEY = "health_checked_at";
 const HEALTH_CHECK_INTERVAL = 2 * 60 * 1000; // 2분
@@ -185,11 +215,12 @@ export async function VerifyEmail(token) {
 //회원가입 관련
 
 // 회원가입 이메일 인증 요청
-export async function RequestRegisterEmailVerification(username, email) {
+export async function RequestRegisterEmailVerification(username, email, registrationSecret) {
   try {
     const response = await api.post(
       "/register/verify-email",
       {
+        registration_secret: registrationSecret,
         username: username,
         email: email,
       }
@@ -203,11 +234,12 @@ export async function RequestRegisterEmailVerification(username, email) {
 }
 
 // 회원가입 이메일 인증 상태 확인
-export async function CheckRegisterVerifyStatus(username, email) {
+export async function CheckRegisterVerifyStatus(username, email, registrationSecret) {
   try {
     const response = await api.post(
       "/register/verify-status",
       {
+        registration_secret: registrationSecret,
         username: username,
         email: email,
       }
@@ -225,10 +257,12 @@ export async function RegisterUser(
   username,
   password,
   email,
-  verificationToken = null
+  verificationToken = null,
+  registrationSecret = null
 ) {
   try {
     const data = {
+      registration_secret: registrationSecret,
       username: username,
       password: password,
       email: email,

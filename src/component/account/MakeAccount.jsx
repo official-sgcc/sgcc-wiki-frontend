@@ -127,6 +127,7 @@ function MakeAccount() {
   // 이메일 인증 관련 상태
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [registrationSecret, setRegistrationSecret] = useState(null);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -176,7 +177,9 @@ function MakeAccount() {
     setIsSubmitting(true);
 
     try {
-      await RequestRegisterEmailVerification(username, email);
+      const secret = crypto.randomUUID();
+      await RequestRegisterEmailVerification(username, email, secret);
+      setRegistrationSecret(secret);
 
       setIsEmailSent(true);
       setIsVerified(false);
@@ -201,6 +204,7 @@ function MakeAccount() {
 
   // 이메일이 변경되면 기존 인증은 무효화
   const handleEmailChange = (event) => {
+    setRegistrationSecret(null);
     setEmail(event.target.value);
 
     setIsVerified(false);
@@ -213,7 +217,7 @@ function MakeAccount() {
     setIsSubmitting(true);
 
     try {
-      const response = await CheckRegisterVerifyStatus(username, email);
+      const response = await CheckRegisterVerifyStatus(username, email, registrationSecret);
 
       if (!response?.verified) {
         setIsVerified(false);
@@ -225,7 +229,7 @@ function MakeAccount() {
       setIsVerified(true);
 
       // 인증 완료 즉시 최종 회원가입
-      const registerResponse = await RegisterUser(username, password, email);
+      const registerResponse = await RegisterUser(username, password, email, null, registrationSecret);
 
       if (registerResponse) {
         // 회원가입 성공 → 로그인 모달 표시

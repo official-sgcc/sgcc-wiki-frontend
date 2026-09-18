@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FiArrowLeft, FiClock, FiUser } from "react-icons/fi";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import { markdownRehypePlugins } from "../../util/MarkdownSecurity";
 import remarkGfm from "remark-gfm";
 import NotFound from "../../ui/NotFound";
 import {
@@ -100,7 +100,7 @@ export default function DocumentHistory() {
         </div>
 
         <section className="document-history__content">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={markdownRehypePlugins}>
             {normalizeMarkdown(selectedVersion.content)}
           </ReactMarkdown>
         </section>
