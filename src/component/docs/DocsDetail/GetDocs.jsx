@@ -2,18 +2,17 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";//MD viewer
-import rehypeRaw from "rehype-raw";
+import { markdownRehypePlugins } from "../../util/MarkdownSecurity";
 import remarkGfm from "remark-gfm";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
 import { FiClock, FiEye } from "react-icons/fi";
 import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
-import { GetUserInfo } from "../../util/AuthAPI";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
 import "./DocumentHistory.css";
-import { canWriteCategory } from "../../util/WritePermission";
+import { useWritePermission } from "../../util/WritePermission";
 
 function normalizeMarkdown(content) {
   if (typeof content !== "string") return "";
@@ -50,40 +49,8 @@ function GetDocs() {
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
   const [categoryPath, setCategoryPath] = useState([]);
-  const [writeCategory, setWriteCategory] = useState(null);
-  const [authState, setAuthState] = useState(() => ({
-    token: sessionStorage.getItem("token"),
-    username: sessionStorage.getItem("username"),
-    permission: null,
-  }));
+  const { documentActions } = useWritePermission(title);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const syncAuthState = async () => {
-      const token = sessionStorage.getItem("token");
-      const username = sessionStorage.getItem("username");
-      const userInfo = token && username ? await GetUserInfo() : null;
-
-      if (isMounted) {
-        setAuthState({
-          token,
-          username,
-          permission: userInfo?.permission ?? null,
-        });
-      }
-    };
-
-    syncAuthState();
-    window.addEventListener("auth-state-change", syncAuthState);
-    window.addEventListener("focus", syncAuthState);
-    return () => {
-      isMounted = false;
-      window.removeEventListener("auth-state-change", syncAuthState);
-      window.removeEventListener("focus", syncAuthState);
-    };
-  }, []);
 
   //when page loaded -> getdocs with loding
   useEffect(() => {
@@ -99,10 +66,8 @@ function GetDocs() {
           (category) => category.name === categoryName,
         );
         setCategoryPath(matchedCategory?.path ?? [categoryName]);
-        setWriteCategory(matchedCategory ?? null);
       } else {
         setCategoryPath([]);
-        setWriteCategory(null);
       }
 
       setLoding(false);
@@ -149,13 +114,8 @@ function GetDocs() {
     return <NotFound status={doc.status} message="문서를 찾을 수 없습니다" />;
   }
 
-  const isLoggedIn = Boolean(
-    authState.token &&
-      authState.username,
-  );
-  const isAdmin = authState.permission === "admin";
-  const canEditDocument = isLoggedIn && canWriteCategory(authState.permission, writeCategory);
-  const canDeleteDocument = isAdmin;
+  const canEditDocument = documentActions?.document_update === true;
+  const canDeleteDocument = documentActions?.document_delete === true;
   const author = doc.data.created_by;
 
   // console.log(doc.data);
@@ -284,7 +244,7 @@ function GetDocs() {
       <section className="docs-content">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw]}
+          rehypePlugins={markdownRehypePlugins}
         >
           {normalizeMarkdown(doc.data.content)}
         </ReactMarkdown>

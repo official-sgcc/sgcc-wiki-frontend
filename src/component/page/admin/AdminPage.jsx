@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./AdminPage.css";
 import CategoryTreeEditor from "./CategoryTreeEditor";
-import { GetUserInfo } from "../../util/AuthAPI";
+import { GetPermissionContext } from "../../util/AuthAPI";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../../ui/Alert";
 import TagManager from "./TagManager";
@@ -54,11 +54,17 @@ export default function AdminPage() {
   const [checkingPermission, setCheckingPermission] = useState(true);
   const [hasPermission, setHasPermission] = useState(false);
   useEffect(() => {
+    let active = true;
+    let version = 0;
     async function loadUserInfo() {
+      const request = ++version;
+      setHasPermission(false);
+      setCheckingPermission(true);
       try {
-        const userInfo = await GetUserInfo();
+        const userInfo = await GetPermissionContext();
+        if (!active || request !== version) return;
 
-        if (userInfo?.permission !== "admin") {
+        if (userInfo?.actions?.admin !== true) {
           setAlert({
             open: true,
             type: "alert",
@@ -77,6 +83,7 @@ export default function AdminPage() {
         setCheckingPermission(false);
 
       } catch {
+        if (!active || request !== version) return;
         setAlert({
           open: true,
           type: "alert",
@@ -92,6 +99,13 @@ export default function AdminPage() {
     }
 
     loadUserInfo();
+    window.addEventListener("auth-state-change", loadUserInfo);
+    window.addEventListener("focus", loadUserInfo);
+    return () => {
+      active = false;
+      window.removeEventListener("auth-state-change", loadUserInfo);
+      window.removeEventListener("focus", loadUserInfo);
+    };
   }, [navigate]);
   return (
     <>

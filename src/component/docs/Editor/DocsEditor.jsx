@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation, useSearchParams } from "react-router-dom";
 import SimpleMDE from "react-simplemde-editor";
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import { markdownRehypePlugins } from "../../util/MarkdownSecurity";
 import remarkGfm from "remark-gfm";
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
@@ -54,7 +54,7 @@ function DocsEditor() {
   const previousTitle = searchParams.get("title") ?? pathTitle;
 
   const isEditMode = Boolean(previousTitle);
-  const { permission, loading: checkingPermission } = useWritePermission();
+  const { permission, documentActions, loading: checkingPermission } = useWritePermission(previousTitle);
   const [originalCategory, setOriginalCategory] = useState(null);
 
   const [value, setValue] = useState("");
@@ -209,6 +209,11 @@ function DocsEditor() {
   }
 
   async function handleSubmit() {
+    if (isEditMode && (documentActions?.document_update !== true ||
+        (category !== originalCategory && documentActions?.document_move !== true))) {
+      alert("문서를 수정하거나 카테고리를 이동할 권한이 없습니다.");
+      return;
+    }
     if (!canWriteCategory(permission, categoryOptions.find((item) => item.name === category))) {
       alert("이 카테고리에 문서를 작성할 권한이 없습니다.");
       return;
@@ -229,7 +234,8 @@ function DocsEditor() {
         finalTags.push(trimmedTag);
       }
 
-      const leafCategories = categoryOptions.filter((item) => item.isLeaf);
+      const leafCategories = categoryOptions.filter((item) =>
+        item.isLeaf || (isEditMode && item.name === originalCategory));
 
       if (
         leafCategories.length === 0 ||
@@ -277,7 +283,7 @@ function DocsEditor() {
   if (checkingPermission || categoriesLoading || (isEditMode && originalCategory === null)) {
     return <NotFound status={0} message="권한 확인 중 . . ." />;
   }
-  if (isEditMode && !canWriteCategory(permission, categoryOptions.find((item) => item.name === originalCategory))) {
+  if (isEditMode && documentActions?.document_update !== true) {
     return <NotFound status={403} message="문서 수정 권한이 없습니다" />;
   }
   if (!isEditMode && !categoryOptions.some((item) => item.isLeaf && canWriteCategory(permission, item))) {
@@ -296,13 +302,14 @@ function DocsEditor() {
         <select
           id="category-select"
           value={category}
+          disabled={isEditMode && documentActions?.document_move !== true}
           onChange={(e) => setCategory(e.target.value)}
         >
           {categoryOptions.length === 0 ? (
             <option value="">카테고리 없음</option>
           ) : (
             categoryOptions
-              .filter((item) => item.isLeaf && canWriteCategory(permission, item))
+              .filter((item) => (item.isLeaf || (isEditMode && item.name === originalCategory)) && canWriteCategory(permission, item))
               .map((item) => (
                 <option key={item.name} value={item.name}>
                   {item.path.join(" - ")}
@@ -347,7 +354,7 @@ function DocsEditor() {
             {value.trim() ? (
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
+                rehypePlugins={markdownRehypePlugins}
               >
                 {normalizeMarkdown(value)}
               </ReactMarkdown>

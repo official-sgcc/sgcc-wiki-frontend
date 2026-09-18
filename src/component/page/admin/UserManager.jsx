@@ -1,28 +1,21 @@
 import { useEffect, useState } from "react";
 import { FiRefreshCw, FiUsers } from "react-icons/fi";
 import {
-  GetAdminPermissions,
+  GetPermissionContext,
   GetAdminUsers,
   UpdateUserPermission,
 } from "../../util/AuthAPI";
 import "./UserManager.css";
 
-function getPermissionLabel(permission) {
-  if (permission === "admin") return "관리자";
-  if (permission === "club_member") return "동아리 회원";
-  if (permission === "login_user") return "일반 회원";
-  return permission || "알 수 없음";
-}
-
 async function requestUserData() {
   const [userData, permissionData] = await Promise.all([
     GetAdminUsers(),
-    GetAdminPermissions(),
+    GetPermissionContext(),
   ]);
 
   return {
     users: Array.isArray(userData) ? userData : [],
-    permissions: Array.isArray(permissionData) ? permissionData : [],
+    permissions: Array.isArray(permissionData?.roles) ? permissionData.roles : [],
   };
 }
 
@@ -184,8 +177,8 @@ export default function UserManager() {
                       }
                     >
                       {permissions.map((permission) => (
-                        <option key={permission} value={permission}>
-                          {getPermissionLabel(permission)}
+                        <option key={permission.name} value={permission.name}>
+                          {permission.label}
                         </option>
                       ))}
                     </select>

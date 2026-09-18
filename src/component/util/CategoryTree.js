@@ -21,6 +21,7 @@ export function flattenCategories(
     result.push({
       name: node.name,
       write_permission: node.write_permission ?? "club_member",
+      can_write: node.can_write === true,
       depth,
       isLeaf,
       path: currentPath,
