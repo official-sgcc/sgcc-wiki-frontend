@@ -5,6 +5,7 @@ import api from '../../backend/axios.js'
 import './MyPage.css'
 import AccountStatus from './AccountStatus.jsx'
 import EditList from './EditList.jsx'
+import RoleBadge from './RoleBadge.jsx'
 
 const TOKEN_KEY = 'token';
 const USERNAME_KEY = 'username';
@@ -33,6 +34,7 @@ function MyPage() {
   const token = sessionStorage.getItem(TOKEN_KEY);
   const username = sessionStorage.getItem(USERNAME_KEY);
   const [user, setUser] = useState(null);
+  const [roles, setRoles] = useState([]);
   const [editList, setEditList] = useState([]);
   const [isLoading, setIsLoading] = useState(Boolean(token && username));
   const [errorMessage, setErrorMessage] = useState('');
@@ -46,8 +48,12 @@ function MyPage() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const response = await api.get(`/users/${username}`);
+        const [response, permissions] = await Promise.all([
+          api.get(`/users/${encodeURIComponent(username)}`),
+          api.get('/permissions').catch(() => null),
+        ]);
         setUser(response.data);
+        setRoles(permissions?.data?.roles ?? []);
         setEditList(response.data?.editList || response.data?.edit_versions || []);
       } catch (error) {
         const status = error.response?.status;
@@ -105,10 +111,7 @@ function MyPage() {
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div className="profileHello">Hello, {displayName}</div>
-          <div className="profileRoleBadge">
-            <FiShield size={12} />
-            <span>{user?.permission || 'login_user'}</span>
-          </div>
+          <RoleBadge permission={user?.permission} roles={roles} />
         </div>
 
         {/* 프로필 정보 + 액션 카드 */}
@@ -129,7 +132,7 @@ function MyPage() {
                   <FiShield className="infoIcon" />
                   <span>권한</span>
                 </div>
-                <div className="infoValue hasValue">{user?.permission || 'login_user'}</div>
+                <div className="infoValue hasValue"><RoleBadge permission={user?.permission} roles={roles} /></div>
               </div>
 
               <div className="infoItem">
