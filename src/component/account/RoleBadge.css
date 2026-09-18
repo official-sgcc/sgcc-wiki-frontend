@@ -1,0 +1,20 @@
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.role-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+.role-badge--admin { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+.role-badge--club_member { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.role-badge--login_user { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }

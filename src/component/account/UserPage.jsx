@@ -6,6 +6,7 @@ import './MyPage.css'
 import './UserPage.css'
 import AccountStatus from './AccountStatus.jsx'
 import EditList from './EditList.jsx'
+import RoleBadge from './RoleBadge.jsx'
 
 function getEditList(data) {
   if (Array.isArray(data?.edit_versions)) {
@@ -22,6 +23,7 @@ function getEditList(data) {
 function UserPage() {
   const { userID } = useParams();
   const [user, setUser] = useState(null);
+  const [roles, setRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [editList, setEditList] = useState([]);
@@ -33,9 +35,14 @@ function UserPage() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const response = await api.get(`/users/${encodeURIComponent(userID)}`, {signal: controller.signal});
+        const [response, permissions] = await Promise.all([
+          api.get(`/users/${encodeURIComponent(userID)}`, { signal: controller.signal }),
+          api.get('/permissions', { signal: controller.signal }).catch(() => null),
+        ]);
+        if (controller.signal.aborted) return;
 
         setUser(response.data);
+        setRoles(permissions?.data?.roles ?? []);
         setEditList(getEditList(response.data));
       } catch (error) {
         if (controller.signal.aborted) { return; }
@@ -82,6 +89,7 @@ function UserPage() {
               {displayName.charAt(0).toUpperCase()}
             </div>
             <div className="profileHello">{displayName}</div>
+            <RoleBadge permission={user?.permission} roles={roles} />
           </div>
 
           <div className="profileInfoCard userpage-profile-card">
