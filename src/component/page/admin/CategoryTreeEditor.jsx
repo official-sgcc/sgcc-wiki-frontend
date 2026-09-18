@@ -8,6 +8,7 @@ import {
 } from "../../util/TagCategoryAPI";
 import { useNavigate } from "react-router-dom";
 import "./CategoryTreeEditor.css";
+import { GetPermissionContext } from "../../util/AuthAPI";
 
 const NODE_STEP_X = 13;
 const NODE_STEP_Y = 9;
@@ -118,6 +119,7 @@ export default function CategoryTreeEditor() {
   const [savingPermission, setSavingPermission] = useState(false);
   const [deletingCategory, setDeletingCategory] = useState(false);
   const [permissionDraft, setPermissionDraft] = useState("club_member");
+  const [roles, setRoles] = useState([]);
 
   const diagramNodes = useMemo(() => layoutTree(tree), [tree]);
   const maxDepth = diagramNodes.reduce((max, item) => Math.max(max, item.depth), 0);
@@ -129,13 +131,15 @@ export default function CategoryTreeEditor() {
   ) || 16;
 
   async function loadTree() {
-    const data = await GetListOfCategories();
+    const [data, context] = await Promise.all([GetListOfCategories(), GetPermissionContext()]);
     setTree(Array.isArray(data) ? data : []);
+    setRoles(context.roles ?? []);
+    return Array.isArray(data) ? data : [];
   }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadTree();
+    loadTree().catch(() => alert("카테고리 권한 정보를 불러오지 못했습니다."));
   }, []);
 
   async function loadDocsCount(name) {
@@ -149,7 +153,7 @@ export default function CategoryTreeEditor() {
 
   function handleSelect(node) {
     setSelected(node);
-    setPermissionDraft(node.write_permission ?? "club_member");
+    setPermissionDraft(node.effective_write_permission ?? node.write_permission ?? "club_member");
     loadDocsCount(node.name);
   }
 
@@ -186,9 +190,13 @@ export default function CategoryTreeEditor() {
       setSavingConnection(true);
       try {
         await UpdateCategory(sourceName, "", targetName === ROOT_KEY ? null : targetName);
-        await loadTree();
-        if (selected?.name === sourceName) {
-          setSelected((current) => (current ? { ...current, parent: targetName === ROOT_KEY ? null : targetName } : current));
+        const refreshed = await loadTree();
+        if (selected) {
+          const updated = layoutTree(refreshed).find((item) => item.key === selected.name)?.node;
+          if (updated) {
+            setSelected(updated);
+            setPermissionDraft(updated.effective_write_permission ?? updated.write_permission ?? "club_member");
+          }
         }
       } catch (error) {
         console.error(error);
@@ -266,9 +274,9 @@ export default function CategoryTreeEditor() {
     setSavingPermission(true);
     try {
       await UpdateCategory(name, "", undefined, permission);
-      await loadTree();
-      setSelected((current) => current?.name === name
-        ? { ...current, write_permission: permission } : current);
+      const refreshed = await loadTree();
+      const updated = layoutTree(refreshed).find((item) => item.key === name)?.node;
+      if (updated) handleSelect(updated);
     } catch (error) {
       console.error(error);
       alert("작성 권한 저장에 실패했습니다.");
@@ -276,6 +284,10 @@ export default function CategoryTreeEditor() {
       setSavingPermission(false);
     }
   }
+
+  const inheritedRole = roles.find((role) => role.name === selected?.inherited_write_permission);
+  const allowedRoles = roles.filter((role) => !selected?.inherited_write_permission ||
+    (inheritedRole && (inheritedRole.name === "admin" ? role.name === "admin" : role.name === "admin" || role.grade >= inheritedRole.grade)));
 
   const edgePaths = diagramNodes
     .filter((item) => item.parentKey)
@@ -377,13 +389,11 @@ export default function CategoryTreeEditor() {
               <select id="category-write-permission" value={permissionDraft}
                 disabled={savingPermission}
                 onChange={(event) => setPermissionDraft(event.target.value)}>
-                <option value="admin">관리자</option>
-                <option value="club_member">동아리 회원</option>
-                <option value="login_user">일반 회원</option>
+                {allowedRoles.map((role) => <option key={role.name} value={role.name}>{role.label}</option>)}
               </select>
-              <p>선택한 등급 이상이 이 카테고리에 작성·수정할 수 있습니다. 하위 노드는 각각 설정합니다.</p>
+              <p>상위 카테고리의 최소 권한보다 낮게 설정할 수 없습니다. 제한을 높이면 모든 하위 문서에도 적용됩니다. 현재 상위 제한: {inheritedRole?.label ?? "없음"}.</p>
               <button type="button" onClick={handleSavePermission}
-                disabled={savingPermission || permissionDraft === (selected.write_permission ?? "club_member")}>
+                disabled={savingPermission || permissionDraft === (selected.effective_write_permission ?? selected.write_permission ?? "club_member")}>
                 {savingPermission ? "저장 중..." : "권한 저장"}
               </button>
             </div>

@@ -40,7 +40,8 @@ export async function GetDocsFromTag(tag, limit, offset) {
 //Get List of Categories 
 export async function GetListOfCategories() { 
     try { 
-        const response = await api.get(`/categories`); 
+        const token = sessionStorage.getItem("token");
+        const response = await api.get(`/categories`, { headers: token ? { auth: token } : {} });
         return response.data; 
     } catch (e) { 
         console.error(e); 
@@ -51,7 +52,8 @@ export async function GetListOfCategories() {
 // Get Category 
 export async function GetCategory(name) { 
   try { 
-    const response = await api.get(`/categories/${name}`); 
+    const token = sessionStorage.getItem("token");
+    const response = await api.get(`/categories/${encodeURIComponent(name)}`, { headers: token ? { auth: token } : {} });
     return response.data; 
   } catch (e) { 
     if (e.response?.status !== 404) { 

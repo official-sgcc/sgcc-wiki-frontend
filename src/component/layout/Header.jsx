@@ -1,4 +1,5 @@
 import './Header.css'
+import { Logout } from '../util/AuthAPI';
 import { useEffect, useState } from 'react'
 import SearchModal from '../../SearchMordal';
 import { Link, useNavigate } from 'react-router-dom';
@@ -30,9 +31,13 @@ function Header() {
     window.dispatchEvent(new Event('auth-state-change'));
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(USERNAME_KEY);
+  const handleLogout = async () => {
+    try {
+      await Logout();
+    } catch {
+      alert('로그아웃에 실패했습니다. 연결을 확인하고 다시 시도해 주세요.');
+      return;
+    }
     setCurrentUsername('');
     setToken('');
     window.dispatchEvent(new Event('auth-state-change'));

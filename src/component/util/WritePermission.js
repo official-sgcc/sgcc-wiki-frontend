@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
-import { GetUserInfo } from "./AuthAPI";
+import { GetPermissionContext, GetDocumentPermissions } from "./AuthAPI";
 
 export function canWriteCategory(permission, category) {
-  const levels = { login_user: 0, club_member: 1, admin: 2 };
-  return Boolean(category) && (levels[permission] ?? -1) >=
-    (levels[category.write_permission ?? "club_member"] ?? 3);
+  return permission?.actions?.document_create === true && Boolean(category) &&
+    permission?.category_permissions?.[category.name] === true;
 }
 
-export function useWritePermission() {
-  const [auth, setAuth] = useState({ permission: null, loading: true });
+export function useWritePermission(title = null) {
+  const [auth, setAuth] = useState({ permission: null, documentActions: null, loading: true });
   useEffect(() => {
     let active = true;
     let version = 0;
     async function refresh() {
       const request = ++version;
-      if (active) setAuth({ permission: null, loading: true });
-      const token = sessionStorage.getItem("token");
-      const user = token ? await GetUserInfo() : null;
-      if (active && request === version) {
-        setAuth({ permission: user?.permission ?? null, loading: false });
+      if (active) setAuth({ permission: null, documentActions: null, loading: true });
+      try {
+        const [permission, documentActions] = await Promise.all([
+          GetPermissionContext(), title ? GetDocumentPermissions(title) : null,
+        ]);
+        if (active && request === version) setAuth({ permission, documentActions, loading: false });
+      } catch {
+        if (active && request === version) setAuth({ permission: null, documentActions: null, loading: false });
       }
     }
     refresh();
@@ -29,6 +31,6 @@ export function useWritePermission() {
       window.removeEventListener("auth-state-change", refresh);
       window.removeEventListener("focus", refresh);
     };
-  }, []);
+  }, [title]);
   return auth;
 }
