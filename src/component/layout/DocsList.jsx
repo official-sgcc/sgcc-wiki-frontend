@@ -10,6 +10,8 @@ import {
 } from "react-icons/fi";
 import { formatDate, getDocumentPath } from "../util/DocsAPI";
 import "./DocsList.css";
+import { canWriteCategory, useWritePermission } from "../util/WritePermission";
+import { GetCategory } from "../util/TagCategoryAPI";
 
 /*
   목적: 공용 문서 목록 컴포넌트
@@ -76,6 +78,17 @@ export default function DocsList({
   showWriteButton = false,
 }) {
   const navigate = useNavigate();
+  const { permission } = useWritePermission();
+  const [writeCategory, setWriteCategory] = useState(null);
+  useEffect(() => {
+    let active = true;
+    if (showWriteButton && category) {
+      GetCategory(category).then((data) => { if (active) setWriteCategory(data); });
+    }
+    return () => { active = false; };
+  }, [category, showWriteButton]);
+  const canWrite = showWriteButton && writeCategory?.name === category &&
+    canWriteCategory(permission, writeCategory);
 
   const [allDocs, setAllDocs] = useState([]);
   const [page, setPage] = useState(1);
@@ -218,7 +231,7 @@ export default function DocsList({
 
         <div
           className={`docs-list__actions ${
-            showSearch && !showWriteButton
+            showSearch && !canWrite
               ? "docs-list__actions--search-only"
               : ""
           }`}
@@ -238,7 +251,7 @@ export default function DocsList({
             </label>
           )}
 
-          {showWriteButton && (
+          {canWrite && (
             <button
               type="button"
               className="docs-list__write-button"

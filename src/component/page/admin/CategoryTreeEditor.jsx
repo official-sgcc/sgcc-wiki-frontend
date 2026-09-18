@@ -115,6 +115,8 @@ export default function CategoryTreeEditor() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [connectionDrag, setConnectionDrag] = useState(null);
   const [savingConnection, setSavingConnection] = useState(false);
+  const [savingPermission, setSavingPermission] = useState(false);
+  const [permissionDraft, setPermissionDraft] = useState("club_member");
 
   const diagramNodes = useMemo(() => layoutTree(tree), [tree]);
   const maxDepth = diagramNodes.reduce((max, item) => Math.max(max, item.depth), 0);
@@ -146,6 +148,7 @@ export default function CategoryTreeEditor() {
 
   function handleSelect(node) {
     setSelected(node);
+    setPermissionDraft(node.write_permission ?? "club_member");
     loadDocsCount(node.name);
   }
 
@@ -240,6 +243,24 @@ export default function CategoryTreeEditor() {
     } catch (error) {
       console.error(error);
       alert("카테고리 삭제에 실패했습니다.");
+    }
+  }
+
+  async function handleSavePermission() {
+    if (!selected) return;
+    const name = selected.name;
+    const permission = permissionDraft;
+    setSavingPermission(true);
+    try {
+      await UpdateCategory(name, "", undefined, permission);
+      await loadTree();
+      setSelected((current) => current?.name === name
+        ? { ...current, write_permission: permission } : current);
+    } catch (error) {
+      console.error(error);
+      alert("작성 권한 저장에 실패했습니다.");
+    } finally {
+      setSavingPermission(false);
     }
   }
 
@@ -338,6 +359,21 @@ export default function CategoryTreeEditor() {
               <div><dt>자식</dt><dd>{selected.children?.length ?? 0}개</dd></div>
               <div><dt>문서</dt><dd>{docsCount}개</dd></div>
             </dl>
+            <div className="inspector-permission">
+              <label htmlFor="category-write-permission">문서 작성·수정 최소 권한</label>
+              <select id="category-write-permission" value={permissionDraft}
+                disabled={savingPermission}
+                onChange={(event) => setPermissionDraft(event.target.value)}>
+                <option value="admin">관리자</option>
+                <option value="club_member">동아리 회원</option>
+                <option value="login_user">일반 회원</option>
+              </select>
+              <p>선택한 등급 이상이 이 카테고리에 작성·수정할 수 있습니다. 하위 노드는 각각 설정합니다.</p>
+              <button type="button" onClick={handleSavePermission}
+                disabled={savingPermission || permissionDraft === (selected.write_permission ?? "club_member")}>
+                {savingPermission ? "저장 중..." : "권한 저장"}
+              </button>
+            </div>
             <button
               type="button"
               className="inspector-link"

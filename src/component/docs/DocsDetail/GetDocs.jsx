@@ -13,6 +13,7 @@ import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
 import "./DocumentHistory.css";
+import { canWriteCategory } from "../../util/WritePermission";
 
 function normalizeMarkdown(content) {
   if (typeof content !== "string") return "";
@@ -49,6 +50,7 @@ function GetDocs() {
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
   const [categoryPath, setCategoryPath] = useState([]);
+  const [writeCategory, setWriteCategory] = useState(null);
   const [authState, setAuthState] = useState(() => ({
     token: sessionStorage.getItem("token"),
     username: sessionStorage.getItem("username"),
@@ -75,9 +77,11 @@ function GetDocs() {
 
     syncAuthState();
     window.addEventListener("auth-state-change", syncAuthState);
+    window.addEventListener("focus", syncAuthState);
     return () => {
       isMounted = false;
       window.removeEventListener("auth-state-change", syncAuthState);
+      window.removeEventListener("focus", syncAuthState);
     };
   }, []);
 
@@ -95,8 +99,10 @@ function GetDocs() {
           (category) => category.name === categoryName,
         );
         setCategoryPath(matchedCategory?.path ?? [categoryName]);
+        setWriteCategory(matchedCategory ?? null);
       } else {
         setCategoryPath([]);
+        setWriteCategory(null);
       }
 
       setLoding(false);
@@ -148,7 +154,7 @@ function GetDocs() {
       authState.username,
   );
   const isAdmin = authState.permission === "admin";
-  const canEditDocument = isLoggedIn;
+  const canEditDocument = isLoggedIn && canWriteCategory(authState.permission, writeCategory);
   const canDeleteDocument = isAdmin;
   const author = doc.data.created_by;
 
