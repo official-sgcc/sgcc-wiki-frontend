@@ -116,6 +116,7 @@ export default function CategoryTreeEditor() {
   const [connectionDrag, setConnectionDrag] = useState(null);
   const [savingConnection, setSavingConnection] = useState(false);
   const [savingPermission, setSavingPermission] = useState(false);
+  const [deletingCategory, setDeletingCategory] = useState(false);
   const [permissionDraft, setPermissionDraft] = useState("club_member");
 
   const diagramNodes = useMemo(() => layoutTree(tree), [tree]);
@@ -234,15 +235,27 @@ export default function CategoryTreeEditor() {
   }
 
   async function handleDelete() {
-    if (!selected || !window.confirm(`${selected.name} 카테고리를 삭제하시겠습니까?`)) return;
+    if (!selected || deletingCategory) return;
+    const name = selected.name;
+    const confirmation = window.prompt(
+      `정말 삭제하시겠습니까?\n삭제 대상: ${name}\n하위 카테고리도 함께 삭제됩니다.\n삭제하시려는 카테고리의 이름을 정확히 써주세요.`,
+    );
+    if (confirmation === null) return;
+    if (confirmation !== name) {
+      alert("카테고리 이름이 일치하지 않아 삭제하지 않았습니다.");
+      return;
+    }
 
+    setDeletingCategory(true);
     try {
-      await DeleteCategory(selected.name);
-      setSelected(null);
+      await DeleteCategory(name);
+      setSelected((current) => current?.name === name ? null : current);
       await loadTree();
     } catch (error) {
       console.error(error);
       alert("카테고리 삭제에 실패했습니다.");
+    } finally {
+      setDeletingCategory(false);
     }
   }
 
@@ -381,8 +394,8 @@ export default function CategoryTreeEditor() {
             >
               이 카테고리 문서 보기
             </button>
-            <button type="button" className="inspector-delete" onClick={handleDelete}>
-              정점 삭제
+            <button type="button" className="inspector-delete" onClick={handleDelete} disabled={deletingCategory}>
+              {deletingCategory ? "삭제 중..." : "정점 삭제"}
             </button>
           </>
         ) : (
