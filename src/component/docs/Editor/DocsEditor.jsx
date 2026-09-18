@@ -3,7 +3,9 @@ import { useNavigate, useParams, useLocation, useSearchParams } from "react-rout
 import SimpleMDE from "react-simplemde-editor";
 import ReactMarkdown from "react-markdown";
 import { markdownRehypePlugins } from "../../util/MarkdownSecurity";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { SubmitDocs, ModifyDocs, GetDocsDetail, getDocumentPath } from "../../util/DocsAPI";
@@ -353,8 +355,8 @@ function DocsEditor() {
           <div className="editor-markdown-preview__content">
             {value.trim() ? (
               <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={markdownRehypePlugins}
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={markdownRehypePlugins.concat(rehypeKatex)}
               >
                 {normalizeMarkdown(value)}
               </ReactMarkdown>

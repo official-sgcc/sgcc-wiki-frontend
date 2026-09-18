@@ -3,7 +3,9 @@ import { FiArrowLeft, FiClock, FiUser } from "react-icons/fi";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { markdownRehypePlugins } from "../../util/MarkdownSecurity";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import NotFound from "../../ui/NotFound";
 import {
   formatDate,
@@ -100,7 +102,10 @@ export default function DocumentHistory() {
         </div>
 
         <section className="document-history__content">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={markdownRehypePlugins}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={markdownRehypePlugins.concat(rehypeKatex)}
+          >
             {normalizeMarkdown(selectedVersion.content)}
           </ReactMarkdown>
         </section>
