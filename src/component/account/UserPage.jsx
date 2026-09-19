@@ -5,7 +5,8 @@ import api from '../../backend/axios.js'
 import './MyPage.css'
 import './UserPage.css'
 import AccountStatus from './AccountStatus.jsx'
-import EditList, { getEditList } from './EditList.jsx'
+import EditList from './EditList.jsx'
+import { getEditList } from './EditHistory.js'
 import RoleBadge from './RoleBadge.jsx'
 
 function UserPage() {
