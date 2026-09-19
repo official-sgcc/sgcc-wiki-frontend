@@ -149,6 +149,8 @@ export default function DocumentHistory() {
   if (selectedVersion) {
     const version = getVersionNumber(selectedVersion);
     const changes = describeChanges(selectedVersion, versions[selectedIndex + 1]);
+    const showBody = changes.some((change) =>
+      ["본문 변경", "문서 생성", "이전 버전 없음"].includes(change.title));
 
     return (
       <article className="document-history document-history--detail">
@@ -179,14 +181,14 @@ export default function DocumentHistory() {
           ))}
         </div>
 
-        {contentDiff && (
+        {showBody && contentDiff && (
           <div className="document-history__view-switch" aria-label="본문 표시 방식">
-            <button type="button" aria-pressed={showDiff} onClick={() => setShowDiff(true)}>변경 보기</button>
-            <button type="button" aria-pressed={!showDiff} onClick={() => setShowDiff(false)}>완성본 보기</button>
+            <button type="button" aria-pressed={showDiff} onClick={() => setShowDiff(true)}>raw</button>
+            <button type="button" aria-pressed={!showDiff} onClick={() => setShowDiff(false)}>v{version}</button>
           </div>
         )}
 
-        {contentDiff && showDiff ? (
+        {showBody && contentDiff && showDiff ? (
           <section className="document-history__diff" aria-label="이전 버전과 비교한 본문">
             <pre>{contentDiff.map(([operation, value], index) => (
               <span key={index} className={operation === 1 ? "document-history__added" : operation === -1 ? "document-history__removed" : undefined}>
@@ -194,7 +196,7 @@ export default function DocumentHistory() {
               </span>
             ))}</pre>
           </section>
-        ) : (
+        ) : showBody ? (
           <section className="document-history__content">
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkMath]}
@@ -203,7 +205,7 @@ export default function DocumentHistory() {
               {normalizeMarkdown(selectedVersion.content)}
             </ReactMarkdown>
           </section>
-        )}
+        ) : null}
       </article>
     );
   }
