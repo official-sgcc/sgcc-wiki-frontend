@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import NotFound from "../../ui/NotFound";
 import ReactMarkdown from "react-markdown";//MD viewer
 import { markdownRehypePlugins } from "../../util/MarkdownSecurity";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
 import { FiClock, FiEye } from "react-icons/fi";
@@ -243,8 +245,8 @@ function GetDocs() {
 
       <section className="docs-content">
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={markdownRehypePlugins}
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={markdownRehypePlugins.concat(rehypeKatex)}
         >
           {normalizeMarkdown(doc.data.content)}
         </ReactMarkdown>
