@@ -109,6 +109,17 @@ export async function GetDocsDetail(title) {
   }
 }
 
+export async function GetDocsForEdit(title) {
+  try {
+    const response = await api.get("/documents/by-title/edit", {
+      params: { title },
+    });
+    return { ok: true, data: response.data };
+  } catch (e) {
+    return { ok: false, status: e.response?.status ?? 500 };
+  }
+}
+
 export async function GetDocsVersions(title) {
   const response = await api.get("/documents/by-title/versions", {
     params: { title },
