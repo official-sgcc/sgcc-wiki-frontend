@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
-import { SubmitDocs, ModifyDocs, RenameDocs, GetDocsDetail, getDocumentPath } from "../../util/DocsAPI";
+import { SubmitDocs, ModifyDocs, RenameDocs, GetDocsForEdit, getDocumentPath } from "../../util/DocsAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import { saveEditedDocument } from "../../util/DocumentSaveFlow";
 import "./DocsEditor.css";
@@ -159,7 +159,7 @@ function DocsEditor() {
       if (!isEditMode) return;
 
       try {
-        const rtn = await GetDocsDetail(previousTitle);
+        const rtn = await GetDocsForEdit(previousTitle);
 
         if (!rtn.ok) {
           if (
