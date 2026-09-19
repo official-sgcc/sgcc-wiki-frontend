@@ -109,6 +109,19 @@ export async function GetDocsDetail(title) {
   }
 }
 
+export async function GetDocumentLikes(title) {
+  const response = await api.get('/documents/by-title/likes', { params: { title } });
+  return response.data;
+}
+
+export async function SetDocumentLike(title, liked) {
+  const config = { params: { title } };
+  const response = liked
+    ? await api.delete('/documents/by-title/likes', config)
+    : await api.post('/documents/by-title/likes', null, config);
+  return response.data;
+}
+
 export async function GetDocsForEdit(title) {
   try {
     const response = await api.get("/documents/by-title/edit", {

@@ -8,8 +8,9 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { IoTrashOutline } from "react-icons/io5";//휴지통 icon
 import { HiOutlinePencilSquare } from "react-icons/hi2";//수정(연필) icon
-import { FiClock, FiEye } from "react-icons/fi";
-import { DeleteDocs, GetDocsDetail, formatDate } from "../../util/DocsAPI";// 문서 관련 api
+import { FiClock, FiEye, FiHeart } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa";
+import { DeleteDocs, GetDocsDetail, GetDocumentLikes, SetDocumentLike, formatDate } from "../../util/DocsAPI";// 문서 관련 api
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
@@ -51,6 +52,8 @@ function GetDocs() {
   const [doc, setDoc] = useState(null);
   const [loding, setLoding] = useState(true);
   const [categoryPath, setCategoryPath] = useState([]);
+  const [likes, setLikes] = useState(null);
+  const [likeBusy, setLikeBusy] = useState(false);
   const { documentActions } = useWritePermission(title);
   const navigate = useNavigate();
 
@@ -60,6 +63,15 @@ function GetDocs() {
       setLoding(true);
       const data = await GetDocsDetail(title);
       setDoc(data);
+      setLikes(null);
+
+      if (data.ok) {
+        try {
+          setLikes(await GetDocumentLikes(title));
+        } catch {
+          setLikes(null);
+        }
+      }
 
       const categoryName = data.data?.category?.name;
       if (data.ok && categoryName) {
@@ -103,6 +115,22 @@ function GetDocs() {
 
   function handleTagButton(tagName) {
     navigate(`/tag/${encodeURIComponent(tagName)}`);
+  }
+
+  async function handleLike() {
+    if (!sessionStorage.getItem('token')) {
+      alert('좋아요를 누르려면 로그인해주세요.');
+      return;
+    }
+    if (!likes || likeBusy) return;
+    setLikeBusy(true);
+    try {
+      setLikes(await SetDocumentLike(title, likes.liked));
+    } catch (error) {
+      alert(error.response?.status === 401 ? '다시 로그인해주세요.' : '좋아요를 변경하지 못했습니다.');
+    } finally {
+      setLikeBusy(false);
+    }
   }
 
   if (loding) {
@@ -225,6 +253,21 @@ function GetDocs() {
             <FiEye aria-hidden="true" />
             조회수 : {doc.data.view_count ?? 0}
           </span>
+          {likes && (
+            <span className="docs-like-group">
+              <button
+                type="button"
+                className={`docs-like${likes.liked ? ' is-liked' : ''}`}
+                onClick={handleLike}
+                disabled={likeBusy}
+                aria-pressed={likes.liked}
+                aria-label={likes.liked ? '좋아요 취소' : '좋아요 누르기'}
+              >
+                {likes.liked ? <FaHeart aria-hidden="true" /> : <FiHeart aria-hidden="true" />}
+              </button>
+              <span className="docs-like-count" aria-label={`좋아요 ${likes.count}개`}>{likes.count}</span>
+            </span>
+          )}
         </div>
 
         {doc.data.tags?.length > 0 && (
