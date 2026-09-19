@@ -160,6 +160,41 @@
   color: #9298a8;
 }
 
+.docs-like-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.docs-like {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #777d8d;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.docs-like:hover,
+.docs-like:focus-visible,
+.docs-like.is-liked {
+  color: #c0392b;
+}
+
+.docs-like:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.docs-like-count {
+  font-variant-numeric: tabular-nums;
+}
+
 .docs-tags {
   display: flex;
   flex-wrap: wrap;
