@@ -4,6 +4,13 @@ import { Link } from 'react-router-dom'
 import './EditList.css'
 import { getDocumentPath } from '../util/DocsAPI'
 
+export function getEditList(data) {
+  const versions = data?.edit_versions ?? data?.editList ?? [];
+  const events = data?.edit_events ?? [];
+  return [...versions, ...events].sort((a, b) =>
+    new Date(b.updated_at ?? 0) - new Date(a.updated_at ?? 0));
+}
+
 function formatEditDate(value) {
   if (!value) {
     return '날짜 정보 없음';
@@ -29,36 +36,45 @@ function EditList({ edits = [] }) {
   return (
     <ul className="editListItems">
       {edits.map((item, index) => {
+        const isEvent = Boolean(item.event_type);
         const version = item.version_number ?? item.version ?? item.rev ?? index + 1;
         const versionText = String(version);
-        const documentTitle = item.wiki_doc_title || item.title || item.docTitle || item.document_title;
-        const displayTitle = documentTitle || '문서 제목 없음';
+        const documentTitle = item.document_title || item.wiki_doc_title || item.title || item.docTitle;
+        const eventTitle = item.event_type === 'rename' ? '제목 변경' : '삭제';
+        const displayTitle = isEvent ? `${eventTitle} · ${documentTitle}` : documentTitle || '문서 제목 없음';
         const date = formatEditDate(
           item.updated_at ?? item.date ?? item.createdAt ?? item.updatedAt,
         );
-        const linkPath = documentTitle
+        const linkPath = documentTitle && !item.deleted
           ? getDocumentPath(documentTitle)
-          : '#';
-        const itemKey = item.id ?? (
+          : null;
+        const itemKey = isEvent ? `event-${item.id}` : (
           documentTitle
             ? `${documentTitle}-${versionText}`
             : `document-${index}`
         );
 
+        const content = (
+          <>
+            <div className="editListLeft">
+              <span className="versionBadge">
+                {isEvent ? (item.event_type === 'rename' ? '제목' : '삭제') :
+                  (versionText.startsWith('v') ? versionText : `v${versionText}`)}
+              </span>
+              <div className="editListInfo">
+                <span className="editListTitle">{displayTitle}</span>
+                {item.event_type === 'rename' && <span className="editListDate">{item.old_title} → {item.new_title}</span>}
+                <span className="editListDate">{date}</span>
+              </div>
+            </div>
+            {linkPath && <FiChevronRight className="editListArrow" />}
+          </>
+        );
+
         return (
           <li key={itemKey} className="editListItem">
-            <Link to={linkPath} className="editListLink">
-              <div className="editListLeft">
-                <span className="versionBadge">
-                  {versionText.startsWith('v') ? versionText : `v${versionText}`}
-                </span>
-                <div className="editListInfo">
-                  <span className="editListTitle">{displayTitle}</span>
-                  <span className="editListDate">{date}</span>
-                </div>
-              </div>
-              <FiChevronRight className="editListArrow" />
-            </Link>
+            {linkPath ? <Link to={linkPath} className="editListLink">{content}</Link> :
+              <div className="editListLink">{content}</div>}
           </li>
         );
       })}

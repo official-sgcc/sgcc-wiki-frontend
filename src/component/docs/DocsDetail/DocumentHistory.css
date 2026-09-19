@@ -170,6 +170,33 @@
   white-space: nowrap;
 }
 
+.document-history__item-info .document-history__item-changes {
+  color: #35394a;
+  font-size: 0.875rem;
+}
+
+.document-history__changes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.document-history__changes span {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.45rem;
+  background: #f0f1f4;
+  color: #35394a;
+  font-size: 0.8rem;
+}
+
+.document-history__changes small {
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
 .document-history__item-arrow {
   width: 1rem;
   height: 1rem;
@@ -205,6 +232,56 @@
   color: #242738;
   line-height: 1.75;
   overflow-wrap: anywhere;
+}
+
+.document-history__view-switch {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 1.5rem;
+}
+
+.document-history__view-switch button {
+  padding: 0.4rem 0.7rem;
+  border: 0.0625rem solid #d2d4dc;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #35394a;
+  cursor: pointer;
+}
+
+.document-history__view-switch button[aria-pressed="true"] {
+  border-color: #1a1a2e;
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.document-history__diff {
+  margin-top: 1rem;
+  border: 0.0625rem solid #e4e4e9;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+}
+
+.document-history__diff pre {
+  margin: 0;
+  padding: 1rem;
+  color: #242738;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.document-history__diff .document-history__added {
+  background: #d7f5df;
+  color: #14532d;
+}
+
+.document-history__diff .document-history__removed {
+  background: #ffe0e0;
+  color: #991b1b;
+  text-decoration: line-through;
 }
 
 .document-history__content > *:first-child {
