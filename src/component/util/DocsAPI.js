@@ -83,6 +83,15 @@ export async function ModifyDocs(
   }); 
 } 
  
+export async function RenameDocs(previousTitle, newTitle) {
+  const response = await api.put(
+    "/documents/by-title/move",
+    { new_title: newTitle },
+    { params: { title: previousTitle } },
+  );
+  return response.data;
+}
+
 export async function GetDocsDetail(title) { 
   try { 
     const response = await api.get("/documents/by-title", {
