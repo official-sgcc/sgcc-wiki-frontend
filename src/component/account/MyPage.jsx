@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import api from '../../backend/axios.js'
 import './MyPage.css'
 import AccountStatus from './AccountStatus.jsx'
-import EditList from './EditList.jsx'
+import EditList, { getEditList } from './EditList.jsx'
 import RoleBadge from './RoleBadge.jsx'
 
 const TOKEN_KEY = 'token';
@@ -54,7 +54,7 @@ function MyPage() {
         ]);
         setUser(response.data);
         setRoles(permissions?.data?.roles ?? []);
-        setEditList(response.data?.editList || response.data?.edit_versions || []);
+        setEditList(getEditList(response.data));
       } catch (error) {
         const status = error.response?.status;
         if (status === 404) {

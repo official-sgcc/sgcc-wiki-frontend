@@ -9,7 +9,8 @@ import remarkMath from "remark-math";
 import NotFound from "../../ui/NotFound";
 import {
   formatDate,
-  GetDocsVersion,
+  GetDocsDiff,
+  GetDocsHistoryEvents,
   GetDocsVersions,
 } from "../../util/DocsAPI";
 import "./DocumentHistory.css";
@@ -28,13 +29,57 @@ function getVersionNumber(version) {
   return version.version_number ?? version.version ?? version.rev;
 }
 
+function getCategoryName(category) {
+  return typeof category === "string" ? category : category?.name;
+}
+
+function getTagNames(tags) {
+  return new Set(tags.map((tag) => typeof tag === "string" ? tag : tag?.name).filter(Boolean));
+}
+
+function describeChanges(version, previousVersion) {
+  if (!previousVersion) {
+    return [{ title: getVersionNumber(version) === 1 ? "문서 생성" : "이전 버전 없음" }];
+  }
+
+  const changes = [];
+  if (version.content !== previousVersion.content) changes.push({ title: "본문 변경" });
+
+  const previousCategory = getCategoryName(previousVersion.category);
+  const currentCategory = getCategoryName(version.category);
+  if (previousCategory && currentCategory && previousCategory !== currentCategory) {
+    changes.push({ title: "위치 이동", detail: `${previousCategory} → ${currentCategory}` });
+  }
+
+  // 태그 스냅샷 자체가 누락된 버전은 변경 여부를 추정하지 않는다.
+  if (Array.isArray(version.tags) && Array.isArray(previousVersion.tags)) {
+    const oldTags = getTagNames(previousVersion.tags);
+    const newTags = getTagNames(version.tags);
+    const added = [...newTags].filter((tag) => !oldTags.has(tag));
+    const removed = [...oldTags].filter((tag) => !newTags.has(tag));
+    if (added.length || removed.length) {
+      changes.push({
+        title: "태그 변경",
+        detail: [
+          added.length ? `추가 ${added.map((tag) => `#${tag}`).join(", ")}` : null,
+          removed.length ? `제거 ${removed.map((tag) => `#${tag}`).join(", ")}` : null,
+        ].filter(Boolean).join(" · "),
+      });
+    }
+  }
+
+  return changes.length ? changes : [{ title: "변경 내역 없음" }];
+}
+
 export default function DocumentHistory() {
   const { title: pathTitle, versionNumber: pathVersionNumber } = useParams();
   const [searchParams] = useSearchParams();
   const title = searchParams.get("title") ?? pathTitle;
   const versionNumber = searchParams.get("version") ?? pathVersionNumber;
   const [versions, setVersions] = useState([]);
-  const [selectedVersion, setSelectedVersion] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [contentDiff, setContentDiff] = useState(null);
+  const [showDiff, setShowDiff] = useState(true);
   const [loading, setLoading] = useState(true);
   const [errorStatus, setErrorStatus] = useState(null);
 
@@ -44,16 +89,27 @@ export default function DocumentHistory() {
     async function fetchHistory() {
       setLoading(true);
       setErrorStatus(null);
-      setSelectedVersion(null);
       setVersions([]);
+      setEvents([]);
+      setContentDiff(null);
+      setShowDiff(true);
 
       try {
-        if (versionNumber) {
-          const version = await GetDocsVersion(title, versionNumber);
-          if (isActive) setSelectedVersion(version);
-        } else {
-          const data = await GetDocsVersions(title);
-          if (isActive) setVersions(Array.isArray(data) ? [...data].reverse() : []);
+        const [data, historyEvents, diff] = await Promise.all([
+          GetDocsVersions(title),
+          GetDocsHistoryEvents(title),
+          versionNumber && Number(versionNumber) > 1
+            ? GetDocsDiff(title, versionNumber).catch(() => null)
+            : Promise.resolve(null),
+        ]);
+        if (isActive) {
+          setVersions(Array.isArray(data)
+            ? [...data].sort((a, b) => getVersionNumber(b) - getVersionNumber(a))
+            : []);
+          setEvents(Array.isArray(historyEvents) ? historyEvents : []);
+          setContentDiff(Array.isArray(diff) && diff.some(([operation]) => operation !== 0)
+            ? diff
+            : null);
         }
       } catch (error) {
         if (isActive) setErrorStatus(error.response?.status ?? 500);
@@ -77,9 +133,22 @@ export default function DocumentHistory() {
   }
 
   const encodedTitle = encodeURIComponent(title);
+  const selectedIndex = versionNumber
+    ? versions.findIndex((version) => String(getVersionNumber(version)) === String(versionNumber))
+    : -1;
+  const selectedVersion = versions[selectedIndex];
+  const historyItems = [
+    ...versions.map((version, index) => ({ kind: "version", version, index, updated_at: version.updated_at })),
+    ...events.map((event) => ({ kind: "event", event, updated_at: event.updated_at })),
+  ].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+  if (versionNumber && !selectedVersion) {
+    return <NotFound status={404} message="버전 기록을 찾을 수 없습니다" />;
+  }
 
   if (selectedVersion) {
     const version = getVersionNumber(selectedVersion);
+    const changes = describeChanges(selectedVersion, versions[selectedIndex + 1]);
 
     return (
       <article className="document-history document-history--detail">
@@ -101,14 +170,40 @@ export default function DocumentHistory() {
           <span><FiClock aria-hidden="true" /> {formatDate(selectedVersion.updated_at)}</span>
         </div>
 
-        <section className="document-history__content">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={markdownRehypePlugins.concat(rehypeKatex)}
-          >
-            {normalizeMarkdown(selectedVersion.content)}
-          </ReactMarkdown>
-        </section>
+        <div className="document-history__changes" aria-label="변경 내용">
+          {changes.map((change) => (
+            <span key={change.title}>
+              <strong>{change.title}</strong>
+              {change.detail && <small>{change.detail}</small>}
+            </span>
+          ))}
+        </div>
+
+        {contentDiff && (
+          <div className="document-history__view-switch" aria-label="본문 표시 방식">
+            <button type="button" aria-pressed={showDiff} onClick={() => setShowDiff(true)}>변경 보기</button>
+            <button type="button" aria-pressed={!showDiff} onClick={() => setShowDiff(false)}>완성본 보기</button>
+          </div>
+        )}
+
+        {contentDiff && showDiff ? (
+          <section className="document-history__diff" aria-label="이전 버전과 비교한 본문">
+            <pre>{contentDiff.map(([operation, value], index) => (
+              <span key={index} className={operation === 1 ? "document-history__added" : operation === -1 ? "document-history__removed" : undefined}>
+                {value}
+              </span>
+            ))}</pre>
+          </section>
+        ) : (
+          <section className="document-history__content">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={markdownRehypePlugins.concat(rehypeKatex)}
+            >
+              {normalizeMarkdown(selectedVersion.content)}
+            </ReactMarkdown>
+          </section>
+        )}
       </article>
     );
   }
@@ -125,13 +220,32 @@ export default function DocumentHistory() {
           <p className="document-history__eyebrow">DOCUMENT HISTORY</p>
           <h1>{title} 수정 기록</h1>
         </div>
-        <span className="document-history__count">{versions.length}개 버전</span>
+        <span className="document-history__count">{historyItems.length}개 기록</span>
       </header>
 
-      {versions.length > 0 ? (
+      {historyItems.length > 0 ? (
         <ol className="document-history__list">
-          {versions.map((version) => {
+          {historyItems.map((item) => {
+            if (item.kind === "event") {
+              const { event } = item;
+              return (
+                <li key={`event-${event.id}`} className="document-history__item document-history__item--event">
+                  <span className="document-history__badge">기록</span>
+                  <span className="document-history__item-info">
+                    <strong>{event.event_type === "rename" ? "제목 변경" : "삭제"}</strong>
+                    {event.event_type === "rename" && (
+                      <span className="document-history__item-changes">{event.old_title} → {event.new_title}</span>
+                    )}
+                    <span className="document-history__item-meta">
+                      {event.updated_by ?? "알 수 없음"} · {formatDate(event.updated_at)}
+                    </span>
+                  </span>
+                </li>
+              );
+            }
+            const { version, index } = item;
             const number = getVersionNumber(version);
+            const changes = describeChanges(version, versions[index + 1]);
 
             return (
               <li key={number}>
@@ -141,8 +255,13 @@ export default function DocumentHistory() {
                 >
                   <span className="document-history__badge">v{number}</span>
                   <span className="document-history__item-info">
-                    <strong>버전 {number}</strong>
-                    <span>
+                    <strong>{changes.map((change) => change.title).join(" · ")}</strong>
+                    {changes.some((change) => change.detail) && (
+                      <span className="document-history__item-changes">
+                        {changes.map((change) => change.detail).filter(Boolean).join(" · ")}
+                      </span>
+                    )}
+                    <span className="document-history__item-meta">
                       {version.updated_by ?? "알 수 없음"} · {formatDate(version.updated_at)}
                     </span>
                   </span>
