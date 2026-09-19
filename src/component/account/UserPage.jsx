@@ -5,20 +5,8 @@ import api from '../../backend/axios.js'
 import './MyPage.css'
 import './UserPage.css'
 import AccountStatus from './AccountStatus.jsx'
-import EditList from './EditList.jsx'
+import EditList, { getEditList } from './EditList.jsx'
 import RoleBadge from './RoleBadge.jsx'
-
-function getEditList(data) {
-  if (Array.isArray(data?.edit_versions)) {
-    return data.edit_versions;
-  }
-
-  if (Array.isArray(data?.editList)) {
-    return data.editList;
-  }
-
-  return [];
-}
 
 function UserPage() {
   const { userID } = useParams();

@@ -127,6 +127,20 @@ export async function GetDocsVersions(title) {
   return response.data;
 }
 
+export async function GetDocsHistoryEvents(title) {
+  const response = await api.get("/documents/by-title/history-events", {
+    params: { title },
+  });
+  return response.data;
+}
+
+export async function GetDocsDiff(title, versionNumber) {
+  const response = await api.get("/documents/by-title/diff", {
+    params: { title, version_number: versionNumber },
+  });
+  return response.data;
+}
+
 export async function GetDocsVersion(title, versionNumber) {
   const response = await api.get("/documents/by-title/version", {
     params: { title, version_number: versionNumber },
