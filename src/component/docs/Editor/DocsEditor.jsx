@@ -8,8 +8,9 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import NotFound from "../../ui/NotFound";
 import { GetListOfCategories } from "../../util/TagCategoryAPI";
-import { SubmitDocs, ModifyDocs, GetDocsDetail, getDocumentPath } from "../../util/DocsAPI";
+import { SubmitDocs, ModifyDocs, RenameDocs, GetDocsDetail, getDocumentPath } from "../../util/DocsAPI";
 import { flattenCategories } from "../../util/CategoryTree";
+import { saveEditedDocument } from "../../util/DocumentSaveFlow";
 import "./DocsEditor.css";
 import "easymde/dist/easymde.min.css";
 import { canWriteCategory, useWritePermission } from "../../util/WritePermission";
@@ -56,7 +57,8 @@ function DocsEditor() {
   const previousTitle = searchParams.get("title") ?? pathTitle;
 
   const isEditMode = Boolean(previousTitle);
-  const { permission, documentActions, loading: checkingPermission } = useWritePermission(previousTitle);
+  const [currentDocumentTitle, setCurrentDocumentTitle] = useState(previousTitle);
+  const { permission, documentActions, loading: checkingPermission } = useWritePermission(currentDocumentTitle);
   const [originalCategory, setOriginalCategory] = useState(null);
 
   const [value, setValue] = useState("");
@@ -211,9 +213,12 @@ function DocsEditor() {
   }
 
   async function handleSubmit() {
+    const nextTitle = title.trim();
+    const titleChanged = isEditMode && nextTitle !== currentDocumentTitle;
     if (isEditMode && (documentActions?.document_update !== true ||
+        (titleChanged && documentActions?.document_rename !== true) ||
         (category !== originalCategory && documentActions?.document_move !== true))) {
-      alert("문서를 수정하거나 카테고리를 이동할 권한이 없습니다.");
+      alert("문서 수정, 제목 변경 또는 카테고리 이동 권한이 없습니다.");
       return;
     }
     if (!canWriteCategory(permission, categoryOptions.find((item) => item.name === category))) {
@@ -223,7 +228,7 @@ function DocsEditor() {
     try {
       setSaving(true);
 
-      if (!title.trim()) {
+      if (!nextTitle) {
         alert("문서 제목을 입력해주세요.");
         return;
       }
@@ -260,17 +265,35 @@ function DocsEditor() {
       };
 
       if (isEditMode) {
-        await ModifyDocs(title.trim(), value, finalTags, categoryData);
+        await saveEditedDocument({
+          currentTitle: currentDocumentTitle,
+          nextTitle,
+          content: value,
+          tags: finalTags,
+          category: categoryData,
+        }, {
+          rename: RenameDocs,
+          update: ModifyDocs,
+          onRenamed: (renamedTitle) => {
+            // 본문 저장 실패 후에도 새 제목으로 다시 저장하거나 편집 화면을 새로고침한다.
+            setCurrentDocumentTitle(renamedTitle);
+            const editUrl = new URL(window.location.href);
+            editUrl.searchParams.set("title", renamedTitle);
+            window.history.replaceState(window.history.state, "", editUrl);
+          },
+        });
       } else {
-        await SubmitDocs(title.trim(), value, finalTags, categoryData);
+        await SubmitDocs(nextTitle, value, finalTags, categoryData);
       }
 
-      navigate(getDocumentPath(title.trim()));
+      navigate(getDocumentPath(nextTitle));
     } catch (e) {
       if (e.response?.status === 401 || e.response?.status === 403) {
-        alert("문서 작성 권한이 없습니다.");
+        alert("문서를 저장할 권한이 없습니다.");
+      } else if (e.response?.status === 400 && e.response?.data?.detail === "There is already a document with the same name.") {
+        alert("같은 제목의 문서가 이미 있습니다.");
       } else {
-        alert("문서 저장 중 오류가 발생했습니다.");
+        alert("문서 저장 중 오류가 발생했습니다. 제목이 변경됐다면 다시 저장해 본문 수정을 재시도할 수 있습니다.");
         console.error(e);
       }
     } finally {
@@ -328,7 +351,7 @@ function DocsEditor() {
           placeholder="문서 제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          readOnly={isEditMode}
+          readOnly={isEditMode && documentActions?.document_rename !== true}
         />
 
         <button
