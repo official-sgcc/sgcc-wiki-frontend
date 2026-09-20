@@ -64,7 +64,7 @@ export default function AdminPage() {
         const userInfo = await GetPermissionContext();
         if (!active || request !== version) return;
 
-        if (userInfo?.actions?.admin !== true) {
+        if (userInfo?.is_admin !== true) {
           setAlert({
             open: true,
             type: "alert",

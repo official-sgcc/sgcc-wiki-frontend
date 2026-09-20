@@ -8,7 +8,7 @@ import {
 } from "../../util/TagCategoryAPI";
 import { useNavigate } from "react-router-dom";
 import "./CategoryTreeEditor.css";
-import { GetPermissionContext } from "../../util/AuthAPI";
+import { GetAdminRoleDefinitions } from "../../util/AuthAPI";
 
 const NODE_STEP_X = 13;
 const NODE_STEP_Y = 9;
@@ -131,9 +131,9 @@ export default function CategoryTreeEditor() {
   ) || 16;
 
   async function loadTree() {
-    const [data, context] = await Promise.all([GetListOfCategories(), GetPermissionContext()]);
+    const [data, roles] = await Promise.all([GetListOfCategories(), GetAdminRoleDefinitions()]);
     setTree(Array.isArray(data) ? data : []);
-    setRoles(context.roles ?? []);
+    setRoles(roles);
     return Array.isArray(data) ? data : [];
   }
 
