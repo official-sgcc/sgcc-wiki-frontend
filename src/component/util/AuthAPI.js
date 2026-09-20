@@ -140,6 +140,11 @@ export async function GetAdminPermissions() {
   return response.data?.permissions ?? [];
 }
 
+export async function GetAdminRoleDefinitions() {
+  const response = await api.get('/admin/permissions');
+  return response.data?.roles ?? [];
+}
+
 // 관리자 전용 사용자 권한 변경
 export async function UpdateUserPermission(username, permission) {
   const response = await api.put(

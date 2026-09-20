@@ -10,7 +10,7 @@ import {
 } from "react-icons/fi";
 import { formatDate, getDocumentPath } from "../util/DocsAPI";
 import "./DocsList.css";
-import { canWriteCategory, useWritePermission } from "../util/WritePermission";
+import { canWriteCategory } from "../util/WritePermission";
 import { GetCategory } from "../util/TagCategoryAPI";
 
 /*
@@ -78,7 +78,6 @@ export default function DocsList({
   showWriteButton = false,
 }) {
   const navigate = useNavigate();
-  const { permission } = useWritePermission();
   const [writeCategory, setWriteCategory] = useState(null);
   useEffect(() => {
     let active = true;
@@ -88,7 +87,7 @@ export default function DocsList({
     return () => { active = false; };
   }, [category, showWriteButton]);
   const canWrite = showWriteButton && writeCategory?.name === category &&
-    canWriteCategory(permission, writeCategory);
+    canWriteCategory(writeCategory);
 
   const [allDocs, setAllDocs] = useState([]);
   const [page, setPage] = useState(1);

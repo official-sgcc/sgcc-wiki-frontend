@@ -35,7 +35,6 @@ function MyPage() {
   const token = sessionStorage.getItem(TOKEN_KEY);
   const username = sessionStorage.getItem(USERNAME_KEY);
   const [user, setUser] = useState(null);
-  const [roles, setRoles] = useState([]);
   const [editList, setEditList] = useState([]);
   const [isLoading, setIsLoading] = useState(Boolean(token && username));
   const [errorMessage, setErrorMessage] = useState('');
@@ -49,12 +48,8 @@ function MyPage() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const [response, permissions] = await Promise.all([
-          api.get(`/users/${encodeURIComponent(username)}`),
-          api.get('/permissions').catch(() => null),
-        ]);
+        const response = await api.get(`/users/${encodeURIComponent(username)}`);
         setUser(response.data);
-        setRoles(permissions?.data?.roles ?? []);
         setEditList(getEditList(response.data));
       } catch (error) {
         const status = error.response?.status;
@@ -112,7 +107,7 @@ function MyPage() {
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div className="profileHello">Hello, {displayName}</div>
-          <RoleBadge permission={user?.permission} roles={roles} />
+          <RoleBadge permission={user?.permission} label={user?.permission_label} />
         </div>
 
         {/* 프로필 정보 + 액션 카드 */}
@@ -133,7 +128,7 @@ function MyPage() {
                   <FiShield className="infoIcon" />
                   <span>권한</span>
                 </div>
-                <div className="infoValue hasValue"><RoleBadge permission={user?.permission} roles={roles} /></div>
+                <div className="infoValue hasValue"><RoleBadge permission={user?.permission} label={user?.permission_label} /></div>
               </div>
 
               <div className="infoItem">

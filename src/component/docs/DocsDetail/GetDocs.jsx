@@ -15,7 +15,7 @@ import { GetListOfCategories } from "../../util/TagCategoryAPI";
 import { flattenCategories } from "../../util/CategoryTree";
 import "./GetDocs.css";
 import "./DocumentHistory.css";
-import { useWritePermission } from "../../util/WritePermission";
+import { useDocumentActions } from "../../util/WritePermission";
 
 function normalizeMarkdown(content) {
   if (typeof content !== "string") return "";
@@ -53,8 +53,9 @@ function GetDocs() {
   const [loding, setLoding] = useState(true);
   const [categoryPath, setCategoryPath] = useState([]);
   const [likes, setLikes] = useState(null);
+  const [likesError, setLikesError] = useState(false);
   const [likeBusy, setLikeBusy] = useState(false);
-  const { documentActions } = useWritePermission(title);
+  const documentActions = useDocumentActions(title);
   const navigate = useNavigate();
 
   //when page loaded -> getdocs with loding
@@ -64,12 +65,14 @@ function GetDocs() {
       const data = await GetDocsDetail(title);
       setDoc(data);
       setLikes(null);
+      setLikesError(false);
 
       if (data.ok) {
         try {
           setLikes(await GetDocumentLikes(title));
         } catch {
           setLikes(null);
+          setLikesError(true);
         }
       }
 
@@ -126,7 +129,9 @@ function GetDocs() {
     setLikeBusy(true);
     try {
       setLikes(await SetDocumentLike(title, likes.liked));
+      setLikesError(false);
     } catch (error) {
+      setLikesError(true);
       alert(error.response?.status === 401 ? '다시 로그인해주세요.' : '좋아요를 변경하지 못했습니다.');
     } finally {
       setLikeBusy(false);
@@ -268,6 +273,7 @@ function GetDocs() {
               <span className="docs-like-count" aria-label={`좋아요 ${likes.count}개`}>{likes.count}</span>
             </span>
           )}
+          {likesError && <span className="docs-like-error" role="status">좋아요 정보를 불러오지 못했습니다.</span>}
         </div>
 
         {doc.data.tags?.length > 0 && (
