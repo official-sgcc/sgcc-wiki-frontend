@@ -111,7 +111,14 @@ export async function GetDocsDetail(title) {
 
 export async function GetDocumentLikes(title) {
   const response = await api.get('/documents/by-title/likes', { params: { title } });
-  return response.data;
+  return parseDocumentLikes(response.data);
+}
+
+function parseDocumentLikes(data) {
+  if (!data || !Number.isInteger(data.count) || typeof data.liked !== 'boolean') {
+    throw new Error('Invalid document likes response');
+  }
+  return data;
 }
 
 export async function SetDocumentLike(title, liked) {
@@ -119,7 +126,7 @@ export async function SetDocumentLike(title, liked) {
   const response = liked
     ? await api.delete('/documents/by-title/likes', config)
     : await api.post('/documents/by-title/likes', null, config);
-  return response.data;
+  return parseDocumentLikes(response.data);
 }
 
 export async function GetDocsForEdit(title) {

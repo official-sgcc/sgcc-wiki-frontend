@@ -12,7 +12,6 @@ import RoleBadge from './RoleBadge.jsx'
 function UserPage() {
   const { userID } = useParams();
   const [user, setUser] = useState(null);
-  const [roles, setRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [editList, setEditList] = useState([]);
@@ -24,14 +23,10 @@ function UserPage() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const [response, permissions] = await Promise.all([
-          api.get(`/users/${encodeURIComponent(userID)}`, { signal: controller.signal }),
-          api.get('/permissions', { signal: controller.signal }).catch(() => null),
-        ]);
+        const response = await api.get(`/users/${encodeURIComponent(userID)}`, { signal: controller.signal });
         if (controller.signal.aborted) return;
 
         setUser(response.data);
-        setRoles(permissions?.data?.roles ?? []);
         setEditList(getEditList(response.data));
       } catch (error) {
         if (controller.signal.aborted) { return; }
@@ -78,7 +73,7 @@ function UserPage() {
               {displayName.charAt(0).toUpperCase()}
             </div>
             <div className="profileHello">{displayName}</div>
-            <RoleBadge permission={user?.permission} roles={roles} />
+            <RoleBadge permission={user?.permission} label={user?.permission_label} />
           </div>
 
           <div className="profileInfoCard userpage-profile-card">

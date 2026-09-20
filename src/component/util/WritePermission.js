@@ -1,26 +1,45 @@
 import { useEffect, useState } from "react";
-import { GetPermissionContext, GetDocumentPermissions } from "./AuthAPI";
+import { GetDocumentPermissions } from "./AuthAPI";
 
-export function canWriteCategory(permission, category) {
-  return permission?.actions?.document_create === true && Boolean(category) &&
-    permission?.category_permissions?.[category.name] === true;
+export function canWriteCategory(category) {
+  return category?.can_write === true;
+}
+
+export function useDocumentActions(title) {
+  const [documentActions, setDocumentActions] = useState(null);
+  useEffect(() => {
+    let active = true;
+    async function refresh() {
+      try {
+        const actions = await GetDocumentPermissions(title);
+        if (active) setDocumentActions(actions);
+      } catch {
+        if (active) setDocumentActions(null);
+      }
+    }
+    refresh();
+    window.addEventListener('auth-state-change', refresh);
+    return () => {
+      active = false;
+      window.removeEventListener('auth-state-change', refresh);
+    };
+  }, [title]);
+  return documentActions;
 }
 
 export function useWritePermission(title = null) {
-  const [auth, setAuth] = useState({ permission: null, documentActions: null, loading: true });
+  const [auth, setAuth] = useState({ documentActions: null, loading: true });
   useEffect(() => {
     let active = true;
     let version = 0;
     async function refresh() {
       const request = ++version;
-      if (active) setAuth({ permission: null, documentActions: null, loading: true });
+      if (active) setAuth({ documentActions: null, loading: true });
       try {
-        const [permission, documentActions] = await Promise.all([
-          GetPermissionContext(), title ? GetDocumentPermissions(title) : null,
-        ]);
-        if (active && request === version) setAuth({ permission, documentActions, loading: false });
+        const documentActions = title ? await GetDocumentPermissions(title) : null;
+        if (active && request === version) setAuth({ documentActions, loading: false });
       } catch {
-        if (active && request === version) setAuth({ permission: null, documentActions: null, loading: false });
+        if (active && request === version) setAuth({ documentActions: null, loading: false });
       }
     }
     refresh();

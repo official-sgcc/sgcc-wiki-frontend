@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiRefreshCw, FiUsers } from "react-icons/fi";
 import {
-  GetPermissionContext,
+  GetAdminRoleDefinitions,
   GetAdminUsers,
   UpdateUserPermission,
 } from "../../util/AuthAPI";
@@ -10,12 +10,12 @@ import "./UserManager.css";
 async function requestUserData() {
   const [userData, permissionData] = await Promise.all([
     GetAdminUsers(),
-    GetPermissionContext(),
+    GetAdminRoleDefinitions(),
   ]);
 
   return {
     users: Array.isArray(userData) ? userData : [],
-    permissions: Array.isArray(permissionData?.roles) ? permissionData.roles : [],
+    permissions: Array.isArray(permissionData) ? permissionData : [],
   };
 }
 
