@@ -5,10 +5,12 @@ import {
   FiClock,
   FiEdit3,
   FiEye,
+  FiHeart,
   FiSearch,
   FiUser,
 } from "react-icons/fi";
 import { formatDate, getDocumentPath } from "../util/DocsAPI";
+import { sortDocuments } from "../util/DocumentListSort";
 import "./DocsList.css";
 import { canWriteCategory } from "../util/WritePermission";
 import { GetCategory } from "../util/TagCategoryAPI";
@@ -105,16 +107,7 @@ export default function DocsList({
   const offset = (currentPage - 1) * limit;
 
   const sortedDocs = useMemo(() => {
-    const direction = sortOrder === "newest" ? -1 : 1;
-
-    return [...allDocs].sort((first, second) => {
-      const firstUpdatedAt = Date.parse(first.updated_at);
-      const secondUpdatedAt = Date.parse(second.updated_at);
-      const firstTime = Number.isNaN(firstUpdatedAt) ? 0 : firstUpdatedAt;
-      const secondTime = Number.isNaN(secondUpdatedAt) ? 0 : secondUpdatedAt;
-
-      return (firstTime - secondTime) * direction;
-    });
+    return sortDocuments(allDocs, sortOrder);
   }, [allDocs, sortOrder]);
 
   const docsdata = useMemo(
@@ -296,6 +289,8 @@ export default function DocsList({
           >
             <option value="newest">최신순</option>
             <option value="oldest">오래된순</option>
+            <option value="likes">좋아요순</option>
+            <option value="views">조회수순</option>
           </select>
         </div>
       </div>
@@ -314,6 +309,7 @@ export default function DocsList({
               <span>작성자</span>
               <span>날짜</span>
               <span>조회</span>
+              <span>좋아요</span>
             </div>
 
             <ul className="docs-list__items">
@@ -369,6 +365,11 @@ export default function DocsList({
                     <span className="docs-list__mobile-label">조회</span>
                     <FiEye className="docs-list__meta-icon" aria-hidden="true" />
                     {post.view_count ?? post.views ?? 0}
+                  </div>
+                  <div className="docs-list__likes">
+                    <span className="docs-list__mobile-label">좋아요</span>
+                    <FiHeart className="docs-list__meta-icon" aria-hidden="true" />
+                    {post.like_count ?? 0}
                   </div>
                 </li>
               ))}

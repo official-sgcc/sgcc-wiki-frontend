@@ -187,7 +187,7 @@
 .docs-list__table-header,
 .docs-list__item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(6rem, 7rem) minmax(7rem, 8rem) minmax(4rem, 5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(6rem, 7rem) minmax(7rem, 8rem) minmax(3.5rem, 4.5rem) minmax(3.5rem, 4.5rem);
   align-items: center;
   gap: 1rem;
   padding-right: clamp(1rem, 2.5vw, 1.5rem);
@@ -290,7 +290,8 @@
 
 .docs-list__writer,
 .docs-list__date,
-.docs-list__views {
+.docs-list__views,
+.docs-list__likes {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -417,7 +418,8 @@
 
   .docs-list__writer,
   .docs-list__date,
-  .docs-list__views {
+  .docs-list__views,
+  .docs-list__likes {
     justify-content: flex-start;
     font-size: 0.8rem;
   }
