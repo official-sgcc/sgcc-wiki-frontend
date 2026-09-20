@@ -39,6 +39,14 @@ function insertAlignedBlock(editor, alignment) {
   editor.codemirror.replaceSelection(block);
 }
 
+function insertMath(editor, display) {
+  const codeMirror = editor.codemirror;
+  const expression = codeMirror.getSelection() || "x";
+  const math = display ? `\n$$\n${expression}\n$$\n` : `$${expression}$`;
+  codeMirror.replaceSelection(math);
+  codeMirror.focus();
+}
+
 function normalizeMarkdown(content) {
   if (typeof content !== "string") return "";
 
@@ -100,6 +108,19 @@ function DocsEditor() {
         "unordered-list",
         "ordered-list",
         "link",
+        "|",
+        {
+          name: "inline-math",
+          action: (editor) => insertMath(editor, false),
+          text: "ƒx",
+          title: "인라인 수식 ($...$)",
+        },
+        {
+          name: "display-math",
+          action: (editor) => insertMath(editor, true),
+          text: "∑",
+          title: "블록 수식 ($$...$$)",
+        },
         "|",
         {
           name: "align-left",
